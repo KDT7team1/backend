@@ -10,7 +10,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-	public static void qqq(){
+	public static void qq(){
 
 	}
 }
