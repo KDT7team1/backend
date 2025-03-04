@@ -11,5 +11,7 @@ public class Application {
 		System.out.println("Hello World!");
 		System.out.println("Hello World!");
 	}
+	public static void pp(){
 
+	}
 }
