@@ -9,7 +9,7 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 		System.out.println("Hello World!");
-		System.out.println("Hello World!!1232!!!!");
+		System.out.println("더럽게어렵다");
 	}
 	public static void pp(){
 
