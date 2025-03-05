@@ -1,0 +1,12 @@
+# 디폴트 무시된 파일
+/shelf/
+/workspace.xml
+/compiler.xml
+/encodings.xml
+/git_toolbox_blame.xml
+/git_toolbox_prj.xml
+/jarRepositories.xml
+/jpa.xml
+/misc.xml
+/vcs.xml
+
