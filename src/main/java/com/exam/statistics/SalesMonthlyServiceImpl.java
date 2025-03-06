@@ -15,9 +15,23 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
     }
 
     @Override
-    public List<SalesMonthlyDTO> findBySalesMonth(String salesMonth) {
+    public SalesMonthlyDTO findBySalesMonth(String salesMonth) {
 
-        List<SalesMonthly> monthlyList = salesMonthlyRepository.findBySalesMonth(salesMonth);
+        SalesMonthly monthly = salesMonthlyRepository.findBySalesMonth(salesMonth);
+
+        SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .saleMonth(monthly.getSaleMonth())
+                    .totalSales(monthly.getTotalSales())
+                    .totalOrders(monthly.getTotalOrders())
+                    .build();
+
+        return dto;
+    }
+
+    @Override
+    public List<SalesMonthlyDTO> findBySalesYear(String year) {
+
+        List<SalesMonthly> monthlyList = salesMonthlyRepository.findBySalesYear(year);
 
         List<SalesMonthlyDTO> monthlyDTO = monthlyList.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()

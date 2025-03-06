@@ -25,6 +25,7 @@ public class SalesController {
 
     @GetMapping("/admin/salesDaily/{salesDate}")
     public ResponseEntity<List<SalesDailyDTO>> findBySalesDate(@PathVariable String salesDate) {
+        log.info("LOGGER: 일간 매출 조회를 요청함");
         log.info("LOGGER: salesDate: {}", salesDate);
         salesDate = salesDate + " 00:00:00";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -42,13 +43,25 @@ public class SalesController {
     } // end findBySalesDate
 
     @GetMapping("admin/salesMontly/{salesMonth}")
-    public ResponseEntity<List<SalesMonthlyDTO>> findBySalesMonth(@PathVariable String salesMonth) {
-        log.info("LOGGER: salesMonth: {}", salesMonth);
+    public ResponseEntity<SalesMonthlyDTO> findBySalesMonth(@PathVariable String salesMonth) {
+        log.info("LOGGER: 월간 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 월: {}", salesMonth);
 
-        List<SalesMonthlyDTO> salesMonthly = salesMonthlyService.findBySalesMonth(salesMonth);
-        log.info("LOGGER: salesDaily 정보 획득: {}", salesMonthly);
+        SalesMonthlyDTO salesMonthly = salesMonthlyService.findBySalesMonth(salesMonth);
+        log.info("LOGGER: salesMonth 정보 획득: {}", salesMonthly);
 
         return ResponseEntity.status(200).body(salesMonthly);
     }
 
+    @GetMapping("admin/salesYearly/{year}")
+    public ResponseEntity<List<SalesMonthlyDTO>> findBySalesYear(@PathVariable String year) {
+        log.info("LOGGER: 연간 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 연도: {}", year);
+
+        String searchyear = year + "%";
+        List<SalesMonthlyDTO> salesMonthlyDTOList = salesMonthlyService.findBySalesYear(searchyear);
+
+        log.info("LOGGER: 조회한 연도의 데이터: {}", salesMonthlyDTOList);
+        return ResponseEntity.status(200).body(salesMonthlyDTOList);
+    }
 }
