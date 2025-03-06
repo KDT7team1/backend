@@ -1,8 +1,8 @@
-package com.exam.goods.service;
+package com.exam.userGoods.service;
 
-import com.exam.goods.dto.GoodsDTO;
-import com.exam.goods.entity.Goods;
-import com.exam.goods.repository.GoodsRepository;
+import com.exam.userGoods.dto.GoodsDTO;
+import com.exam.userGoods.entity.Goods;
+import com.exam.userGoods.repository.GoodsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
