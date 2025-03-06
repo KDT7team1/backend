@@ -2,6 +2,7 @@ package com.exam.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,9 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository ;
     final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public MemberServiceImpl(MemberRepository memberRepository){
+
         this.memberRepository = memberRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
@@ -60,7 +63,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public boolean checkSignUpSamePasswd(MemberDTO memberDTO) {
+    public boolean checkSignUpSamePassword(MemberDTO memberDTO) {
 
         if(!(memberDTO.getMember_passwd()).equals(memberDTO.getMember_passwd())) {
             log.error("비밀번호를 다시 입력해주세요.");
