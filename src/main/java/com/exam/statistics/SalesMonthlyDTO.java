@@ -17,9 +17,9 @@ public class SalesMonthlyDTO {
     String saleMonth;
 
     @Column(name = "total_sales")
-    Long totalSales;
+    Long monthlyAmount;
 
     @Column(name = "total_orders")
-    Long totalOrders;
+    Long monthlyOrders;
 
 }

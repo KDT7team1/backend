@@ -17,13 +17,13 @@ import lombok.*;
 public class SalesMonthly {
 
     @Id
-    @Column(name = "sale_month")
+    @Column(name = "sales_month")
     String saleMonth;
 
-    @Column(name = "total_sales")
-    Long totalSales;
+    @Column(name = "monthly_amount")
+    Long monthlyAmount;
 
-    @Column(name = "total_orders")
-    Long totalOrders;
+    @Column(name = "monthly_orders")
+    Long monthlyOrders;
 
 }

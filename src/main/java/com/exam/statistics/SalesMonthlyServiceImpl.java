@@ -21,8 +21,8 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
                     .saleMonth(monthly.getSaleMonth())
-                    .totalSales(monthly.getTotalSales())
-                    .totalOrders(monthly.getTotalOrders())
+                    .monthlyAmount(monthly.getMonthlyAmount())
+                    .monthlyOrders(monthly.getMonthlyOrders())
                     .build();
 
         return dto;
@@ -36,8 +36,8 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
         List<SalesMonthlyDTO> monthlyDTO = monthlyList.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
                     .saleMonth(s.getSaleMonth())
-                    .totalSales(s.getTotalSales())
-                    .totalOrders(s.getTotalOrders())
+                    .monthlyAmount(s.getMonthlyAmount())
+                    .monthlyOrders(s.getMonthlyOrders())
                     .build();
             return dto;
         }).collect(Collectors.toList());
