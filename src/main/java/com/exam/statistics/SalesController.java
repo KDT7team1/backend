@@ -45,11 +45,11 @@ public class SalesController {
     } // end findBySalesDate
 
     @GetMapping("statistics/salesMontly/{salesMonth}")
-    public ResponseEntity<SalesMonthlyDTO> findBySalesMonth(@PathVariable String salesMonth) {
+    public ResponseEntity<List<SalesMonthlyDTO>> findBySalesMonth(@PathVariable String salesMonth) {
         log.info("LOGGER: 월간 매출 조회를 요청함");
         log.info("LOGGER: 조회할 월: {}", salesMonth);
 
-        SalesMonthlyDTO salesMonthly = salesMonthlyService.findBySalesMonth(salesMonth);
+        List<SalesMonthlyDTO> salesMonthly = salesMonthlyService.findBySalesMonth(salesMonth);
         log.info("LOGGER: salesMonth 정보 획득: {}", salesMonthly);
 
         return ResponseEntity.status(200).body(salesMonthly);
@@ -98,19 +98,19 @@ public class SalesController {
     } // end getSalesDifference
 
     @GetMapping("statistics/salesMonthlyDiff/{targetMonth}")
-    public ResponseEntity<Map<String, SalesMonthlyDTO>> getMontlySalesDiff(@PathVariable String targetMonth) {
+    public ResponseEntity<Map<String, List<SalesMonthlyDTO>>> getMontlySalesDiff(@PathVariable String targetMonth) {
         log.info("LOGGER: 이번 달과 월간 매출 비교를 요청함");
         log.info("LOGGER: 이번 달: 2024-12 비교할 월: {}", targetMonth);
 
         String thisMonth = "2024-12";
 
-        Map<String, SalesMonthlyDTO> salesDiff = new HashMap<>();
+        Map<String, List<SalesMonthlyDTO>> salesDiff = new HashMap<>();
 
-        SalesMonthlyDTO thisMonthSales = salesMonthlyService.findBySalesMonth(thisMonth);
+        List<SalesMonthlyDTO> thisMonthSales = salesMonthlyService.findBySalesMonth(thisMonth);
         log.info("LOGGER: thisMonthSales 정보 획득: {}", thisMonthSales);
         salesDiff.put("thisMonth", thisMonthSales);
 
-        SalesMonthlyDTO targetMonthSales = salesMonthlyService.findBySalesMonth(targetMonth);
+        List<SalesMonthlyDTO> targetMonthSales = salesMonthlyService.findBySalesMonth(targetMonth);
         log.info("LOGGER: targetMonth 정보 획득: {}", targetMonthSales);
         salesDiff.put("targetMonth", targetMonthSales);
 

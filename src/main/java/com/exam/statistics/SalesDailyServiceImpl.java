@@ -21,8 +21,8 @@ public class SalesDailyServiceImpl implements SalesDailyService{
 
         List<SalesDailyDTO> dailyDTO = dailyList.stream().map(s -> {
             SalesDailyDTO dto = SalesDailyDTO.builder()
-                    .salesDate(s.compositeKey.getSalesDate())
-                    .salesCategory(s.compositeKey.getSalesCategory())
+                    .salesDate(s.dailyCompositeKey.getSalesDate())
+                    .salesCategory(s.dailyCompositeKey.getSalesCategory())
                     .totalAmount(s.getTotalAmount())
                     .totalOrders(s.getTotalOrders())
                     .build();
