@@ -1,8 +1,8 @@
 package com.exam.userGoods.service;
 
 
-import com.exam.userGoods.dto.GoodsDTO;
 
+import com.exam.common.dto.GoodsDTO;
 import java.util.List;
 
 
