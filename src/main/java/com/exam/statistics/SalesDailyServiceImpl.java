@@ -16,8 +16,8 @@ public class SalesDailyServiceImpl implements SalesDailyService{
     }
 
     @Override
-    public List<SalesDailyDTO> findBySalesDate(LocalDateTime salesDate) {
-        List<SalesDaily> dailyList = salesDailyRepository.findBySalesDate(salesDate);
+    public List<SalesDailyDTO> findBySalesDate(LocalDateTime startDate, LocalDateTime endDate) {
+        List<SalesDaily> dailyList = salesDailyRepository.findBySalesDate(startDate, endDate);
 
         List<SalesDailyDTO> dailyDTO = dailyList.stream().map(s -> {
             SalesDailyDTO dto = SalesDailyDTO.builder()

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -28,15 +29,20 @@ public class SalesController {
     @GetMapping("/statistics/salesDaily/{salesDate}")
     public ResponseEntity<List<SalesDailyDTO>> findBySalesDate(@PathVariable String salesDate) {
         log.info("LOGGER: 일간 매출 조회를 요청함");
-        log.info("LOGGER: salesDate: {}", salesDate);
-        salesDate = salesDate + " 00:00:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        try {
-            LocalDateTime searchDate = LocalDateTime.parse(salesDate, formatter);
-            log.info("LOGGER: searchDate 포맷 변환: {}", searchDate);
 
-            List<SalesDailyDTO> salesDaily = salesDailyService.findBySalesDate(searchDate);
+        // 날짜 포매팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            // 날짜 데이터 타입 변환
+            LocalDate searchDate = LocalDate.parse(salesDate, formatter);
+            LocalDateTime startDay = searchDate.atStartOfDay(); // 00:00:00
+            LocalDateTime endDay = searchDate.atTime(23, 59, 59); // 23:59:59
+
+            log.info("LOGGER: 조회할 시간: {} ~ {}", startDay, endDay);
+
+            List<SalesDailyDTO> salesDaily = salesDailyService.findBySalesDate(startDay, endDay);
             log.info("LOGGER: salesDaily 정보 획득: {}", salesDaily);
+
             return ResponseEntity.status(200).body(salesDaily);
         } catch (DateTimeException e) {
             log.error("날짜 형식이 올바르지 않습니다.", e);
@@ -70,21 +76,24 @@ public class SalesController {
     @GetMapping("statistics/salesDailyDiff/{targetDate}")
     public ResponseEntity<Map<String, List<SalesDailyDTO>>> getDailySalesDiff(@PathVariable String targetDate) {
         log.info("LOGGER: 오늘과 특정 날짜의 매출 비교를 요청함");
-        log.info("LOGGER: 오늘 날짜: 2024-12-31, 비교할 날짜: {}", targetDate);
-        // 날짜 포맷 변환
-        targetDate = targetDate + " 00:00:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime today = LocalDateTime.parse("2024-12-31 00:00:00", formatter);
+        LocalDateTime todayStart = LocalDateTime.now().toLocalDate().atStartOfDay();
+        LocalDateTime todayEnd = LocalDateTime.now().toLocalDate().atTime(23, 59, 59);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        // 두 날짜의 매출 정보를 MAP에 저장
+        // 두 날짜의 매출 정보를 저장할 MAP
         Map<String, List<SalesDailyDTO>> salesDiff = new HashMap<>();
 
         try {
-            List<SalesDailyDTO> todaySales = salesDailyService.findBySalesDate(today);
+            // 오늘 날짜의 매출 정보 획득
+            List<SalesDailyDTO> todaySales = salesDailyService.findBySalesDate(todayStart, todayEnd);
             log.info("LOGGER: 오늘 날짜의 매출 정보 획득: {}", todaySales);
 
-            LocalDateTime searchDate = LocalDateTime.parse(targetDate, formatter);
-            List<SalesDailyDTO> targetDateSales = salesDailyService.findBySalesDate(searchDate);
+            // 비교할 날짜의 매출 정보 획득
+            LocalDate target = LocalDate.parse(targetDate, formatter);
+            LocalDateTime targetStart = target.atStartOfDay(); // 00:00:00
+            LocalDateTime targetEnd = target.atTime(23, 59, 59); // 23:59:59
+
+            List<SalesDailyDTO> targetDateSales = salesDailyService.findBySalesDate(targetStart, targetEnd);
             log.info("LOGGER: 비교할 날짜의 매출 정보 획득: {}", targetDateSales);
 
             salesDiff.put("today", todaySales);
