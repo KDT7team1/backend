@@ -3,7 +3,8 @@ package com.exam.statistics;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -17,7 +18,7 @@ import java.util.Objects;
 public class SalesDaily {
 
   @EmbeddedId
-  CompositeKey compositeKey;
+  DailyCompositeKey dailyCompositeKey;
 
   @Column(name = "total_amount")
   Long totalAmount; // 매출액
@@ -32,10 +33,13 @@ public class SalesDaily {
 @ToString
 @Builder
 @Embeddable
-class CompositeKey implements java.io.Serializable {
+class DailyCompositeKey implements Serializable {
 
   @Column(name = "sales_date")
-  LocalDateTime salesDate;
+  LocalDate salesDate;
+
+  @Column(name = "sales_hour")
+  int salesHour;
 
   @Column(name = "sales_category")
   Long salesCategory;
@@ -44,7 +48,7 @@ class CompositeKey implements java.io.Serializable {
   public boolean equals(Object o){
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CompositeKey that = (CompositeKey) o;
+    DailyCompositeKey that = (DailyCompositeKey) o;
     return Objects.equals(salesDate, that.salesDate) && Objects.equals(salesCategory, that.salesCategory);
   }
 

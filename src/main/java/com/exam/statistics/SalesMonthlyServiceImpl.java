@@ -15,17 +15,21 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
     }
 
     @Override
-    public SalesMonthlyDTO findBySalesMonth(String salesMonth) {
+    public List<SalesMonthlyDTO> findBySalesMonth(String salesMonth) {
 
-        SalesMonthly monthly = salesMonthlyRepository.findBySalesMonth(salesMonth);
+        List<SalesMonthly> monthly = salesMonthlyRepository.findBySalesMonth(salesMonth);
 
-        SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
-                    .saleMonth(monthly.getSaleMonth())
-                    .totalSales(monthly.getTotalSales())
-                    .totalOrders(monthly.getTotalOrders())
+        List<SalesMonthlyDTO> monthlyDTO = monthly.stream().map(s -> {
+            SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .saleMonth(s.monthlyCompositeKey.getSaleMonth())
+                    .salesCategory(s.monthlyCompositeKey.getSalesCategory())
+                    .monthlyAmount(s.getMonthlyAmount())
+                    .monthlyOrders(s.getMonthlyOrders())
                     .build();
+            return dto;
+        }).collect(Collectors.toList());
 
-        return dto;
+        return monthlyDTO;
     }
 
     @Override
@@ -35,9 +39,10 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         List<SalesMonthlyDTO> monthlyDTO = monthlyList.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
-                    .saleMonth(s.getSaleMonth())
-                    .totalSales(s.getTotalSales())
-                    .totalOrders(s.getTotalOrders())
+                    .saleMonth(s.monthlyCompositeKey.getSaleMonth())
+                    .salesCategory(s.monthlyCompositeKey.getSalesCategory())
+                    .monthlyAmount(s.getMonthlyAmount())
+                    .monthlyOrders(s.getMonthlyOrders())
                     .build();
             return dto;
         }).collect(Collectors.toList());

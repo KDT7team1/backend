@@ -1,7 +1,5 @@
 package com.exam.statistics;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import lombok.*;
 
 @AllArgsConstructor
@@ -12,14 +10,9 @@ import lombok.*;
 @Builder
 public class SalesMonthlyDTO {
 
-    @Id
-    @Column(name = "sale_month")
     String saleMonth;
-
-    @Column(name = "total_sales")
-    Long totalSales;
-
-    @Column(name = "total_orders")
-    Long totalOrders;
+    Long salesCategory;
+    Long monthlyAmount;
+    Long monthlyOrders;
 
 }

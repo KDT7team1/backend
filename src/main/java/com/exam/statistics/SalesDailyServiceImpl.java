@@ -2,7 +2,7 @@ package com.exam.statistics;
 
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,15 +16,14 @@ public class SalesDailyServiceImpl implements SalesDailyService{
     }
 
     @Override
-    public List<SalesDailyDTO> findBySalesDate(LocalDateTime salesDate) {
-        List<SalesDaily> dailyList = salesDailyRepository.findBySalesDate(salesDate);
+    public List<SalesDailyDTO> findBySalesDate(LocalDate searchDate) {
+        List<SalesDaily> dailyList = salesDailyRepository.findBySalesDate(searchDate);
 
         List<SalesDailyDTO> dailyDTO = dailyList.stream().map(s -> {
             SalesDailyDTO dto = SalesDailyDTO.builder()
-                    .compositeKeyDTO(CompositeKeyDTO.builder()
-                            .salesDate(s.getCompositeKey().getSalesDate())
-                            .salesCategory(s.getCompositeKey().getSalesCategory())
-                            .build())
+                    .salesDate(s.dailyCompositeKey.getSalesDate())
+                    .salesHour(s.dailyCompositeKey.getSalesHour())
+                    .salesCategory(s.dailyCompositeKey.getSalesCategory())
                     .totalAmount(s.getTotalAmount())
                     .totalOrders(s.getTotalOrders())
                     .build();
