@@ -35,12 +35,10 @@ public class SalesController {
         try {
             // 날짜 데이터 타입 변환
             LocalDate searchDate = LocalDate.parse(salesDate, formatter);
-            LocalDateTime startDay = searchDate.atStartOfDay(); // 00:00:00
-            LocalDateTime endDay = searchDate.atTime(23, 59, 59); // 23:59:59
 
-            log.info("LOGGER: 조회할 시간: {} ~ {}", startDay, endDay);
+            log.info("LOGGER: 조회할 날짜: {}", salesDate);
 
-            List<SalesDailyDTO> salesDaily = salesDailyService.findBySalesDate(startDay, endDay);
+            List<SalesDailyDTO> salesDaily = salesDailyService.findBySalesDate(salesDate);
             log.info("LOGGER: salesDaily 정보 획득: {}", salesDaily);
 
             return ResponseEntity.status(200).body(salesDaily);
@@ -77,7 +75,7 @@ public class SalesController {
     public ResponseEntity<Map<String, List<SalesDailyDTO>>> getDailySalesDiff(@PathVariable String targetDate) {
         log.info("LOGGER: 오늘과 특정 날짜의 매출 비교를 요청함");
         LocalDateTime todayStart = LocalDateTime.now().toLocalDate().atStartOfDay();
-        LocalDateTime todayEnd = LocalDateTime.now().toLocalDate().atTime(23, 59, 59);
+        LocalDateTime todayEnd = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // 두 날짜의 매출 정보를 저장할 MAP

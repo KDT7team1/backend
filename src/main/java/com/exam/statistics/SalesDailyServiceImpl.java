@@ -16,12 +16,13 @@ public class SalesDailyServiceImpl implements SalesDailyService{
     }
 
     @Override
-    public List<SalesDailyDTO> findBySalesDate(LocalDateTime startDate, LocalDateTime endDate) {
-        List<SalesDaily> dailyList = salesDailyRepository.findBySalesDate(startDate, endDate);
+    public List<SalesDailyDTO> findBySalesDate(LocalDate searchDate) {
+        List<SalesDaily> dailyList = salesDailyRepository.findBySalesDate(searchDate);
 
         List<SalesDailyDTO> dailyDTO = dailyList.stream().map(s -> {
             SalesDailyDTO dto = SalesDailyDTO.builder()
                     .salesDate(s.dailyCompositeKey.getSalesDate())
+                    .salesHour(s.dailyCompositeKey.getSalesHour())
                     .salesCategory(s.dailyCompositeKey.getSalesCategory())
                     .totalAmount(s.getTotalAmount())
                     .totalOrders(s.getTotalOrders())

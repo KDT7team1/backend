@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -36,7 +36,10 @@ public class SalesDaily {
 class DailyCompositeKey implements Serializable {
 
   @Column(name = "sales_date")
-  LocalDateTime salesDate;
+  LocalDate salesDate;
+
+  @Column(name = "sales_hour")
+  int hour;
 
   @Column(name = "sales_category")
   Long salesCategory;

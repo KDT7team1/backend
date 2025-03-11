@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class SalesDailyDTO {
 
     LocalDateTime salesDate;
+    int salesHour;
     Long salesCategory;
     Long totalAmount; // 매출액
     Long totalOrders; // 주문량
