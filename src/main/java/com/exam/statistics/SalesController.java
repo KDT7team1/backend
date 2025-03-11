@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +35,9 @@ public class SalesController {
             // 날짜 데이터 타입 변환
             LocalDate searchDate = LocalDate.parse(salesDate, formatter);
 
-            log.info("LOGGER: 조회할 날짜: {}", salesDate);
+            log.info("LOGGER: 조회할 날짜: {}", searchDate);
 
-            List<SalesDailyDTO> salesDaily = salesDailyService.findBySalesDate(salesDate);
+            List<SalesDailyDTO> salesDaily = salesDailyService.findBySalesDate(searchDate);
             log.info("LOGGER: salesDaily 정보 획득: {}", salesDaily);
 
             return ResponseEntity.status(200).body(salesDaily);
@@ -74,8 +73,7 @@ public class SalesController {
     @GetMapping("statistics/salesDailyDiff/{targetDate}")
     public ResponseEntity<Map<String, List<SalesDailyDTO>>> getDailySalesDiff(@PathVariable String targetDate) {
         log.info("LOGGER: 오늘과 특정 날짜의 매출 비교를 요청함");
-        LocalDateTime todayStart = LocalDateTime.now().toLocalDate().atStartOfDay();
-        LocalDateTime todayEnd = LocalDateTime.now();
+        LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // 두 날짜의 매출 정보를 저장할 MAP
@@ -83,15 +81,13 @@ public class SalesController {
 
         try {
             // 오늘 날짜의 매출 정보 획득
-            List<SalesDailyDTO> todaySales = salesDailyService.findBySalesDate(todayStart, todayEnd);
+            List<SalesDailyDTO> todaySales = salesDailyService.findBySalesDate(today);
             log.info("LOGGER: 오늘 날짜의 매출 정보 획득: {}", todaySales);
 
             // 비교할 날짜의 매출 정보 획득
             LocalDate target = LocalDate.parse(targetDate, formatter);
-            LocalDateTime targetStart = target.atStartOfDay(); // 00:00:00
-            LocalDateTime targetEnd = target.atTime(23, 59, 59); // 23:59:59
 
-            List<SalesDailyDTO> targetDateSales = salesDailyService.findBySalesDate(targetStart, targetEnd);
+            List<SalesDailyDTO> targetDateSales = salesDailyService.findBySalesDate(target);
             log.info("LOGGER: 비교할 날짜의 매출 정보 획득: {}", targetDateSales);
 
             salesDiff.put("today", todaySales);

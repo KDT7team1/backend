@@ -39,7 +39,7 @@ class DailyCompositeKey implements Serializable {
   LocalDate salesDate;
 
   @Column(name = "sales_hour")
-  int hour;
+  int salesHour;
 
   @Column(name = "sales_category")
   Long salesCategory;

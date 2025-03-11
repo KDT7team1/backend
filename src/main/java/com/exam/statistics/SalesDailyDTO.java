@@ -2,7 +2,7 @@ package com.exam.statistics;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class SalesDailyDTO {
 
-    LocalDateTime salesDate;
+    LocalDate salesDate;
     int salesHour;
     Long salesCategory;
     Long totalAmount; // 매출액
