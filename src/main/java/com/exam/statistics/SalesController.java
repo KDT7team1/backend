@@ -103,9 +103,11 @@ public class SalesController {
     @GetMapping("statistics/salesMonthlyDiff/{targetMonth}")
     public ResponseEntity<Map<String, List<SalesMonthlyDTO>>> getMontlySalesDiff(@PathVariable String targetMonth) {
         log.info("LOGGER: 이번 달과 월간 매출 비교를 요청함");
-        log.info("LOGGER: 이번 달: 2024-12 비교할 월: {}", targetMonth);
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
-        String thisMonth = "2024-12";
+        String thisMonth = today.format(formatter);
+        log.info("LOGGER: 이번 달: {}, 비교할 월: {}", thisMonth, targetMonth);
 
         Map<String, List<SalesMonthlyDTO>> salesDiff = new HashMap<>();
 
