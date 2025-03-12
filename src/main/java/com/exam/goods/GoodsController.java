@@ -1,11 +1,8 @@
-package com.exam.adminGoods;
+package com.exam.goods;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,6 +14,19 @@ public class GoodsController {
 
     @Autowired
     GoodsService goodsService;
+
+    // 1. 상품 상세보기
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<GoodsDTO> findById(@PathVariable Long id){
+        System.out.println(id);
+        GoodsDTO dto =  goodsService.findById(id);
+
+        if(dto == null){
+            return ResponseEntity.status(404).body(null);
+        }
+        return  ResponseEntity.status(200).body(dto);
+    }
+
 
     // 상품 저장 API
     @PostMapping("/save2")
