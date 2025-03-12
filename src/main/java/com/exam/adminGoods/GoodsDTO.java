@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -26,4 +27,6 @@ public class GoodsDTO {
     private Long goods_orders;
 
 
+    public GoodsDTO(Long goodsId, Long categoryId, String goodsName, Long goodsPrice, String goodsDescription, Long goodsStock, String s) {
+    }
 }
