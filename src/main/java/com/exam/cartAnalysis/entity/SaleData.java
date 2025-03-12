@@ -1,7 +1,5 @@
 package com.exam.cartAnalysis.entity;
 
-
-
 import com.exam.goods.Goods;
 import jakarta.persistence.*;
 import lombok.*;
