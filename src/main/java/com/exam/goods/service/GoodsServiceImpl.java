@@ -1,9 +1,13 @@
-package com.exam.userGoods.service;
+package com.exam.goods.service;
 
 
-import com.exam.userGoods.dto.GoodsDTO;
-import com.exam.userGoods.entity.Goods;
-import com.exam.userGoods.repository.GoodsRepository;
+
+import com.exam.goods.Category;
+import com.exam.goods.repository.CategoryRepository;
+import com.exam.goods.Goods;
+import com.exam.goods.GoodsDTO;
+import com.exam.goods.repository.GoodsRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +18,16 @@ import java.util.stream.Collectors;
 public class GoodsServiceImpl implements GoodsService {
 	GoodsRepository goodsRepository;
 
-	public GoodsServiceImpl(GoodsRepository goodsRepository) {
-		super();
+
+
+	CategoryRepository categoryRepository;
+
+	public GoodsServiceImpl(GoodsRepository goodsRepository, CategoryRepository categoryRepository) {
 		this.goodsRepository = goodsRepository;
+		this.categoryRepository = categoryRepository;
 	}
+
+
 
 	// 1. 전체 목록 조회
 	@Override
@@ -116,6 +126,36 @@ public class GoodsServiceImpl implements GoodsService {
 	}
 
 
+
+
+	//상품 저장
+	@Override
+	public void save(GoodsDTO dto) {
+		System.out.println("GoodsDTO2:" + dto);
+		if (dto.getCategory_id() == null) {
+			throw new IllegalArgumentException("category_id는 null이 될 수 없습니다.");
+		}
+		// 1. category_id를 사용하여 카테고리 조회
+		Category categoryEntity = categoryRepository.findById(dto.getCategory_id())
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 ID: " + dto.getCategory_id()));
+
+		// 2. GoodsEntity 생성 및 저장
+		Goods goodsEntity = Goods.builder()
+				.goods_id(dto.getGoods_id())
+				.category(categoryEntity)
+				.goods_name(dto.getGoods_name())
+				.goods_price(dto.getGoods_price())
+				.goods_description(dto.getGoods_description())
+				.goods_stock(dto.getGoods_stock())
+				.goods_image(dto.getGoods_image())
+				.goods_created_at(dto.getGoods_created_at())
+				.goods_updated_at(dto.getGoods_updated_at())
+				.goods_views(dto.getGoods_views())
+				.goods_orders(dto.getGoods_orders())
+				.build();
+
+		goodsRepository.save(goodsEntity);
+	}
 
 
 

@@ -1,8 +1,9 @@
-package com.exam.userGoods.controller;
+package com.exam.goods.controller;
 
 
-import com.exam.userGoods.dto.GoodsDTO;
-import com.exam.userGoods.service.GoodsService;
+import com.exam.goods.GoodsDTO;
+import com.exam.goods.service.GoodsService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

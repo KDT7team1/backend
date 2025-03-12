@@ -1,7 +1,9 @@
-package com.exam.userGoods.repository;
+package com.exam.goods.repository;
 
 
-import com.exam.userGoods.entity.Goods;
+
+
+import com.exam.goods.Goods;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

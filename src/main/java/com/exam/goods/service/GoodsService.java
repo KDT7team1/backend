@@ -1,8 +1,11 @@
-package com.exam.userGoods.service;
+package com.exam.goods.service;
 
 
 
-import com.exam.userGoods.dto.GoodsDTO;
+
+
+import com.exam.goods.GoodsDTO;
+
 import java.util.List;
 
 
@@ -19,6 +22,7 @@ public interface GoodsService {
 	// 4. 카테고리별 상품 보기 ( 소분류 : 과자, 아이스크림,.. )
 	List<GoodsDTO> getGoodsBySecondCategory(String firstName, String secondName);
 
+	void save(GoodsDTO goodsDTO);
 
 
 }
