@@ -4,7 +4,7 @@
 //import com.exam.cartAnalysis.entity.SaleData;
 //import com.exam.cartAnalysis.repository.OrdersRepository;
 //import com.exam.cartAnalysis.repository.SaleDataRepository;
-//import com.exam.common.entity.Goods;
+//import com.exam.userGoods.entity.Goods;
 //import com.exam.member.Member;
 //import com.exam.member.MemberRepository;
 //

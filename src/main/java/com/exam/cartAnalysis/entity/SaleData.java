@@ -1,6 +1,8 @@
 package com.exam.cartAnalysis.entity;
 
-import com.exam.common.entity.Goods;
+
+
+import com.exam.goods.Goods;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
