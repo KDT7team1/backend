@@ -6,46 +6,57 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "member")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @ToString
 @Builder
-@Entity
 public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long member_no;
+    @Column(name = "member_no")
+    Long memberNo;
 
-    @Column(name = "member_id", nullable = false, length = 20)
-    String member_id;
+    @Column(name = "member_id", nullable = false)
+    String memberId;
 
-    @Column(name = "member_passwd", nullable = false, length = 100) // 암호화 대비
-    String member_passwd;
+    @Column(name = "member_passwd")
+    String memberPasswd;
 
-    @Column(name = "member_username", nullable = false, length = 20)
-    String member_username;
+    @Column(name = "member_username")
+    String memberUsername;
 
-    @Column(nullable = false, length = 10)
-    String member_gender;
+    @Column(name = "member_gender")
+    String memberGender;
 
-    @Column(nullable = false, length = 30)
-    String member_nickname;
+    @Column(name = "member_nickname")
+    String memberNickname;
 
-    @Column(nullable = false, length = 15)
-    String member_phone;
+    @Column(name = "member_phone")
+    String memberPhone;
 
-    LocalDate member_birthdate;
+    @Column(name = "member_birthdate")
+    LocalDate memberBirthdate;
 
-    @Column(nullable = false, length = 20)
-    String member_role;
+    @Column(name = "member_role")
+    String memberRole;
 
-    @Column(nullable = false, length = 100)
-    String member_address;
+    @Column(name = "member_address")
+    String memberAddress;
 
-    @Column(updatable = false)  // 생성 날짜는 변경 불가
-    LocalDateTime member_created_at;
+    @Column(name = "member_created_at")
+    LocalDateTime memberCreatedAt;
+
+    // memberCreatedAt 필드가 null 이면 자동으로 현재 날짜와 시간 저장
+    @PrePersist
+    public void onCreate(){
+        if (memberCreatedAt == null){
+            memberCreatedAt = LocalDateTime.now();
+        }
+    }
 
 }
