@@ -122,13 +122,13 @@ public class GoodsServiceImpl implements GoodsService {
             throw new IllegalArgumentException("category_id는 null이 될 수 없습니다.");
         }
         // 1. category_id를 사용하여 카테고리 조회
-        Category category = categoryRepository.findById(dto.getCategory_id())
+        Category categoryEntity = categoryRepository.findById(dto.getCategory_id())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 ID: " + dto.getCategory_id()));
 
         // 2. GoodsEntity 생성 및 저장
         Goods goodsEntity = Goods.builder()
                 .goods_id(dto.getGoods_id())
-                .category(category)
+                .category(categoryEntity)
                 .goods_name(dto.getGoods_name())
                 .goods_price(dto.getGoods_price())
                 .goods_description(dto.getGoods_description())
