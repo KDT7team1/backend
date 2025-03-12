@@ -12,22 +12,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class Application {
 
 	public static void main(String[] args) {
-
 		SpringApplication.run(Application.class, args);
-		System.out.println("Demo Application");
-
 	}
 
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
-		log.info("WebMvcConfigurer.addCorsMappings");
 		return new WebMvcConfigurer() {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedMethods("*")
-						.allowedOrigins("http://localhost:3000","*");
+						.allowedOrigins("http://localhost:3000", "*");
 			}
 		};
 	}
-
 }

@@ -23,12 +23,19 @@ public class Goods {
 	@JoinColumn(name = "category_id")
 	private  Category category;
 
+
+	@ManyToOne
+	@JoinColumn(name = "sub_category_id")
+	private  SubCategory subCategory;
+
 	//Long category_id;  // 상품 카테고리 아이디
 	String goods_name; // 상품 이름
 	Long goods_price;  // 상품 가격
 	String goods_description; // 상품 설명
 	Long goods_stock;         // 상품 재고
 	String goods_image;       // 상품 이미지
+
+
 
 	@CreationTimestamp
 		@Column(updatable = false)
