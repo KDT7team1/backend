@@ -1,7 +1,7 @@
 package com.exam.userGoods.controller;
 
 
-import com.exam.common.dto.GoodsDTO;
+import com.exam.userGoods.dto.GoodsDTO;
 import com.exam.userGoods.service.GoodsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
