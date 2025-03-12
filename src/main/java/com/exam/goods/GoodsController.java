@@ -54,7 +54,7 @@ public class GoodsController {
              String goods_description,
             Long goods_stock) {
 
-       System.out.println("Received goods_image1: " + goods_image);
+        System.out.println("Received goods_image1: " + goods_image);
         System.out.println("Received goods_id1: " + goods_id);
         System.out.println("Received category_id1: " + category_id);
         System.out.println("Received goods_name1: " + goods_name);
