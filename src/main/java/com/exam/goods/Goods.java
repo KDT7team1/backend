@@ -1,6 +1,5 @@
 package com.exam.goods;
 
-import com.exam.userGoods.entity.SubCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
