@@ -1,7 +1,7 @@
 package com.exam.userGoods.controller;
 
 
-import com.exam.userGoods.dto.GoodsDTO;
+import com.exam.common.dto.GoodsDTO;
 import com.exam.userGoods.service.GoodsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/products") // 해당 컨트롤러의 모든
 public class GoodsController {
-	GoodsService goodsService;
+    GoodsService goodsService;
 
 	public GoodsController(GoodsService goodsService) {
 		super();
