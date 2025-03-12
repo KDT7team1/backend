@@ -7,8 +7,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -27,14 +25,14 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public boolean checkMemberExist(String member_id) {
 
-        Optional<Member> memberOptional = memberRepository.findById(member_id);
-        if(memberOptional.isPresent()){
-            log.error("동일한 아이디가 존재합니다.");
-            return true;
-        }else{
-            log.info("동일한 아이디가 없습니다.");
+//        Optional<Member> memberOptional = memberRepository.findById(member_id);
+//        if(memberOptional.isPresent()){
+//            log.error("동일한 아이디가 존재합니다.");
+//            return true;
+//        }else{
+//            log.info("동일한 아이디가 없습니다.");
             return false;
-        }
+//        }
     }
 
     @Override
