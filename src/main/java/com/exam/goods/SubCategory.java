@@ -1,4 +1,4 @@
-package com.exam.userGoods.entity;
+package com.exam.goods;
 
 import jakarta.persistence.*;
 import lombok.*;
