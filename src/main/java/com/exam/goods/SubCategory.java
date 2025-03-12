@@ -12,15 +12,16 @@ import lombok.*;
 @Entity
 @Table(name="sub_category")
 public class SubCategory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long sub_category_id;
 
-    @ManyToOne
-    @JoinColumn(name="category_id")
-    Category category;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long sub_category_id;
 
-    String sub_name;
+	@ManyToOne
+			@JoinColumn(name="category_id")
+	Category category;
+
+	String sub_name;
 
 
 }

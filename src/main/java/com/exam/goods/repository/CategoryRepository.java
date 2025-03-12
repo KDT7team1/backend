@@ -1,5 +1,6 @@
-package com.exam.goods;
+package com.exam.goods.repository;
 
+import com.exam.goods.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
