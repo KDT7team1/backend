@@ -1,4 +1,4 @@
-package com.exam.adminGoods;
+package com.exam.goods;
 
 import lombok.*;
 
