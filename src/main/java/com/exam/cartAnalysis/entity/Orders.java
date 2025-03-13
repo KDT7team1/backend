@@ -28,5 +28,4 @@ public class Orders {
 	@CreationTimestamp
 	LocalDateTime ordersDate;
 
-
 }
