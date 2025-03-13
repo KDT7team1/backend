@@ -1,14 +1,14 @@
-package com.exam.userGoods.repository;
+package com.exam.goods;
 
-
-import com.exam.common.entity.Goods;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface GoodsRepository extends JpaRepository<Goods, Long>{
+@Repository
+public interface GoodsRepository extends JpaRepository<Goods, Long> {
 
     @Query("SELECT g FROM Goods g WHERE g.category.firstName = :firstName")
     List<Goods> findByFirstCategory(@Param("firstName") String firstName);
@@ -21,7 +21,6 @@ public interface GoodsRepository extends JpaRepository<Goods, Long>{
 
     @Query("SELECT g FROM Goods g WHERE g.subCategory.sub_category_id = :subCategoryId")
     List<Goods> findBySubCategoryId(@Param("subCategoryId") long subCategoryId);
-
 
 }
 

@@ -1,4 +1,4 @@
-package com.exam.common.entity;
+package com.exam.goods;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +12,7 @@ import lombok.*;
 @Entity
 @Table(name="sub_category")
 public class SubCategory {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long sub_category_id;
