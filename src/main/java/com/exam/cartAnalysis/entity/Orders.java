@@ -28,14 +28,4 @@ public class Orders {
 	@CreationTimestamp
 	LocalDateTime ordersDate;
 
-	String orders_status;
-	String paymentMethod;
-
-	@CreationTimestamp
-	@Column(updatable = false)
-	LocalDateTime created_at;
-
-	@UpdateTimestamp
-	@Column(insertable = false)
-	LocalDateTime updatedAt;
 }

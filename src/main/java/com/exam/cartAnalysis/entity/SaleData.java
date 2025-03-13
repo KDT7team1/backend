@@ -31,7 +31,6 @@ public class SaleData {
 	Long saleAmount;
 	Long salePrice;
 
-	@CreationTimestamp
 	@Column(updatable = false)
 	LocalDateTime saleDate;
 
