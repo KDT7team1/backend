@@ -1,13 +1,13 @@
-package com.exam.cartAnalysis;//package com.exam;
+//package com.exam.cartAnalysis;
 //
-//import com.exam.entity.Goods;
-//import com.exam.entity.Member;
-//import com.exam.entity.Orders;
-//import com.exam.entity.SaleData;
-//import com.exam.repository.GoodsRepository;
-//import com.exam.repository.MemberRepository;
-//import com.exam.repository.OrdersRepository;
-//import com.exam.repository.SaleDataRepository;
+//import com.exam.cartAnalysis.entity.Orders;
+//import com.exam.cartAnalysis.entity.SaleData;
+//import com.exam.cartAnalysis.repository.OrdersRepository;
+//import com.exam.cartAnalysis.repository.SaleDataRepository;
+//import com.exam.goods.Goods;
+//import com.exam.goods.GoodsRepository;
+//import com.exam.member.Member;
+//import com.exam.member.MemberRepository;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.CommandLineRunner;
 //import org.springframework.stereotype.Component;
@@ -32,7 +32,6 @@ package com.exam.cartAnalysis;//package com.exam;
 //    @Autowired
 //    private MemberRepository memberRepo;
 //
-//    private static final int BATCH_SIZE = 1000; // 하나의 배치당 1000개씩 저장
 //    private static final int NUM_ORDERS = 100000; // 주문 데이터 개수 (랜덤+연관 데이터 포함)
 //    private static final int NUM_SALE_DATA = 500000; // 판매 데이터 개수
 //
@@ -47,19 +46,20 @@ package com.exam.cartAnalysis;//package com.exam;
 //        // ✅ 상품 카테고리별 목록 가져오기
 //        Map<String, List<Goods>> categoryMap = new HashMap<>();
 //        categoryMap.put("삼각김밥", goodsRepo.findBySubCategoryId(1L));
-//        categoryMap.put("커피", goodsRepo.findBySubCategoryId(29L));
-//        categoryMap.put("샌드위치", goodsRepo.findBySubCategoryId(11L));
-//        categoryMap.put("에너지드링크", goodsRepo.findBySubCategoryId(35L));
-//        categoryMap.put("도시락", goodsRepo.findBySubCategoryId(4L));
-//        categoryMap.put("컵라면", goodsRepo.findBySubCategoryId(7L));
-//        categoryMap.put("초콜릿", goodsRepo.findBySubCategoryId(25L));
-//        categoryMap.put("젤리", goodsRepo.findBySubCategoryId(24L));
-//        categoryMap.put("감자칩", goodsRepo.findBySubCategoryId(20L));
-//        categoryMap.put("맥주", goodsRepo.findBySubCategoryId(41L));
-//        categoryMap.put("콜라", goodsRepo.findBySubCategoryId(33L));
+//        categoryMap.put("도시락", goodsRepo.findBySubCategoryId(4L)); //
 //        categoryMap.put("햄버거", goodsRepo.findBySubCategoryId(6L));
-//        categoryMap.put("소주", goodsRepo.findBySubCategoryId(42L));
+//        categoryMap.put("컵라면", goodsRepo.findBySubCategoryId(7L));
+//        categoryMap.put("샌드위치", goodsRepo.findBySubCategoryId(11L));
+//        categoryMap.put("감자칩", goodsRepo.findBySubCategoryId(20L));
+//        categoryMap.put("젤리", goodsRepo.findBySubCategoryId(24L));
+//        categoryMap.put("초콜릿", goodsRepo.findBySubCategoryId(25L));
+//        categoryMap.put("커피", goodsRepo.findBySubCategoryId(29L));
+//        categoryMap.put("콜라", goodsRepo.findBySubCategoryId(33L));
+//        categoryMap.put("에너지드링크", goodsRepo.findBySubCategoryId(35L));
 //        categoryMap.put("비타민음료", goodsRepo.findBySubCategoryId(37L));
+//        categoryMap.put("맥주", goodsRepo.findBySubCategoryId(41L));
+//        categoryMap.put("소주", goodsRepo.findBySubCategoryId(42L));
+//
 //
 //        List<Goods> allGoods = goodsRepo.findAll();
 //
@@ -69,11 +69,9 @@ package com.exam.cartAnalysis;//package com.exam;
 //        timePairs.put("점심", Arrays.asList(new String[]{"도시락", "에너지드링크"}, new String[]{"삼각김밥", "라면"}));
 //        timePairs.put("한산한 오후", Arrays.asList(new String[]{"초콜릿", "커피"}, new String[]{"감자칩", "젤리"}));
 //        timePairs.put("저녁", Arrays.asList(new String[]{"맥주", "감자칩"}, new String[]{"햄버거", "콜라"}));
-//        timePairs.put("심야", Arrays.asList(new String[]{"소주", "비타민음료"}, new String[]{"젤리", "소주"}));
+//        timePairs.put("심야", Arrays.asList(new String[]{"소주", "비타민음료"}, new String[]{"닭강정", "아이스크림"}));
 //
-//        // ✅ 배치 리스트
-//        List<Orders> orderBatch = new ArrayList<>();
-//        List<SaleData> saleDataBatch = new ArrayList<>();
+//
 //
 //        // 🔥 주문 데이터 생성 (랜덤 + 연관 데이터)
 //        for (int i = 0; i < NUM_ORDERS; i++) {
@@ -90,12 +88,6 @@ package com.exam.cartAnalysis;//package com.exam;
 //                    .orElseThrow(() -> new RuntimeException("멤버 데이터를 먼저 삽입하세요"));
 //            order.setMember(member);
 //            order.setOrdersDate(currentDateTime);
-//            orderBatch.add(order);
-//
-//            if (orderBatch.size() >= BATCH_SIZE) {
-//                ordersRepo.saveAll(orderBatch);
-//                orderBatch.clear();
-//            }
 //
 //            Orders savedOrder = ordersRepo.save(order);
 //
@@ -112,34 +104,22 @@ package com.exam.cartAnalysis;//package com.exam;
 //                        List<Goods> itemB = categoryMap.get(selectedPair[1]);
 //
 //                        if (itemA != null && !itemA.isEmpty() && itemB != null && !itemB.isEmpty()) {
-//                            saleDataBatch.add(createSaleData(savedOrder, itemA.get(random.nextInt(itemA.size())), currentDateTime, random));
-//                            saleDataBatch.add(createSaleData(savedOrder, itemB.get(random.nextInt(itemB.size())), currentDateTime, random));
+//                            createSaleData(savedOrder, itemA.get(random.nextInt(itemA.size())), currentDateTime, random);
+//                            createSaleData(savedOrder, itemB.get(random.nextInt(itemB.size())), currentDateTime, random);
 //                        }
 //                    }
 //                }
 //            }
 //
 //            // 🔥 40% 확률로 랜덤 상품 1~3개 추가
-//            if (random.nextDouble() < 0.7) {
+//            if (random.nextDouble() < 0.4) {
 //                int numRandomGoods = 1 + random.nextInt(3);
 //                for (int j = 0; j < numRandomGoods; j++) {
 //                    Goods randomGoods = allGoods.get(random.nextInt(allGoods.size()));
-//                    saleDataBatch.add(createSaleData(savedOrder, randomGoods, currentDateTime, random));
+//                    createSaleData(savedOrder, randomGoods, currentDateTime, random);
 //                }
 //            }
 //
-//            if (saleDataBatch.size() >= BATCH_SIZE) {
-//                saleDataRepo.saveAll(saleDataBatch);
-//                saleDataBatch.clear();
-//            }
-//        }
-//
-//        // 🔥 남아있는 데이터 저장
-//        if (!orderBatch.isEmpty()) {
-//            ordersRepo.saveAll(orderBatch);
-//        }
-//        if (!saleDataBatch.isEmpty()) {
-//            saleDataRepo.saveAll(saleDataBatch);
 //        }
 //
 //        System.out.println("🔥 랜덤 + 연관 데이터 삽입 성공!!");
@@ -172,11 +152,13 @@ package com.exam.cartAnalysis;//package com.exam;
 //
 //    private SaleData createSaleData(Orders order, Goods goods, LocalDateTime dateTime, Random random) {
 //        SaleData saleData = new SaleData();
-//       saleData.setOrders(order);
-//       saleData.setGoods(goods);
-//       saleData.setSaleAmount(1+ random.nextLong(3)); // 1개에서 3개 랜덤으로
+//        saleData.setOrders(order);
+//        saleData.setGoods(goods);
+//        saleData.setSaleAmount(1+ random.nextLong(3)); // 1개에서 3개 랜덤으로
 //        saleData.setSalePrice(goods.getGoods_price());
 //        saleData.setSaleDate(dateTime);
+//
+//        saleDataRepo.save(saleData);
 //        return saleData;
 //    }
 //}
