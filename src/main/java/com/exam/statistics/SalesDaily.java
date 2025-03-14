@@ -20,10 +20,10 @@ public class SalesDaily {
   @EmbeddedId
   DailyCompositeKey dailyCompositeKey;
 
-  @Column(name = "total_amount")
-  Long totalAmount; // 매출액
-  @Column(name = "total_orders")
-  Long totalOrders; // 주문량
+  @Column(name = "daily_price")
+  Long dailyPrice; // 매출액
+  @Column(name = "daily_amount")
+  Long dailyAmount; // 주문량
 }
 
 @AllArgsConstructor
@@ -41,20 +41,23 @@ class DailyCompositeKey implements Serializable {
   @Column(name = "sales_hour")
   int salesHour;
 
-  @Column(name = "sales_category")
+  @Column(name = "category_id")
   Long salesCategory;
+
+  @Column(name = "sub_category_id")
+  Long subCategoryId;
 
   @Override
   public boolean equals(Object o){
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     DailyCompositeKey that = (DailyCompositeKey) o;
-    return Objects.equals(salesDate, that.salesDate) && Objects.equals(salesCategory, that.salesCategory);
+    return Objects.equals(salesDate, that.salesDate) && Objects.equals(salesCategory, that.salesCategory) & Objects.equals(subCategoryId, that.subCategoryId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(salesDate, salesCategory);
+    return Objects.hash(salesDate, salesCategory, subCategoryId);
   }
 
 }

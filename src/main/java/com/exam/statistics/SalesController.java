@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.DateTimeException;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/statistics")
 @Slf4j
 public class SalesController {
 
@@ -25,7 +27,7 @@ public class SalesController {
         this.salesMonthlyService = salesMonthlyService;
     }
 
-    @GetMapping("/statistics/salesDaily/{salesDate}")
+    @GetMapping("/salesDaily/{salesDate}")
     public ResponseEntity<List<SalesDailyDTO>> findBySalesDate(@PathVariable String salesDate) {
         log.info("LOGGER: 일간 매출 조회를 요청함");
 
@@ -47,7 +49,7 @@ public class SalesController {
         }
     } // end findBySalesDate
 
-    @GetMapping("statistics/salesMontly/{salesMonth}")
+    @GetMapping("/salesMontly/{salesMonth}")
     public ResponseEntity<List<SalesMonthlyDTO>> findBySalesMonth(@PathVariable String salesMonth) {
         log.info("LOGGER: 월간 매출 조회를 요청함");
         log.info("LOGGER: 조회할 월: {}", salesMonth);
@@ -58,7 +60,7 @@ public class SalesController {
         return ResponseEntity.status(200).body(salesMonthly);
     } // end findBySalesMonth
 
-    @GetMapping("statistics/salesYearly/{year}")
+    @GetMapping("/salesYearly/{year}")
     public ResponseEntity<List<SalesMonthlyDTO>> findBySalesYear(@PathVariable String year) {
         log.info("LOGGER: 연간 매출 조회를 요청함");
         log.info("LOGGER: 조회할 연도: {}", year);
@@ -70,7 +72,7 @@ public class SalesController {
         return ResponseEntity.status(200).body(salesMonthlyDTOList);
     } // end findBySalesYear
 
-    @GetMapping("statistics/salesDailyDiff/{targetDate}")
+    @GetMapping("/salesDailyDiff/{targetDate}")
     public ResponseEntity<Map<String, List<SalesDailyDTO>>> getDailySalesDiff(@PathVariable String targetDate) {
         log.info("LOGGER: 오늘과 특정 날짜의 매출 비교를 요청함");
         LocalDate today = LocalDate.now();
@@ -100,7 +102,7 @@ public class SalesController {
         }
     } // end getSalesDifference
 
-    @GetMapping("statistics/salesMonthlyDiff/{targetMonth}")
+    @GetMapping("/salesMonthlyDiff/{targetMonth}")
     public ResponseEntity<Map<String, List<SalesMonthlyDTO>>> getMontlySalesDiff(@PathVariable String targetMonth) {
         log.info("LOGGER: 이번 달과 월간 매출 비교를 요청함");
         LocalDate today = LocalDate.now();

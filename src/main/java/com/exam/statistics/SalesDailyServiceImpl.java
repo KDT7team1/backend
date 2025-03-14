@@ -23,9 +23,9 @@ public class SalesDailyServiceImpl implements SalesDailyService{
             SalesDailyDTO dto = SalesDailyDTO.builder()
                     .salesDate(s.dailyCompositeKey.getSalesDate())
                     .salesHour(s.dailyCompositeKey.getSalesHour())
-                    .salesCategory(s.dailyCompositeKey.getSalesCategory())
-                    .totalAmount(s.getTotalAmount())
-                    .totalOrders(s.getTotalOrders())
+                    .categoryId(s.dailyCompositeKey.getSubCategoryId())
+                    .dailyPrice(s.getDailyPrice())
+                    .dailyAmount(s.getDailyAmount())
                     .build();
             return dto;
         }).collect(Collectors.toList());
