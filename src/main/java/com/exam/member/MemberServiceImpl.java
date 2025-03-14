@@ -1,7 +1,6 @@
 package com.exam.member;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,28 +8,18 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     final MemberRepository memberRepository;
-    final BCryptPasswordEncoder passwordEncoder;
+    final BCryptPasswordEncoder passwordEncoder;    // 비밀번호 암호화
 
     // 회원가입
     @Override
-    public MemberDTO registerMember(MemberDTO memberDTO) {
-
-        if (memberRepository.existsByMemberId(memberDTO.getMemberId())) {
-            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-        }
-
-        // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(memberDTO.getMemberPasswd());
-        memberDTO.setMemberPasswd(encodedPassword);
-
-        // 회원 정보를 MemberEntity로 변환하여 저장
-        MemberEntity memberEntity = MemberEntity.builder()
+    public void registerMember(MemberDTO memberDTO) {
+        // 회원 정보를 Entity로 변환하여 DB에 저장
+        MemberEntity member = MemberEntity.builder()
                 .memberId(memberDTO.getMemberId())
-                .memberPasswd(memberDTO.getMemberPasswd())
+                .memberPasswd(passwordEncoder.encode(memberDTO.getMemberPasswd()))  // 암호화 된 비밀번호 저장
                 .memberUsername(memberDTO.getMemberUsername())
                 .memberGender(memberDTO.getMemberGender())
                 .memberNickname(memberDTO.getMemberNickname())
@@ -41,68 +30,19 @@ public class MemberServiceImpl implements MemberService {
                 .memberCreatedAt(memberDTO.getMemberCreatedAt())
                 .build();
 
-        MemberEntity savedMember = memberRepository.save(memberEntity);
-
-        // 저장된 데이터를 DTO로 반환
-        return new MemberDTO(
-                savedMember.getMemberNo(),
-                savedMember.getMemberId(),
-                null,  // 비밀번호는 반환하지 않음
-                savedMember.getMemberUsername(),
-                savedMember.getMemberGender(),
-                savedMember.getMemberNickname(),
-                savedMember.getMemberPhone(),
-                savedMember.getMemberBirthdate(),
-                savedMember.getMemberRole(),
-                savedMember.getMemberAddress(),
-                savedMember.getMemberCreatedAt()
-        );
+        memberRepository.save(member);  // DB에 저장
     }
 
     // 로그인
     @Override
-    public MemberDTO loginMember(String memberId, String password) {
+    public MemberEntity login(String memberId, String memberPasswd) {
+        Optional<MemberEntity> member = memberRepository.findByMemberId(memberId);
 
-        MemberEntity memberEntity = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-
-        // 비밀번호 확인
-        if (!passwordEncoder.matches(password, memberEntity.getMemberPasswd())) {
-            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+        // 아이디가 존재하고 비밀번호가 일치하면 로그인 성공
+        if (member.isPresent() && passwordEncoder.matches(memberPasswd, member.get().getMemberPasswd())) {
+            return member.get();    // 로그인 성공
         }
-
-        // 로그인 성공 시 DTO로 반환 (비밀번호 제외)
-        return new MemberDTO(
-                memberEntity.getMemberNo(),
-                memberEntity.getMemberId(),
-                null,  // 비밀번호는 반환하지 않음
-                memberEntity.getMemberUsername(),
-                memberEntity.getMemberGender(),
-                memberEntity.getMemberNickname(),
-                memberEntity.getMemberPhone(),
-                memberEntity.getMemberBirthdate(),
-                memberEntity.getMemberRole(),
-                memberEntity.getMemberAddress(),
-                memberEntity.getMemberCreatedAt()
-        );
+        return null;    // 로그인 실패
     }
 
-    // 회원 정보 조회
-    @Override
-    public Optional<MemberDTO> getMemberById(String memberId) {
-        return memberRepository.findByMemberId(memberId)
-                .map(memberEntity -> new MemberDTO(
-                        memberEntity.getMemberNo(),
-                        memberEntity.getMemberId(),
-                        null,  // 비밀번호는 반환하지 않음
-                        memberEntity.getMemberUsername(),
-                        memberEntity.getMemberGender(),
-                        memberEntity.getMemberNickname(),
-                        memberEntity.getMemberPhone(),
-                        memberEntity.getMemberBirthdate(),
-                        memberEntity.getMemberRole(),
-                        memberEntity.getMemberAddress(),
-                        memberEntity.getMemberCreatedAt()
-                ));
-    }
 }

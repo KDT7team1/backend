@@ -21,7 +21,7 @@ public class MemberEntity {
     @Column(name = "member_no")
     Long memberNo;
 
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "member_id", nullable = false, unique = true)
     String memberId;
 
     @Column(name = "member_passwd")
@@ -49,14 +49,6 @@ public class MemberEntity {
     String memberAddress;
 
     @Column(name = "member_created_at")
-    LocalDateTime memberCreatedAt;
-
-    // memberCreatedAt 필드가 null 이면 자동으로 현재 날짜와 시간 저장
-    @PrePersist
-    public void onCreate(){
-        if (memberCreatedAt == null){
-            memberCreatedAt = LocalDateTime.now();
-        }
-    }
+    LocalDateTime memberCreatedAt = LocalDateTime.now();    // 가입일 자동 저장
 
 }
