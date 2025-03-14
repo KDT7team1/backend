@@ -1,9 +1,16 @@
 package com.exam.member;
 
+import java.util.Optional;
+
 public interface MemberService {
 
-    boolean checkMemberExist(String member_id);
-    void save(MemberDTO memberDTO);
-    boolean checkSignUpSamePassword(MemberDTO memberDTO);
+    // 회원가입
+    void registerMember(MemberDTO memberDTO);
+
+    // 로그인
+    MemberEntity login(String memberId, String memberPasswd);
+
+//    // 로그아웃
+//    void logoutMember(String token);
 
 }

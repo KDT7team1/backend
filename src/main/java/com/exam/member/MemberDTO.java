@@ -1,7 +1,7 @@
 package com.exam.member;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,17 +14,21 @@ import java.time.LocalDateTime;
 @Builder
 public class MemberDTO {
 
-    Long member_no;
-    String member_id;
-    String member_passwd;
-    String member_username;
-    String member_gender;
-    String member_nickname;
-    String member_phone;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDate member_birthdate;
-    String member_role;
-    String member_address;
-    LocalDateTime member_created_at;
+    Long memberNo;          // 회원번호
+
+    @NotBlank(message = "아이디는 필수 입력값입니다.")
+    String memberId;        // 회원 아이디
+
+    @NotBlank(message = "비밀번호는 필수 입력값입니다.")
+    String memberPasswd;    // 비밀번호
+
+    String memberUsername;  // 사용자 이름
+    String memberGender;    // 성별
+    String memberNickname;  // 닉네임
+    String memberPhone;     // 전화번호
+    LocalDate memberBirthdate;      // 생년월일
+    String memberRole;      // 회원타입 (USER/ADMIN)
+    String memberAddress;   // 주소
+    LocalDateTime memberCreatedAt;  // 가입일
 
 }
