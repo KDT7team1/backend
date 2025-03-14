@@ -15,4 +15,16 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
     @Query("SELECT s FROM SalesDaily s WHERE s.dailyCompositeKey.salesDate = :date")
     List<SalesDaily> findBySalesDate(@Param("date") LocalDate date);
 
+    // 선택한 날짜의 시간별 매출 통계
+    @Query("""
+            select
+                s.dailyCompositeKey.salesHour as salesHour,
+                coalesce(sum(s.dailyPrice), 0) as dailyPrice,
+                coalesce(sum(s.dailyAmount), 0) as dailyAmount
+            from SalesDaily s
+            where s.dailyCompositeKey.salesDate = :date
+            group by s.dailyCompositeKey.salesHour
+            order by s.dailyCompositeKey.salesHour
+            """)
+    List<SalesDaily> getHourlySalesByDate(@Param("date") LocalDate date);
 }
