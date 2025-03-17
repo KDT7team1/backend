@@ -114,6 +114,12 @@ public class GoodsController {
 //        return ResponseEntity.ok(dto);
 //    }
 
+    // 3. 상품 재고 수정하기
+    @PutMapping("/updateStock/{goodsId}")
+    public ResponseEntity<String> updateStock(@PathVariable Long goodsId, @RequestParam("newStock") Long newStock) {
+        goodsService.updateGoodsStock(goodsId, newStock);
+        return ResponseEntity.ok("재고 업데이트 완료");
+    }
 
 
 
