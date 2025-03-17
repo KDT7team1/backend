@@ -21,10 +21,11 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         List<SalesMonthlyDTO> monthlyDTO = monthly.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
-                    .saleMonth(s.monthlyCompositeKey.getSaleMonth())
-                    .salesCategory(s.monthlyCompositeKey.getSalesCategory())
+                    .salesMonth(s.monthlyCompositeKey.getSalesMonth())
+                    .categoryId(s.monthlyCompositeKey.getCategoryId())
+                    .subCategoryId(s.monthlyCompositeKey.getSubCategoryId())
+                    .monthlyPrice(s.getMonthlyPrice())
                     .monthlyAmount(s.getMonthlyAmount())
-                    .monthlyOrders(s.getMonthlyOrders())
                     .build();
             return dto;
         }).collect(Collectors.toList());
@@ -39,10 +40,11 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         List<SalesMonthlyDTO> monthlyDTO = monthlyList.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
-                    .saleMonth(s.monthlyCompositeKey.getSaleMonth())
-                    .salesCategory(s.monthlyCompositeKey.getSalesCategory())
+                    .salesMonth(s.monthlyCompositeKey.getSalesMonth())
+                    .categoryId(s.monthlyCompositeKey.getCategoryId())
+                    .subCategoryId(s.monthlyCompositeKey.getSubCategoryId())
+                    .monthlyPrice(s.getMonthlyPrice())
                     .monthlyAmount(s.getMonthlyAmount())
-                    .monthlyOrders(s.getMonthlyOrders())
                     .build();
             return dto;
         }).collect(Collectors.toList());
