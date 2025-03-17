@@ -14,7 +14,9 @@ public class SalesDailyDTO {
 
     LocalDate salesDate;
     int salesHour;
-    Long salesCategory;
-    Long totalAmount; // 매출액
-    Long totalOrders; // 주문량
+    Long categoryId;  // 대분류 id
+    Long subCategoryId; // 소분류 id
+    Long dailyPrice;  // 매출액
+    Long dailyAmount; // 주문량
+
 }
