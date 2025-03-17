@@ -26,5 +26,5 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             group by s.dailyCompositeKey.salesHour
             order by s.dailyCompositeKey.salesHour
             """)
-    List<SalesDaily> getHourlySalesByDate(@Param("date") LocalDate date);
+    List<Object[]> getHourlySalesByDate(@Param("date") LocalDate date);
 }
