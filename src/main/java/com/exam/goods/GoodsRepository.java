@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GoodsRepository extends JpaRepository<Goods, Long> {
@@ -21,6 +22,9 @@ public interface GoodsRepository extends JpaRepository<Goods, Long> {
 
     @Query("SELECT g FROM Goods g WHERE g.subCategory.sub_category_id = :subCategoryId")
     List<Goods> findBySubCategoryId(@Param("subCategoryId") long subCategoryId);
+
+    @Query("SELECT g.goods_stock from Goods g where g.goods_id = :goodsId")
+    Optional<Long> findStockByGoodsId(@Param("goodsId") Long goodsId);
 
 }
 
