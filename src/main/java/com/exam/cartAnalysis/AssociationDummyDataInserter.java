@@ -1,13 +1,13 @@
 //package com.exam;
 //
-//import com.exam.cartAnalysis.entity.Orders;
-//import com.exam.cartAnalysis.entity.SaleData;
-//import com.exam.cartAnalysis.repository.OrdersRepository;
-//import com.exam.cartAnalysis.repository.SaleDataRepository;
-//import com.exam.goods.Goods;
-//import com.exam.goods.GoodsRepository;
-//import com.exam.member.Member;
-//import com.exam.member.MemberRepository;
+//import com.exam.entity.Goods;
+//import com.exam.entity.Member;
+//import com.exam.entity.Orders;
+//import com.exam.entity.SaleData;
+//import com.exam.repository.GoodsRepository;
+//import com.exam.repository.MemberRepository;
+//import com.exam.repository.OrdersRepository;
+//import com.exam.repository.SaleDataRepository;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.CommandLineRunner;
 //import org.springframework.stereotype.Component;
@@ -32,7 +32,6 @@
 //    @Autowired
 //    private MemberRepository memberRepo;
 //
-//    private static final int BATCH_SIZE = 1000; // 하나의 배치당 1000개씩 저장
 //    private static final int NUM_ORDERS = 100000; // 주문 데이터 개수 (랜덤+연관 데이터 포함)
 //    private static final int NUM_SALE_DATA = 500000; // 판매 데이터 개수
 //
@@ -82,9 +81,7 @@
 //        timePairs.put("저녁", Arrays.asList(new String[]{"맥주", "팝콘"}, new String[]{"햄버거", "콜라"}, new String[]{"칫솔", "면도기"}));
 //        timePairs.put("심야", Arrays.asList(new String[]{"소주", "비타민음료"}, new String[]{"닭강정", "아이스크림"},  new String[]{"도넛", "요거트"}));
 //
-//        // ✅ 배치 리스트
-//        List<Orders> orderBatch = new ArrayList<>();
-//        List<SaleData> saleDataBatch = new ArrayList<>();
+//
 //
 //        // 🔥 주문 데이터 생성 (랜덤 + 연관 데이터)
 //        for (int i = 0; i < NUM_ORDERS; i++) {
@@ -101,12 +98,6 @@
 //                    .orElseThrow(() -> new RuntimeException("멤버 데이터를 먼저 삽입하세요"));
 //            order.setMember(member);
 //            order.setOrdersDate(currentDateTime);
-//            orderBatch.add(order);
-//
-//            if (orderBatch.size() >= BATCH_SIZE) {
-//                ordersRepo.saveAll(orderBatch);
-//                orderBatch.clear();
-//            }
 //
 //            Orders savedOrder = ordersRepo.save(order);
 //
@@ -143,18 +134,6 @@
 //                }
 //            }
 //
-//            if (saleDataBatch.size() >= BATCH_SIZE) {
-//                saleDataRepo.saveAll(saleDataBatch);
-//                saleDataBatch.clear();
-//            }
-//        }
-//
-//        // 🔥 남아있는 데이터 저장
-//        if (!orderBatch.isEmpty()) {
-//            ordersRepo.saveAll(orderBatch);
-//        }
-//        if (!saleDataBatch.isEmpty()) {
-//            saleDataRepo.saveAll(saleDataBatch);
 //        }
 //
 //        System.out.println("🔥 랜덤 + 연관 데이터 삽입 성공!!");
