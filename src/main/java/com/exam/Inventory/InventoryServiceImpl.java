@@ -1,6 +1,7 @@
 package com.exam.Inventory;
 
 
+import com.exam.goods.Goods;
 import com.exam.goods.GoodsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,8 @@ public class InventoryServiceImpl implements InventoryService {
         List<InventoryDTO> inventoryList = inventoryRepository.findAll().stream()
                 .map((item) -> {
                     InventoryDTO dto = InventoryDTO.builder()
-                            .goodsId(item.getGoodsId())
+                            .goodsId(item.getGoods().getGoods_id())
+                            .goodsName(item.getGoods().getGoods_name())
                             .stockQuantity(item.getStockQuantity())
                             .stockStatus(item.getStockStatus())
                             .inventoryId(item.getInventoryId())
@@ -45,15 +47,16 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = inventoryRepository.findByGoodsId(goodsId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품의 재고 정보를 찾을 수 없습니다."));
 
-       InventoryDTO inventoryDTO = InventoryDTO.builder()
-               .goodsId(inventory.getGoodsId())
-               .stockQuantity(inventory.getStockQuantity())
-               .stockStatus(inventory.getStockStatus())
-               .inventoryId(inventory.getInventoryId())
-               .stockUpdateAt(inventory.getStockUpdateAt())
-               .build();
+        InventoryDTO inventoryDTO = InventoryDTO.builder()
+                .goodsId(inventory.getGoods().getGoods_id())
+                .goodsName(inventory.getGoods().getGoods_name())
+                .stockQuantity(inventory.getStockQuantity())
+                .stockStatus(inventory.getStockStatus())
+                .inventoryId(inventory.getInventoryId())
+                .stockUpdateAt(inventory.getStockUpdateAt())
+                .build();
 
-       return inventoryDTO;
+        return inventoryDTO;
     }
 
 
@@ -66,8 +69,11 @@ public class InventoryServiceImpl implements InventoryService {
         if(stock.isPresent()){
             Long goodsStock = stock.get();
 
+            Goods goods = goodsRepository.findById(goodsId)
+                    .orElseThrow(() -> new RuntimeException("해당 상품이 존재하지 않습니다: " + goodsId));
+
             Inventory inventory = new Inventory();
-            inventory.setGoodsId(goodsId);
+            inventory.setGoods(goods);
             inventory.setStockQuantity(goodsStock);
             inventory.setStockStatus(goodsStock >= 5 ? "정상" : "재고부족");
             inventory.setStockUpdateAt(LocalDateTime.now());
