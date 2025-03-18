@@ -1,5 +1,6 @@
 package com.exam.Inventory;
 
+import com.exam.goods.Goods;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +21,9 @@ public class Inventory {
     @Column(name = "inventory_id")
     Long inventoryId;   // 재고 ID
 
-    @Column(name = "goods_id", nullable = false)
-    Long goodsId;       // 상품번호
+    @ManyToOne
+    @JoinColumn(name = "goods_id")
+    Goods goods;
 
     @Column(name = "stock_quantity", nullable = false)
     Long stockQuantity; // 재고수량
