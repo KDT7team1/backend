@@ -26,15 +26,15 @@ public interface GoodsService {
     // GoodsDTO findById(Long goodsId);
 
     // 상품 수정
-    // void update(Long goodsId, GoodsDTO dto);
-    // void update(GoodsDTO dto);
+    //void update(Long goodsId, GoodsDTO dto);
+    void update(GoodsDTO dto);
 
     // 상품 삭제
-    // void delete(Long goodsId);
+    void delete(Long goodsId);
 
 
 
 
-    }
+}
 
 
