@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "프로젝트의 백엔드 코드가 저장됩니다.\r ---\r # 의존성 설정\r - spring-boot-starter-web\r - spring-boot-starter-validation\r - spring-boot-starter-data-jpa\r - mysql-connector-java\r - tomcat-embed-jasper\r - jakarta.servlet.jsp.jstl-api\r - jakarta.servlet.jsp.jstl\r - jquery\r - bootstrap\r - spring-boot-devtools\r - lombok\r - spring-boot-starter-security\r - spring-security-taglibs\r - spring-boot-starter-test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoojjeong/backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yoojjeong/backend/issues"
+  },
+  "homepage": "https://github.com/yoojjeong/backend#readme"
+}

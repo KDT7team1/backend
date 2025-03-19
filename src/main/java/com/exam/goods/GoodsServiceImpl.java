@@ -1,5 +1,7 @@
 package com.exam.goods;
 
+import com.exam.Inventory.Inventory;
+import com.exam.Inventory.InventoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.exam.goods.Goods;
@@ -7,6 +9,7 @@ import com.exam.goods.Goods;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -15,10 +18,15 @@ public class GoodsServiceImpl implements GoodsService {
 
     GoodsRepository goodsRepository;
     CategoryRepository categoryRepository;
+    InventoryRepository inventoryRepository;
 
-    public GoodsServiceImpl(GoodsRepository goodsRepository, CategoryRepository categoryRepository) {
+    public GoodsServiceImpl(GoodsRepository goodsRepository,
+                            CategoryRepository categoryRepository,
+                            InventoryRepository inventoryRepository) {
+        super();
         this.goodsRepository = goodsRepository;
         this.categoryRepository = categoryRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     // 1. 전체 목록 조회

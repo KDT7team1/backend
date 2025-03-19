@@ -10,9 +10,10 @@ import lombok.*;
 @Builder
 public class SalesMonthlyDTO {
 
-    String saleMonth;
-    Long salesCategory;
+    String salesMonth;
+    Long categoryId;
+    Long subCategoryId;
+    Long monthlyPrice;
     Long monthlyAmount;
-    Long monthlyOrders;
 
 }

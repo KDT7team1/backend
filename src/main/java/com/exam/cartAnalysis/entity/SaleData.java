@@ -3,7 +3,6 @@ package com.exam.cartAnalysis.entity;
 import com.exam.goods.Goods;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +20,7 @@ public class SaleData {
 	Long salesId;
 
 	@ManyToOne
-			@JoinColumn(name="orders_id")
+	@JoinColumn(name="orders_id")
 	Orders orders;
 
 	@ManyToOne
@@ -31,7 +30,6 @@ public class SaleData {
 	Long saleAmount;
 	Long salePrice;
 
-	@CreationTimestamp
 	@Column(updatable = false)
 	LocalDateTime saleDate;
 

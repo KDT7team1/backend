@@ -19,11 +19,11 @@ public class SalesMonthly {
     @EmbeddedId
     MonthlyCompositeKey monthlyCompositeKey;
 
+    @Column(name = "monthly_price")
+    Long monthlyPrice;
+
     @Column(name = "monthly_amount")
     Long monthlyAmount;
-
-    @Column(name = "monthly_orders")
-    Long monthlyOrders;
 
 }
 
@@ -37,22 +37,25 @@ public class SalesMonthly {
 class MonthlyCompositeKey implements Serializable {
 
     @Column(name = "sales_month")
-    String saleMonth;
+    String salesMonth;
 
-    @Column(name = "sales_category")
-    Long salesCategory;
+    @Column(name = "category_id")
+    Long categoryId;
+
+    @Column(name = "sub_category_id")
+    Long subCategoryId;
 
     @Override
     public boolean equals(Object o){
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MonthlyCompositeKey that = (MonthlyCompositeKey) o;
-        return Objects.equals(saleMonth, that.saleMonth) && Objects.equals(salesCategory, that.salesCategory);
+        return Objects.equals(salesMonth, that.salesMonth) && Objects.equals(categoryId, that.categoryId) && Objects.equals(subCategoryId, that.subCategoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(saleMonth, salesCategory);
+        return Objects.hash(salesMonth, categoryId, subCategoryId);
     }
 
 }

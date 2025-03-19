@@ -1,6 +1,6 @@
 package com.exam.cartAnalysis.entity;
 
-import com.exam.member.Member;
+import com.exam.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,19 +23,9 @@ public class Orders {
 
 	@ManyToOne
 	@JoinColumn(name="member_no")
-	Member member;
+	MemberEntity member;
 
 	@CreationTimestamp
 	LocalDateTime ordersDate;
 
-	String orders_status;
-	String paymentMethod;
-
-	@CreationTimestamp
-	@Column(updatable = false)
-	LocalDateTime created_at;
-
-	@UpdateTimestamp
-	@Column(insertable = false)
-	LocalDateTime updatedAt;
 }
