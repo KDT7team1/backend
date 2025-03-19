@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     // 상품 ID로 재고 정보를 조회
-    @Query("select i from Inventory i where i.goodsId = :goodsId")
+    @Query("select i from Inventory i where i.goods.goods_id = :goodsId")
     Optional<Inventory> findByGoodsId(@Param("goodsId") Long goodsId);
 
 }
