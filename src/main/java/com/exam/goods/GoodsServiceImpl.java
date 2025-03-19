@@ -175,7 +175,7 @@ public class GoodsServiceImpl implements GoodsService {
             }else {
 
                 Inventory newInventory = new Inventory();
-                newInventory.setGoodsId(goodsId);
+                newInventory.setGoods(goods);
                 newInventory.setStockQuantity(newStock);
                 newInventory.setStockStatus(newStock >= 5 ? "정상" : "재고부족");
                 newInventory.setStockUpdateAt(LocalDateTime.now());
