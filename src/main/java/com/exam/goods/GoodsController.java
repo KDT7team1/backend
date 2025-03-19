@@ -29,30 +29,15 @@ public class GoodsController {
 
 
     // 상품 저장 API
-    @PostMapping("/save2")
-    public ResponseEntity<String> save2( String theText,@RequestBody MultipartFile theFile) {
-
-        System.out.println("Received goods_id: " + theText);
-        System.out.println("Received goods_image: " + theFile);
-//        System.out.println("Received category_id: " + dto.getCategory_id());
-//
-//        if (dto.getCategory_id() == null) {
-//            return ResponseEntity.badRequest().body("category_id는 필수 값입니다.");
-//        }
-//
-//        goodsService.save(dto);
-        return  ResponseEntity.ok("상품이 저장되었습니다.");
-    }
-
     @PostMapping("/save")
     public ResponseEntity<String> save(
-             MultipartFile goods_image,
-             Long goods_id,
-             Long category_id,
-             String goods_name,
-             Long goods_price,
-             String goods_description,
-            Long goods_stock) {
+            @RequestParam(value="goods_image", required=false) MultipartFile goods_image, // 수정!
+            @RequestParam("goods_id") Long goods_id,
+            @RequestParam("category_id") Long category_id,
+            @RequestParam("goods_name") String goods_name,
+            @RequestParam("goods_price") Long goods_price,
+            @RequestParam("goods_description") String goods_description,
+            @RequestParam("goods_stock") Long goods_stock) {
 
         System.out.println("Received goods_image1: " + goods_image);
         System.out.println("Received goods_id1: " + goods_id);
@@ -69,12 +54,12 @@ public class GoodsController {
             String fileName = goods_image.getOriginalFilename();
             imagePath = "images/" + fileName;
 
-            File uploadDir = new File("c:\\upload", fileName); // ✅ 이미지 저장 폴더
-            if (!uploadDir.exists()) uploadDir.mkdirs();
+            System.out.println("Received fileName: " + fileName);
 
-            File dest = new File(uploadDir, fileName);
+            File uploadDir = new File("C:\\Users\\01min\\Desktop\\upload", fileName);
+
             try {
-                goods_image.transferTo(dest);
+                goods_image.transferTo(uploadDir);
             } catch (IOException e) {
                 e.printStackTrace();
                 return ResponseEntity.status(500).body("파일 업로드 실패");
@@ -82,39 +67,51 @@ public class GoodsController {
         }
 
         // DTO에 이미지 경로 저장
-        GoodsDTO dto2 = new GoodsDTO(goods_id,
-                category_id,
-                goods_name, goods_price, goods_description, goods_stock, "/" + imagePath);
+//        GoodsDTO dto2 = new GoodsDTO(goods_id,
+//                category_id,
+//                goods_name, goods_price, goods_description, goods_stock, "/" + imagePath);
 
         GoodsDTO dto = GoodsDTO.builder()
-                       .goods_id(goods_id)
+                .goods_id(goods_id)
                 .category_id(category_id)
                 .goods_name(goods_name)
                 .goods_price(goods_price)
                 .goods_description(goods_description)
                 .goods_stock(goods_stock)
                 .goods_image("/" + imagePath)
-                       .build();
+                .build();
 
         System.out.println("GoodsDTO:" + dto);
         goodsService.save(dto);
 
         return ResponseEntity.ok("상품이 저장되었습니다.");
+
     }
 
+    //상품 삭제
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") Long goods_id) {
+        try {
+            goodsService.delete(goods_id);
+            return ResponseEntity.ok("상품 삭제 완료: " + goods_id);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 
-
-
-
-
-    // 상품 조회 API
-//    @GetMapping("/{goodsId}")
-//    public ResponseEntity<GoodsDTO> getGoods(@PathVariable Long goodsId) {
-//        GoodsDTO dto = goodsService.findById(goodsId);
-//        return ResponseEntity.ok(dto);
-//    }
-
-
+    // 상품 수정
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> update(
+            @PathVariable("id") Long goods_id,
+            @RequestBody GoodsDTO dto) {
+        try {
+            dto.setGoods_id(goods_id); //이거 맞는지 모르겠음
+            goodsService.update(dto);
+            return ResponseEntity.ok("상품 수정 완료: " + goods_id);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 
 
 }
