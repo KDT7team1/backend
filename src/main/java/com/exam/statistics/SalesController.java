@@ -1,7 +1,6 @@
 package com.exam.statistics;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +41,7 @@ public class SalesController {
             log.info("LOGGER: 조회할 날짜: {}", searchDate);
 
             List<SalesDailyDTO> salesDaily = salesDailyService.getHourlySalesByDate(searchDate);
-            log.info("LOGGER: salesDaily 정보 획득: {}", salesDaily);
+            log.info("LOGGER: 일간 정보 획득: {}", salesDaily);
 
             return ResponseEntity.status(200).body(salesDaily);
         } catch (DateTimeException e) {
@@ -57,7 +56,7 @@ public class SalesController {
         log.info("LOGGER: 조회할 월: {}", salesMonth);
 
         List<SalesDailyDTO> salesMonthly = salesDailyService.getDailySalesByMonth(salesMonth);
-        log.info("LOGGER: salesMonthly 정보 획득: {}", salesMonthly);
+        log.info("LOGGER: 월간 정보 획득: {}", salesMonthly);
 
         return ResponseEntity.status(200).body(salesMonthly);
     }
@@ -68,7 +67,7 @@ public class SalesController {
         log.info("LOGGER: 조회할 연도: {}", salesYear);
 
         List<SalesMonthlyDTO> salesYearly = salesMonthlyService.getMonthlySalesByYear(salesYear);
-        log.info("LOGGER: salesMonthly 정보 획득: {}", salesYearly);
+        log.info("LOGGER: 연간 정보 획득: {}", salesYearly);
 
         return ResponseEntity.status(200).body(salesYearly);
     }
