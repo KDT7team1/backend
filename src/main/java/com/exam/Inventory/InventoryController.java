@@ -16,7 +16,7 @@ public class InventoryController {
     @Autowired
     InventoryServiceImpl inventoryService;
 
-    // 1. 재고테이블 전체 조히
+    // 1. 재고테이블 전체 조회
     @GetMapping("/findAll")
     public ResponseEntity<List<InventoryDTO>> findAll(){
         List<InventoryDTO> inventoryList = inventoryService.findAll();
