@@ -94,6 +94,8 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsDTOList;
     }
 
+
+
     // 4. 상품 카테고리별 조회하기 (소분류)
     @Override
     public List<GoodsDTO> getGoodsBySecondCategory(String firstName, String secondName) {
@@ -184,7 +186,6 @@ public class GoodsServiceImpl implements GoodsService {
         goodsRepository.deleteById(goodsId);
         System.out.println("상품 삭제 완료: " + goodsId);
     }
-
 
 
 
