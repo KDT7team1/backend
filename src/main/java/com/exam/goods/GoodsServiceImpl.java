@@ -156,46 +156,11 @@ public class GoodsServiceImpl implements GoodsService {
         goodsRepository.save(goodsEntity);
     }
 
-    //상품 수정
-    @Override
-    public void update(GoodsDTO dto) {
-
-        // 예외처리
-        if (dto.getGoods_id() == null) {
-            throw new IllegalArgumentException("상품 ID는 null이 될 수 없습니다.");
-        }
-
-        // 기존 상품 조회
-        Goods goods = goodsRepository.findById(dto.getGoods_id())
-                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다: " + dto.getGoods_id()));
-
-        // 상품 정보 업데이트
-        if (dto.getGoods_name() != null) goods.setGoods_name(dto.getGoods_name());
-        if (dto.getGoods_price() != null) goods.setGoods_price(dto.getGoods_price());
-        if (dto.getGoods_description() != null) goods.setGoods_description(dto.getGoods_description());
-        if (dto.getGoods_stock() != null) goods.setGoods_stock(dto.getGoods_stock());
-
-        // 이미지 업데이트
-        if (dto.getGoods_image() != null && !dto.getGoods_image().isEmpty()) {
-            goods.setGoods_image(dto.getGoods_image());
-        }
-
-        // 업데이트 시간 변경
-        goods.setGoods_updated_at(LocalDateTime.now());
-
-        // DB 저장
-        goodsRepository.save(goods);
-    }
-
-
-
     @Override
     public void delete(Long goodsId) {
         goodsRepository.deleteById(goodsId);
         System.out.println("상품 삭제 완료: " + goodsId);
     }
-
-
 
 }
 

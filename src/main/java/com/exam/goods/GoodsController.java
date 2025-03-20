@@ -86,31 +86,4 @@ public class GoodsController {
 
         return ResponseEntity.ok("상품이 저장되었습니다.");
 
-    }
-
-    //상품 삭제
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") Long goods_id) {
-        try {
-            goodsService.delete(goods_id);
-            return ResponseEntity.ok("상품 삭제 완료: " + goods_id);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
-    }
-
-    // 상품 수정
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(
-            @PathVariable("id") Long goods_id,
-            @RequestBody GoodsDTO dto) {
-        try {
-            dto.setGoods_id(goods_id); //이거 맞는지 모르겠음
-            goodsService.update(dto);
-            return ResponseEntity.ok("상품 수정 완료: " + goods_id);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
-    }
-
 }
