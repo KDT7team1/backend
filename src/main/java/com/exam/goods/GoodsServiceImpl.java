@@ -102,6 +102,8 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsDTOList;
     }
 
+
+
     // 4. 상품 카테고리별 조회하기 (소분류)
     @Override
     public List<GoodsDTO> getGoodsBySecondCategory(String firstName, String secondName) {
