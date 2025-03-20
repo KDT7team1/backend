@@ -65,8 +65,8 @@ filtered_transactions = [t for t in transactions if len(t) > 1]
 ##################################################################
 results = apriori(
     filtered_transactions,
-    min_support=0.02,      # 예: 0.02
-    min_confidence=0.3,    # 예: 0.3
+    min_support=0.03,      # 예: 0.02
+    min_confidence=0.4,    # 예: 0.3
     min_lift=1.0           # 예: 1.0
 )
 
@@ -121,10 +121,10 @@ for selected_rule, (support, confidence, lift,itemset_a, itemset_b) in unique_ru
 
 
     try:
-           print(f"🚀 INSERT: {itemset_a} -> {itemset_b}, support={support}, confidence={confidence}, lift={lift}")
-           cursor.execute(sql, (itemset_a, itemset_b, support, confidence, lift))
+        print(f"🚀 INSERT: {itemset_a} -> {itemset_b}, support={support}, confidence={confidence}, lift={lift}")
+        cursor.execute(sql, (itemset_a, itemset_b, support, confidence, lift))
     except Exception as e:
-            print(f"❌ SQL 실행 오류: {e}")
+        print(f"❌ SQL 실행 오류: {e}")
 
 
 # 5) 커밋 & DB 연결 종료
