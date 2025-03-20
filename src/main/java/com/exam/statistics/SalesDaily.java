@@ -52,7 +52,7 @@ class DailyCompositeKey implements Serializable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     DailyCompositeKey that = (DailyCompositeKey) o;
-    return salesHour == that.salesHour && Objects.equals(salesDate, that.salesDate) && Objects.equals(salesCategory, that.salesCategory) & Objects.equals(subCategoryId, that.subCategoryId);
+    return salesHour == that.salesHour && Objects.equals(salesDate, that.salesDate) && Objects.equals(salesCategory, that.salesCategory) && Objects.equals(subCategoryId, that.subCategoryId);
   }
 
   @Override

@@ -20,7 +20,7 @@ public interface GoodsService {
     void save(GoodsDTO dto);
 
     // 6. 상품 재고 수정
-    void updateGoodsStock(Long goodsId, Long stock);
+    void updateGoodsStock(Long goodsId, Long newStock);
 
     //상품 조회
     // GoodsDTO findById(Long goodsId);
