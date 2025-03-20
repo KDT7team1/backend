@@ -107,20 +107,5 @@ public class GoodsController {
 
 
 
-    // 상품 조회 API
-//    @GetMapping("/{goodsId}")
-//    public ResponseEntity<GoodsDTO> getGoods(@PathVariable Long goodsId) {
-//        GoodsDTO dto = goodsService.findById(goodsId);
-//        return ResponseEntity.ok(dto);
-//    }
-
-    // 3. 상품 재고 수정하기
-    @PutMapping("/updateStock/{goodsId}")
-    public ResponseEntity<String> updateStock(@PathVariable Long goodsId, @RequestParam("newStock") Long newStock) {
-        goodsService.updateGoodsStock(goodsId, newStock);
-        return ResponseEntity.ok("재고 업데이트 완료");
-    }
-
-
 
 }
