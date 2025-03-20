@@ -19,7 +19,8 @@ public interface GoodsService {
     // 상품 저장
     void save(GoodsDTO dto);
 
-
+    // 6. 상품 재고 수정
+    void updateGoodsStock(Long goodsId, Long newStock);
 
     //상품 조회
     // GoodsDTO findById(Long goodsId);
@@ -30,9 +31,6 @@ public interface GoodsService {
 
     // 상품 삭제
     void delete(Long goodsId);
-
-
-
 
 }
 
