@@ -157,6 +157,7 @@ public class GoodsServiceImpl implements GoodsService {
     public void updateGoodsStock(Long goodsId, Long newStock) {
         Optional<Goods> goodsOpt = goodsRepository.findById(goodsId);
         if(goodsOpt.isPresent()) {
+
             // 1. 상품 테이블에 재고 수정
             Goods goods = goodsOpt.get();
             goods.setGoods_stock(newStock); // 전달받은 재고로 수정하기
