@@ -152,41 +152,7 @@ public class GoodsServiceImpl implements GoodsService {
         goodsRepository.save(goodsEntity);
     }
 
-    // 상품 재고 수량 변경 (업데이트) => 재고 테이블도 동시에 수정됨
-    @Override
-    public void updateGoodsStock(Long goodsId, Long newStock) {
-        Optional<Goods> goodsOpt = goodsRepository.findById(goodsId);
-        if(goodsOpt.isPresent()) {
 
-            // 1. 상품 테이블에 재고 수정
-            Goods goods = goodsOpt.get();
-            goods.setGoods_stock(newStock); // 전달받은 재고로 수정하기
-            goodsRepository.save(goods);
-
-            // 2. 동시에 재고 테이블 재고 수정
-            Optional<Inventory> invenOpt =  inventoryRepository.findByGoodsId(goodsId);
-
-            if(invenOpt.isPresent()) {
-                Inventory inventory = invenOpt.get();
-
-                inventory.setStockQuantity(newStock);
-                inventory.setStockStatus(newStock >= 5 ? "정상" : "재고부족");
-                inventory.setStockUpdateAt(LocalDateTime.now());
-                inventoryRepository.save(inventory);
-            }else {
-
-                Inventory newInventory = new Inventory();
-                newInventory.setGoods(goods);
-                newInventory.setStockQuantity(newStock);
-                newInventory.setStockStatus(newStock >= 5 ? "정상" : "재고부족");
-                newInventory.setStockUpdateAt(LocalDateTime.now());
-            }
-            System.out.println("상품 재고 및 인벤토리 업데이트 완료: " + newStock);
-        }
-        else {
-            throw new RuntimeException("해당 상품을 찾을 수 없습니다.");
-        }
-    }
 
     //상품 조회
 //    @Override
