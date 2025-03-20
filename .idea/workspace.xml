@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="9b326094-5ce9-4c6b-9389-6ec4656408b6" name="변경" comment="수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/cartAnalysis/AssociationDummyDataInserter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/cartAnalysis/AssociationDummyDataInserter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/goods/GoodsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/goods/GoodsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/goods/GoodsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/goods/GoodsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDaily.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDaily.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -30,8 +28,8 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="minjeong" />
-                    <option name="lastUsedInstant" value="1741759803" />
+                    <option name="branchName" value="hyemin" />
+                    <option name="lastUsedInstant" value="1742449517" />
                   </RecentBranch>
                   <RecentBranch>
                     <option name="branchName" value="main" />
@@ -70,7 +68,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.Application.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "hyemin",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -155,7 +153,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="upstream/main" />
+                        <option value="hyemin" />
                       </list>
                     </value>
                   </entry>
