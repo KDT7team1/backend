@@ -1,6 +1,7 @@
 package com.exam.statistics;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,11 +55,24 @@ public class SalesController {
     public ResponseEntity<List<SalesDailyDTO>> getDailySalesByMonth(@PathVariable String salesMonth) {
         log.info("LOGGER: 월간(일별) 매출 조회를 요청함");
         log.info("LOGGER: 조회할 월: {}", salesMonth);
+
         List<SalesDailyDTO> salesMonthly = salesDailyService.getDailySalesByMonth(salesMonth);
         log.info("LOGGER: salesMonthly 정보 획득: {}", salesMonthly);
 
         return ResponseEntity.status(200).body(salesMonthly);
     }
+
+    @GetMapping("/salesMonthlyTotal/{salesYear}")
+    public ResponseEntity<List<SalesMonthlyDTO>> getMonthlySalesByYear(@PathVariable String salesYear) {
+        log.info("LOGGER: 연간(월별) 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 연도: {}", salesYear);
+
+        List<SalesMonthlyDTO> salesYearly = salesMonthlyService.getMonthlySalesByYear(salesYear);
+        log.info("LOGGER: salesMonthly 정보 획득: {}", salesYearly);
+
+        return ResponseEntity.status(200).body(salesYearly);
+    }
+
 
     // 카테고리별 매출 조회
     @GetMapping("/salesDaily/{salesDate}")

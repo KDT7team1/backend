@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b326094-5ce9-4c6b-9389-6ec4656408b6" name="변경" comment="수정">
+    <list default="true" id="9b326094-5ce9-4c6b-9389-6ec4656408b6" name="변경" comment="월간 일일 판매량 조회 api 구현">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesDailyServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesMonthlyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesMonthlyRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesMonthlyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesMonthlyService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesMonthlyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/exam/statistics/SalesMonthlyServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +136,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741825452696</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="월간 일일 판매량 조회 api 구현">
+      <option name="closed" value="true" />
+      <created>1742452326849</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1742452326849</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -169,6 +177,7 @@
     <MESSAGE value="test2" />
     <MESSAGE value="상품 등록 1" />
     <MESSAGE value="수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="수정" />
+    <MESSAGE value="월간 일일 판매량 조회 api 구현" />
+    <option name="LAST_COMMIT_MESSAGE" value="월간 일일 판매량 조회 api 구현" />
   </component>
 </project>
