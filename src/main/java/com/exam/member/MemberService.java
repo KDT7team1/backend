@@ -1,16 +1,20 @@
 package com.exam.member;
 
-import java.util.Optional;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface MemberService {
 
     // 회원가입
-    void registerMember(MemberDTO memberDTO);
+    int save(MemberDTO dto);
 
-    // 로그인
-    MemberEntity login(String memberId, String memberPasswd);
+    // 회원 아이디로 사용자 찾기
+    MemberDTO findByMemberId(String memberId);
 
-//    // 로그아웃
-//    void logoutMember(String token);
+    // 로그인 기능 추가
+//    boolean login(String memberId, String memberPasswd);
 
+    void logout(HttpServletRequest request, HttpServletResponse response);
 }
