@@ -1,15 +1,12 @@
 package com.exam.goods;
 
-import com.exam.Inventory.Inventory;
 import com.exam.Inventory.InventoryRepository;
+import com.exam.category.Category;
+import com.exam.category.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.exam.goods.Goods;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,8 +50,7 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsList;
     }
 
-
-    // 2. 상품 상세보기
+    // 2. 상품 상제보기
     @Override
     public GoodsDTO findById(Long id){
         Goods goods =  goodsRepository.findById(id).orElse(null);
@@ -128,7 +124,7 @@ public class GoodsServiceImpl implements GoodsService {
     //상품 저장
     @Override
     public void save(GoodsDTO dto) {
-        System.out.println("GoodsDTO2:" + dto); //GoodsDTO2가 맞는지?
+        System.out.println("GoodsDTO2:" + dto);
         if (dto.getCategory_id() == null) {
             throw new IllegalArgumentException("category_id는 null이 될 수 없습니다.");
         }
@@ -154,50 +150,22 @@ public class GoodsServiceImpl implements GoodsService {
         goodsRepository.save(goodsEntity);
     }
 
-    //상품 수정
-    @Override
-    public void update(GoodsDTO dto) {
-
-        // 예외처리
-        if (dto.getGoods_id() == null) {
-            throw new IllegalArgumentException("상품 ID는 null이 될 수 없습니다.");
-        }
-
-        // 기존 상품 조회
-        Goods goods = goodsRepository.findById(dto.getGoods_id())
-                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다: " + dto.getGoods_id()));
-
-        // 상품 정보 업데이트
-        if (dto.getGoods_name() != null) goods.setGoods_name(dto.getGoods_name());
-        if (dto.getGoods_price() != null) goods.setGoods_price(dto.getGoods_price());
-        if (dto.getGoods_description() != null) goods.setGoods_description(dto.getGoods_description());
-        if (dto.getGoods_stock() != null) goods.setGoods_stock(dto.getGoods_stock());
-
-        // 이미지 업데이트
-        if (dto.getGoods_image() != null && !dto.getGoods_image().isEmpty()) {
-            goods.setGoods_image(dto.getGoods_image());
-        }
-
-        // 업데이트 시간 변경
-        goods.setGoods_updated_at(LocalDateTime.now());
-
-        // DB 저장
-        goodsRepository.save(goods);
-    }
-
-
-
-    @Override
-    public void delete(Long goodsId) {
-        goodsRepository.deleteById(goodsId);
-        System.out.println("상품 삭제 완료: " + goodsId);
-    }
-
-
-
+    //상품 조회
+//    @Override
+//    public GoodsDTO findById(Long goodsId) {
+//
+//        GoodsEntity entity = goodsRepository.findById(goodsId)
+//                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다. ID: " + goodsId));
+//
+//         return GoodsDTO.builder()
+//                    .goods_id(entity.getGoods_id())
+//                    .category_id(entity.getCategory().getCategory_id())
+//                    .goods_name(entity.getGoods_name())
+//                    .goods_price(entity.getGoods_price())
+//                    .goods_description(entity.getGoods_description())
+//                    .goods_stock(entity.getGoods_stock())
+//                    .goods_image(entity.getGoods_image())
+//                    .build();
+//        }
 
 }
-
-
-
-

@@ -25,15 +25,15 @@ category_map = {str(g_id) : sub_name for g_id, sub_name in cursor.fetchall()}
 
 # 시간대 정의 함수
 def get_time_period(time):
-    if 6 <= time < 8:
+    if 5 <= time < 11:
         return "아침"
-    elif 11 <= time < 14:
+    elif 11 <= time < 15:
         return "점심"
-    elif 15 <= time < 17:
+    elif 15 <= time < 18:
         return "한가한 오후"
-    elif 18 <= time < 22:
+    elif 18 <= time < 23:
         return "저녁"
-    elif 0 <= time < 5:
+    elif time >= 23 or time < 5:
         return "심야"
     else:
         return "기본"
@@ -70,13 +70,13 @@ for orders_id, goods_id, sale_date in sales:
         current_time_period = time_period
 
     if orders_id != current_order:
-       # 주문이 바뀌면 기존 아이템들을 저장
-       if current_items:
-           transactions_byTime[current_time_period].append(list(current_items))
+        # 주문이 바뀌면 기존 아이템들을 저장
+        if current_items:
+            transactions_byTime[current_time_period].append(list(current_items))
 
-       current_items = set()
-       current_order = orders_id
-       current_time_period = time_period
+        current_items = set()
+        current_order = orders_id
+        current_time_period = time_period
 
     sub_name = category_map.get(str(goods_id))
     if sub_name:

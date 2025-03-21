@@ -18,8 +18,8 @@ public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inventory_id")
-    Long inventoryId;   // 재고 ID
+    @Column(name = "batch_id")
+    Long batchId;   // 재고 ID
 
     @ManyToOne
     @JoinColumn(name = "goods_id")
@@ -33,5 +33,8 @@ public class Inventory {
 
     @Column(name = "stock_updated_at")
     LocalDateTime stockUpdateAt;    // 재고 업데이트 시간
+
+    @Column(name = "expiration_date")
+    LocalDateTime expirationDate;
 
 }
