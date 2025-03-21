@@ -24,107 +24,152 @@ for g_id, sub_name in cursor.fetchall():
     category_map[str(g_id)] = sub_name # id : 상품 카테고리명 == "101": "음료"
 
 
-##################################################################
-# orders_id로 묶어서 같은 주문끼리 묶이도록
-cursor.execute("SELECT orders_id, goods_id FROM sale_data ORDER BY orders_id")
-sales = cursor.fetchall()
+def analyze_def(period_label, data_condition):
+    cursor.execute(f""" 
+         SELECT orders_id, goods_id 
+         FROM sale_data 
+         where {data_condition} 
+         ORDER BY orders_id
+        """
+                   )
+    sales = cursor.fetchall() # 기간별 데이터 전부 들고오기
 
-transactions = []
-current_order = None
-current_items = set()  # sub_name 저장용 set
+    transactions = []
+    current_order = None
+    current_items = set()  # sub_name 저장용 set
 
-for orders_id, goods_id in sales:
-    # 맨 처음일때 current_order를 첫주문id로 초기화
-    if current_order is None:
-        current_order = orders_id
+    for orders_id, goods_id in sales:
+        # 맨 처음일때 current_order를 첫주문id로 초기화
+        if current_order is None:
+            current_order = orders_id
 
-    if orders_id != current_order:
-        # 지금까지 모은 sub_name들을 하나의 거래로 추가
+        if orders_id != current_order:
+            # 지금까지 모은 sub_name들을 하나의 거래로 추가
+            transactions.append(list(current_items))
+            current_items = set() # 초기화
+            current_order = orders_id
+
+        # goods_id에 해당하는 sub_name을 set에 저장
+        sub_name = category_map[str(goods_id)] # goods_id → sub_name 변환
+        current_items.add(sub_name) # set에 추기 (중복되면 추가안되겠지)
+
+    # 마지막 주문 처리
+    if current_items:
         transactions.append(list(current_items))
-        current_items = set() # 초기화
-        current_order = orders_id
 
-    # goods_id에 해당하는 sub_name을 set에 저장
-    sub_name = category_map[str(goods_id)] # goods_id → sub_name 변환
-    current_items.add(sub_name) # set에 추기 (중복되면 추가안되겠지)
+    print(f"📌 총 거래 개수: {len(transactions)}")
+    print(f"📌 예시 거래 내역 5개:")
+    for idx in range(min(5, len(transactions))):
+        print(f" - {transactions[idx]}")
 
-# 마지막 주문 처리
-if current_items:
-    transactions.append(list(current_items))
-
-print(f"📌 총 거래 개수: {len(transactions)}")
-print(f"📌 예시 거래 내역 5개:")
-for idx in range(min(5, len(transactions))):
-    print(f" - {transactions[idx]}")
-
-# 단일 품목 주문 제외 : 연관관계 분석에 의미가 없으니까
-filtered_transactions = [t for t in transactions if len(t) > 1]
+    # 단일 품목 주문 제외 : 연관관계 분석에 의미가 없으니까
+    filtered_transactions = [t for t in transactions if len(t) > 1]
 
 
-# 3) Apriori 실행
-##################################################################
-results = apriori(
-    filtered_transactions,
-    min_support=0.03,      # 예: 0.02
-    min_confidence=0.4,    # 예: 0.3
-    min_lift=1.0           # 예: 1.0
-)
+    # 3) Apriori 실행
+    ##################################################################
+    results = apriori(
+        filtered_transactions,
+        min_support=0.02,      # 예: 0.02
+        min_confidence=0.3,    # 예: 0.3
+        min_lift=1.0           # 예: 1.0
+    )
 
-results_list = list(results)
-print(f"✅ Apriori 결과 개수: {len(results_list)}")
+    results_list = list(results)
+    print(f"✅ Apriori 결과 개수: {len(results_list)}")
 
-##################################################################
-# 4) 결과 저장 (자기 자신 예측 등 불필요 규칙 필터링)
-##################################################################
-unique_rules = {} #(A,B) : (support,confidence, lift)  형태의 딕셔너리
+    ##################################################################
+    # 4) 결과 저장 (자기 자신 예측 등 불필요 규칙 필터링)
+    ##################################################################
+    unique_rules = {} #(A,B) : (support,confidence, lift)  형태의 딕셔너리
 
-# 연관관계 분석한 거 하나씩 돌려서 계산
-for rule in results_list:
-    for item in rule.ordered_statistics:
-        base_items = item.items_base # 조건부 A
-        add_items  = item.items_add  # 결과 B
+    # 연관관계 분석한 거 하나씩 돌려서 계산
+    for rule in results_list:
+        for item in rule.ordered_statistics:
+            base_items = item.items_base # 조건부 A
+            add_items  = item.items_add  # 결과 B
 
-        # Base와 Add가 겹치면 건너뛴다 (맥주 => 맥주)
-        if not base_items or not add_items:
-            continue # 조건 또는 결과 비어있으면 건너뛰기
+            # Base와 Add가 겹치면 건너뛴다 (맥주 => 맥주)
+            if not base_items or not add_items  or base_items == add_items:
+                continue # 조건 또는 결과 비어있으면 건너뛰기
 
+            # for base in base_items:
+            #     for add in add_items:
+            #         if base == add:
+            #             continue
 
-        for base in base_items:
-            for add in add_items:
-                if base == add:
-                    continue
+            itemset_a = ', '.join(sorted(base_items))
+            itemset_b =  ', '.join(sorted(add_items))
+            support = round(rule.support,4)
+            confidence = round(item.confidence,4)
+            lift = round(item.lift,4)
 
-                itemset_a = base
-                itemset_b =  add
-                support = round(rule.support,4)
-                confidence = round(item.confidence,4)
-                lift = round(item.lift,4)
+            # (A → B)와 (B → A) 중 더 신뢰도(confidence)가 높은 것을 저장
+            # selected_rule = tuple(sorted([itemset_a, itemset_b]))
+            selected_rule = (itemset_a, itemset_b)
 
-                # (A → B)와 (B → A) 중 더 신뢰도(confidence)가 높은 것을 저장
-                selected_rule = tuple(sorted([itemset_a, itemset_b]))
-
-                if selected_rule in unique_rules:
-                    prev_confidence = unique_rules[selected_rule][0] # 기존 저장된 confidence 값
-                    if confidence > prev_confidence:
-                        unique_rules[selected_rule] = (support,confidence,lift,itemset_a,itemset_b)
-                else:
+            if selected_rule in unique_rules:
+                prev_confidence = unique_rules[selected_rule][0] # 기존 저장된 confidence 값
+                if confidence > prev_confidence:
                     unique_rules[selected_rule] = (support,confidence,lift,itemset_a,itemset_b)
-
-# (key, value) => (selected_rule, (s,c,...)) =>  ('감자칩', '콜라'): (0.126, 0.437, 1.509, '감자칩', '콜라'),
-for selected_rule, (support, confidence, lift,itemset_a, itemset_b) in unique_rules.items():
-    sql = """
-                    INSERT INTO association_rules 
-                        (itemset_a, itemset_b, support, confidence, lift)
-                    VALUES 
-                        (%s, %s, %s, %s, %s)
-            """
+            else:
+                unique_rules[selected_rule] = (support,confidence,lift,itemset_a,itemset_b)
 
 
-    try:
-        print(f"🚀 INSERT: {itemset_a} -> {itemset_b}, support={support}, confidence={confidence}, lift={lift}")
-        cursor.execute(sql, (itemset_a, itemset_b, support, confidence, lift))
-    except Exception as e:
-        print(f"❌ SQL 실행 오류: {e}")
+
+
+    cursor.execute("DELETE FROM association_rules WHERE period_label = %s", (period_label,))
+
+    # (key, value) => (selected_rule, (s,c,...)) =>  ('감자칩', '콜라'): (0.126, 0.437, 1.509, '감자칩', '콜라'),
+    for selected_rule, (support, confidence, lift,itemset_a, itemset_b) in unique_rules.items():
+        sql = """
+                            INSERT INTO association_rules 
+                                (itemset_a, itemset_b, support, confidence, lift, period_label)
+                            VALUES 
+                                (%s, %s, %s, %s, %s, %s)
+                    """
+
+
+        try:
+            print(f"🚀 INSERT: {itemset_a} -> {itemset_b} [{period_label}], support={support}, confidence={confidence}, lift={lift}")
+            cursor.execute(sql, (itemset_a, itemset_b, support, confidence, lift, period_label))
+        except Exception as e:
+            print(f"❌ SQL 실행 오류: {e}")
+
+# analyze_def('2024', "YEAR(sale_date) = 2024")
+# analyze_def('2025', "YEAR(sale_date) = 2025")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-01'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-02'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-03'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-04'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-05'")
+
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-06'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-07'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-08'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-09'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-10'")
+
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-11'")
+analyze_def('2024', "DATE_FORMAT(sale_date, '%Y-%m') = '2024-12'")
+
+
+
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-01'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-02'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-03'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-04'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-05'")
+
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-06'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-07'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-08'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-09'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-10'")
+
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-11'")
+analyze_def('2025', "DATE_FORMAT(sale_date, '%Y-%m') = '2025-12'")
+
 
 
 # 5) 커밋 & DB 연결 종료
