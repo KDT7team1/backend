@@ -30,6 +30,6 @@ public class AssociationRules {
 	@Column(updatable = false)
 	LocalDateTime created_at;  // 상품 수정 시간
 
-
+	private String periodLabel;
 
 }
