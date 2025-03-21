@@ -51,4 +51,21 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         return monthlyDTO;
     }
+
+    @Override
+    public List<SalesMonthlyDTO> getMonthlySalesByYear(String year) {
+        // 월별 매출 데이터 가져오기
+        List<Object[]> yearlyList = salesMonthlyRepository.getMonthlySalesByYear(year);
+
+        List<SalesMonthlyDTO> monthlyList = yearlyList.stream().map(s -> {
+            SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .salesMonth((String) s[0])
+                    .monthlyPrice((Long) s[1])
+                    .monthlyAmount((Long) s[2])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return monthlyList;
+    }
 }

@@ -1,15 +1,12 @@
 package com.exam.goods;
 
-import com.exam.Inventory.Inventory;
 import com.exam.Inventory.InventoryRepository;
+import com.exam.category.Category;
+import com.exam.category.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.exam.goods.Goods;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,8 +50,7 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsList;
     }
 
-
-    // 2. 상품 상세보기
+    // 2. 상품 상제보기
     @Override
     public GoodsDTO findById(Long id){
         Goods goods =  goodsRepository.findById(id).orElse(null);
@@ -128,7 +124,7 @@ public class GoodsServiceImpl implements GoodsService {
     //상품 저장
     @Override
     public void save(GoodsDTO dto) {
-        System.out.println("GoodsDTO2:" + dto); //GoodsDTO2가 맞는지?
+        System.out.println("GoodsDTO2:" + dto);
         if (dto.getCategory_id() == null) {
             throw new IllegalArgumentException("category_id는 null이 될 수 없습니다.");
         }
@@ -154,14 +150,22 @@ public class GoodsServiceImpl implements GoodsService {
         goodsRepository.save(goodsEntity);
     }
 
-    @Override
-    public void delete(Long goodsId) {
-        goodsRepository.deleteById(goodsId);
-        System.out.println("상품 삭제 완료: " + goodsId);
-    }
+    //상품 조회
+//    @Override
+//    public GoodsDTO findById(Long goodsId) {
+//
+//        GoodsEntity entity = goodsRepository.findById(goodsId)
+//                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다. ID: " + goodsId));
+//
+//         return GoodsDTO.builder()
+//                    .goods_id(entity.getGoods_id())
+//                    .category_id(entity.getCategory().getCategory_id())
+//                    .goods_name(entity.getGoods_name())
+//                    .goods_price(entity.getGoods_price())
+//                    .goods_description(entity.getGoods_description())
+//                    .goods_stock(entity.getGoods_stock())
+//                    .goods_image(entity.getGoods_image())
+//                    .build();
+//        }
 
 }
-
-
-
-

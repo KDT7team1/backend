@@ -16,4 +16,5 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     @Query("select i from Inventory i order by i.goods.goods_id ASC, i.expirationDate ASC")
     List<Inventory> findAll();
+
 }

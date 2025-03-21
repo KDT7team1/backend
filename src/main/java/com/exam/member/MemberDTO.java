@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @ToString
-@Builder
+//@Builder
 public class MemberDTO {
 
     Long memberNo;          // 회원번호
@@ -22,13 +22,13 @@ public class MemberDTO {
     @NotBlank(message = "비밀번호는 필수 입력값입니다.")
     String memberPasswd;    // 비밀번호
 
-    String memberUsername;  // 사용자 이름
-    String memberGender;    // 성별
-    String memberNickname;  // 닉네임
-    String memberPhone;     // 전화번호
-    LocalDate memberBirthdate;      // 생년월일
-    String memberRole;      // 회원타입 (USER/ADMIN)
-    String memberAddress;   // 주소
-    LocalDateTime memberCreatedAt;  // 가입일
+//    String memberUsername;  // 사용자 이름
+//    String memberGender;    // 성별
+//    String memberNickname;  // 닉네임
+//    String memberPhone;     // 전화번호
+//    LocalDate memberBirthdate;      // 생년월일
+//    String memberRole;      // 회원타입 (USER/ADMIN)
+//    String memberAddress;   // 주소
+//    LocalDateTime memberCreatedAt;  // 가입일
 
 }

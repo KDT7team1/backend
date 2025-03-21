@@ -7,7 +7,7 @@
 //import com.exam.cartAnalysis.repository.SaleDataRepository;
 //import com.exam.goods.Goods;
 //import com.exam.goods.GoodsRepository;
-//import com.exam.member.MemberEntity;
+//import com.exam.member.Member;
 //import com.exam.member.MemberRepository;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.CommandLineRunner;
@@ -183,7 +183,7 @@
 //
 //            // 🔹 주문 생성
 //            Orders order = new Orders();
-//            MemberEntity member = memberRepo.findById(1L + random.nextInt(100))
+//            Member member = memberRepo.findById(1L + random.nextInt(100))
 //                    .orElseThrow(() -> new RuntimeException("멤버 데이터를 먼저 삽입하세요"));
 //            order.setMember(member);
 //            order.setOrdersDate(currentDateTime);

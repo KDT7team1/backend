@@ -66,4 +66,20 @@ public class SalesDailyServiceImpl implements SalesDailyService{
         return dailyDTO;
     }
 
+    @Override
+    public List<SalesDailyDTO> getDailySalesByMonth(String month) {
+        // 일별 매출 데이터 가져오기
+        List<Object[]> monthlyList = salesDailyRepository.getDailySalesByMonth(month);
+
+        List<SalesDailyDTO> dailyList = monthlyList.stream().map(d -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .salesDate((LocalDate)d[0])
+                    .dailyPrice((Long)d[1])
+                    .dailyAmount((Long)d[2])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return dailyList;
+    }
 }
