@@ -17,4 +17,5 @@ public interface MemberService {
 //    boolean login(String memberId, String memberPasswd);
 
     void logout(HttpServletRequest request, HttpServletResponse response);
+
 }
