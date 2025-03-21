@@ -43,7 +43,6 @@ public class InventoryServiceImpl implements InventoryService {
         return inventoryList;
     }
 
-
     // 2. 특정 상품의 재고 정보를 조회
     @Override
     public InventoryDTO getInventory(Long batchId) {
@@ -81,12 +80,10 @@ public class InventoryServiceImpl implements InventoryService {
 
             updateGoodsStock(goodsId);
 
-        }else {
+        } else {
             throw new RuntimeException("해당 배치를 찾을 수 없습니다.");
         }
-
     }
-
 
     // 상품 재고 수량 변경 (업데이트) => 재고 테이블도 동시에 수정됨
     @Override
@@ -122,7 +119,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         long remainingStock = reduceStock;
 
-        for(Inventory inventory : list) {
+        for (Inventory inventory : list) {
             if(remainingStock  < 0) break;
 
             // 현재 수량이 더 많은 경우에는 그냥 빼면 됨
@@ -137,17 +134,15 @@ public class InventoryServiceImpl implements InventoryService {
             }
             inventoryRepository.save(inventory);
         }
-
     }
 
     /* 재고 증가 로직 : 새 배치 단위로 추가해야됨 */
     @Override
     @Transactional
-    public void addStock(Long goodsId, Long addStock, LocalDateTime expirationDate)
-    {
+    public void addStock(Long goodsId, Long addStock, LocalDateTime expirationDate) {
         Optional<Goods> goodsOpt = goodsRepository.findById(goodsId);
 
-        if(goodsOpt.isPresent()){
+        if (goodsOpt.isPresent()) {
             Goods goods = goodsOpt.get();
 
             Inventory newInventory = new Inventory();
@@ -159,7 +154,6 @@ public class InventoryServiceImpl implements InventoryService {
 
             inventoryRepository.save(newInventory);
 
-
             long updatedTotalStock  = inventoryRepository.findByGoodsId(goodsId)
                     .stream()
                     .mapToLong(Inventory::getStockQuantity)
@@ -168,10 +162,9 @@ public class InventoryServiceImpl implements InventoryService {
             goods.setGoods_stock(updatedTotalStock ); // 전달받은 재고로 수정하기
             goodsRepository.save(goods);
 
-
             System.out.println("새로운 배치 추가 완료: " + addStock);
             System.out.println("상품 ID " + goodsId + " 의 총 재고 업데이트 완료: " + updatedTotalStock);
-        }else {
+        } else {
             throw new RuntimeException("해당 상품을 찾을 수 없습니다.");
         }
 

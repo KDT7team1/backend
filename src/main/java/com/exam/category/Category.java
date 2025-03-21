@@ -1,5 +1,6 @@
-package com.exam.goods;
+package com.exam.category;
 
+import com.exam.goods.Goods;
 import jakarta.persistence.*;
 import lombok.*;
 

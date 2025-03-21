@@ -1,6 +1,8 @@
 package com.exam.goods;
 
 import com.exam.Inventory.Inventory;
+import com.exam.category.Category;
+import com.exam.category.SubCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,7 +39,6 @@ public class Goods {
     String goods_description; // 상품 설명
     Long goods_stock;         // 상품 재고
     String goods_image;       // 상품 이미지
-
 
 
     @CreationTimestamp

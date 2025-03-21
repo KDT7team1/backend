@@ -1,6 +1,5 @@
 package com.exam.Inventory;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +27,11 @@ public class InventoryController {
     public ResponseEntity<InventoryDTO> getInventory(@PathVariable Long batchId){
         InventoryDTO dto =  inventoryService.getInventory(batchId);
 
-        if(dto == null){
+        if (dto == null) {
             return ResponseEntity.status(404).body(null);
         }
         return ResponseEntity.status(200).body(dto);
     }
-
 
     // 3. 재고 수량 업데이트 ( 배치별 )
     @PutMapping("/update/{batchId}/{newStock}")
@@ -45,9 +43,6 @@ public class InventoryController {
         return ResponseEntity.ok("배치 " + batchId + "의 재고가 " + newStock + "으로 변경되었습니다.");
     }
 
-
-
-
     // 3. 상품 재고 수정하기
     @PutMapping("/updateStock/{goodsId}")
     public ResponseEntity<String> updateStock(@PathVariable Long goodsId, @RequestParam("newStock") Long newStock) {
@@ -56,7 +51,6 @@ public class InventoryController {
 
         return ResponseEntity.ok("Stock updated successfully");
     }
-
 
     // 상품 입고 로직
     @PostMapping("/addStock")
@@ -74,11 +68,9 @@ public class InventoryController {
     public ResponseEntity<String> reduceStock(
             @RequestParam Long goodsId,
             @RequestParam Long reduceStock
-
     ){
         inventoryService.reduceStock(goodsId, reduceStock);
         return ResponseEntity.ok("재고 감소 완료");
     }
-
 
 }

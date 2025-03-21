@@ -85,5 +85,5 @@ public class GoodsController {
         goodsService.save(dto);
 
         return ResponseEntity.ok("상품이 저장되었습니다.");
-
+    }
 }

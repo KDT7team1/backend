@@ -36,4 +36,5 @@ public class Inventory {
 
     @Column(name = "expiration_date")
     LocalDateTime expirationDate;
+
 }
