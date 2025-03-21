@@ -21,10 +21,11 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         List<SalesMonthlyDTO> monthlyDTO = monthly.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
-                    .saleMonth(s.monthlyCompositeKey.getSaleMonth())
-                    .salesCategory(s.monthlyCompositeKey.getSalesCategory())
+                    .salesMonth(s.monthlyCompositeKey.getSalesMonth())
+                    .categoryId(s.monthlyCompositeKey.getCategoryId())
+                    .subCategoryId(s.monthlyCompositeKey.getSubCategoryId())
+                    .monthlyPrice(s.getMonthlyPrice())
                     .monthlyAmount(s.getMonthlyAmount())
-                    .monthlyOrders(s.getMonthlyOrders())
                     .build();
             return dto;
         }).collect(Collectors.toList());
@@ -39,14 +40,32 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         List<SalesMonthlyDTO> monthlyDTO = monthlyList.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
-                    .saleMonth(s.monthlyCompositeKey.getSaleMonth())
-                    .salesCategory(s.monthlyCompositeKey.getSalesCategory())
+                    .salesMonth(s.monthlyCompositeKey.getSalesMonth())
+                    .categoryId(s.monthlyCompositeKey.getCategoryId())
+                    .subCategoryId(s.monthlyCompositeKey.getSubCategoryId())
+                    .monthlyPrice(s.getMonthlyPrice())
                     .monthlyAmount(s.getMonthlyAmount())
-                    .monthlyOrders(s.getMonthlyOrders())
                     .build();
             return dto;
         }).collect(Collectors.toList());
 
         return monthlyDTO;
+    }
+
+    @Override
+    public List<SalesMonthlyDTO> getMonthlySalesByYear(String year) {
+        // 월별 매출 데이터 가져오기
+        List<Object[]> yearlyList = salesMonthlyRepository.getMonthlySalesByYear(year);
+
+        List<SalesMonthlyDTO> monthlyList = yearlyList.stream().map(s -> {
+            SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .salesMonth((String) s[0])
+                    .monthlyPrice((Long) s[1])
+                    .monthlyAmount((Long) s[2])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return monthlyList;
     }
 }

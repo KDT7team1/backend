@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class SalesDailyServiceImpl implements SalesDailyService{
@@ -23,13 +24,62 @@ public class SalesDailyServiceImpl implements SalesDailyService{
             SalesDailyDTO dto = SalesDailyDTO.builder()
                     .salesDate(s.dailyCompositeKey.getSalesDate())
                     .salesHour(s.dailyCompositeKey.getSalesHour())
-                    .salesCategory(s.dailyCompositeKey.getSalesCategory())
-                    .totalAmount(s.getTotalAmount())
-                    .totalOrders(s.getTotalOrders())
+                    .categoryId(s.dailyCompositeKey.getSubCategoryId())
+                    .dailyPrice(s.getDailyPrice())
+                    .dailyAmount(s.getDailyAmount())
                     .build();
             return dto;
         }).collect(Collectors.toList());
         return dailyDTO;
     }
 
+    @Override
+    public List<SalesDailyDTO> getHourlySalesByDate(LocalDate date) {
+        // 0 ~ 23시까지의 모든 시간대 배열
+        List<Integer> allHours = IntStream.range(0, 24).boxed().collect(Collectors.toList());
+
+        // 시간대별 매출 데이터 가져오기
+        List<Object[]> dailyList = salesDailyRepository.getHourlySalesByDate(date);
+
+        // salesHourly 데이터가 없으면 0으로 채워줌
+        List<SalesDailyDTO> dailyDTO = allHours.stream().map(hour -> {
+            // 해당 hour에 대한 데이터 찾기
+            Object[] matchingRow = dailyList.stream().filter(row ->
+                    ((Integer) row[0]).equals(hour)).findFirst().orElse(null);
+
+            // 매칭되는 데이터가 없으면 0으로 채움
+            if (matchingRow != null) {
+                return SalesDailyDTO.builder()
+                        .salesHour(hour)
+                        .dailyPrice(((Number) matchingRow[1]).longValue())
+                        .dailyAmount(((Number) matchingRow[2]).longValue())
+                        .build();
+            } else {
+                return SalesDailyDTO.builder()
+                        .salesHour(hour)
+                        .dailyPrice(0L)
+                        .dailyAmount(0L)
+                        .build();
+            }
+        }).collect(Collectors.toList());
+
+        return dailyDTO;
+    }
+
+    @Override
+    public List<SalesDailyDTO> getDailySalesByMonth(String month) {
+        // 일별 매출 데이터 가져오기
+        List<Object[]> monthlyList = salesDailyRepository.getDailySalesByMonth(month);
+
+        List<SalesDailyDTO> dailyList = monthlyList.stream().map(d -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .salesDate((LocalDate)d[0])
+                    .dailyPrice((Long)d[1])
+                    .dailyAmount((Long)d[2])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return dailyList;
+    }
 }

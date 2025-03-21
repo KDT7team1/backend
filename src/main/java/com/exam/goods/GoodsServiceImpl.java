@@ -1,5 +1,8 @@
 package com.exam.goods;
 
+import com.exam.Inventory.InventoryRepository;
+import com.exam.category.Category;
+import com.exam.category.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +15,15 @@ public class GoodsServiceImpl implements GoodsService {
 
     GoodsRepository goodsRepository;
     CategoryRepository categoryRepository;
+    InventoryRepository inventoryRepository;
 
-    public GoodsServiceImpl(GoodsRepository goodsRepository, CategoryRepository categoryRepository) {
+    public GoodsServiceImpl(GoodsRepository goodsRepository,
+                            CategoryRepository categoryRepository,
+                            InventoryRepository inventoryRepository) {
+        super();
         this.goodsRepository = goodsRepository;
         this.categoryRepository = categoryRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     // 1. 전체 목록 조회
@@ -41,7 +49,6 @@ public class GoodsServiceImpl implements GoodsService {
                 }).collect(Collectors.toList());
         return goodsList;
     }
-
 
     // 2. 상품 상제보기
     @Override
@@ -138,7 +145,7 @@ public class GoodsServiceImpl implements GoodsService {
                 .goods_updated_at(dto.getGoods_updated_at())
                 .goods_views(dto.getGoods_views())
                 .goods_orders(dto.getGoods_orders())
-                 .build();
+                .build();
 
         goodsRepository.save(goodsEntity);
     }
@@ -161,9 +168,4 @@ public class GoodsServiceImpl implements GoodsService {
 //                    .build();
 //        }
 
-
-    }
-
-
-
-
+}

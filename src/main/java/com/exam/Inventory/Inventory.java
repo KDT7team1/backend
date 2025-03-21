@@ -1,5 +1,6 @@
 package com.exam.Inventory;
 
+import com.exam.goods.Goods;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,11 +18,12 @@ public class Inventory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inventory_id")
-    Long inventoryId;   // 재고 ID
+    @Column(name = "batch_id")
+    Long batchId;   // 재고 ID
 
-    @Column(name = "goods_id", nullable = false)
-    Long goodsId;       // 상품번호
+    @ManyToOne
+    @JoinColumn(name = "goods_id")
+    Goods goods;
 
     @Column(name = "stock_quantity", nullable = false)
     Long stockQuantity; // 재고수량
@@ -31,5 +33,8 @@ public class Inventory {
 
     @Column(name = "stock_updated_at")
     LocalDateTime stockUpdateAt;    // 재고 업데이트 시간
+
+    @Column(name = "expiration_date")
+    LocalDateTime expirationDate;
 
 }

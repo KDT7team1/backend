@@ -1,4 +1,4 @@
-package com.exam.goods;
+package com.exam.category;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +19,7 @@ public class SubCategory {
 
 	@ManyToOne
 			@JoinColumn(name="category_id")
-	Category category;
+    Category category;
 
 	String sub_name;
 

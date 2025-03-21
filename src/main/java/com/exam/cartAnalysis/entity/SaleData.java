@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="sale_data")
 public class SaleData {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long salesId;

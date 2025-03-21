@@ -1,11 +1,15 @@
 package com.exam.goods;
 
+import com.exam.Inventory.Inventory;
+import com.exam.category.Category;
+import com.exam.category.SubCategory;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -37,7 +41,6 @@ public class Goods {
     String goods_image;       // 상품 이미지
 
 
-
     @CreationTimestamp
     @Column(updatable = false)
     LocalDateTime goods_created_at;  // 상품 등록 시간
@@ -48,5 +51,8 @@ public class Goods {
 
     Long goods_views;  // 상품 조회수
     Long goods_orders; // 상품 주문수
+
+    @OneToMany(mappedBy = "goods")
+    private List<Inventory> inventoryList;
 
 }

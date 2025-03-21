@@ -1,6 +1,5 @@
 package com.exam.cartAnalysis.controller;
 
-
 import com.exam.cartAnalysis.entity.AssociationRules;
 import com.exam.cartAnalysis.repository.AssociationRulesRepository;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +20,10 @@ public class AssociationRulesController {
 		this.associationRulesRepository = associationRulesRepository;
 	}
 
-
 	@GetMapping
 	public ResponseEntity<List<AssociationRules>> getAllRules(){
 		List<AssociationRules> list = associationRulesRepository.findAll();
 		return ResponseEntity.status(200).body(list);
 	}
-
-
-
 
 }

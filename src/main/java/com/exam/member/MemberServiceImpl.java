@@ -3,10 +3,8 @@ package com.exam.member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public int save(MemberDTO dto) {
         // 이미 존재하는 memberId인지 확인
-        Optional<MemberEntity> existingMember = memberRepository.findByMemberId(dto.getMemberId());
+        Optional<Member> existingMember = memberRepository.findByMemberId(dto.getMemberId());
         if (existingMember.isPresent()) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
@@ -35,7 +33,7 @@ public class MemberServiceImpl implements MemberService {
         dto.setMemberPasswd(dto.getMemberPasswd());  // 암호화된 비밀번호를 DTO에 설정
 
         // MemberDTO를 MemberEntity로 변환하여 저장
-        MemberEntity member = MemberEntity.builder()
+        Member member = Member.builder()
         					 .memberId(dto.getMemberId())
         					 .memberPasswd(dto.getMemberPasswd())
         					 .build();
@@ -48,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDTO findByMemberId(String memberId) {
-        Optional<MemberEntity> member = memberRepository.findByMemberId(memberId);
+        Optional<Member> member = memberRepository.findByMemberId(memberId);
         if (member.isEmpty()) {
             return null; // 사용자 존재하지 않으면 null 반환
         }

@@ -29,9 +29,4 @@ public interface GoodsService {
     // 상품 삭제
     // void delete(Long goodsId);
 
-
-
-
-    }
-
-
+}
