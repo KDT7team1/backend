@@ -33,12 +33,14 @@ public class SalesDailyServiceImpl implements SalesDailyService{
             // 매칭되는 데이터가 없으면 0으로 채움
             if (matchingRow != null) {
                 return SalesDailyDTO.builder()
+                        .salesDate(date)
                         .salesHour(hour)
                         .dailyPrice(((Number) matchingRow[1]).longValue())
                         .dailyAmount(((Number) matchingRow[2]).longValue())
                         .build();
             } else {
                 return SalesDailyDTO.builder()
+                        .salesDate(date)
                         .salesHour(hour)
                         .dailyPrice(0L)
                         .dailyAmount(0L)
