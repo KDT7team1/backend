@@ -17,4 +17,15 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("select i from Inventory i order by i.goods.goods_id ASC, i.expirationDate ASC")
     List<Inventory> findAll();
 
+    @Query("""
+    SELECT i FROM Inventory i
+    WHERE i.expirationDate <= CURRENT_DATE
+      AND i.stockQuantity > 0
+      AND NOT EXISTS (
+          SELECT 1 FROM Disposal d WHERE d.inventory.batchId = i.batchId
+      )
+    ORDER BY i.expirationDate ASC
+    """)
+    List<Inventory> findExpiredButNotDisposed();
+
 }
