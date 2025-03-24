@@ -68,4 +68,38 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         return monthlyList;
     }
+
+    @Override
+    public List<SalesMonthlyDTO> getCategorySalesByMonth(String month) {
+        // 월간 카테고리 대분류별 데이터 가져오기
+        List<Object[]> categoryList = salesMonthlyRepository.getCategorySalesByMonth(month);
+
+        List<SalesMonthlyDTO> monthlyList = categoryList.stream().map(s -> {
+            SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .categoryId((Long) s[0])
+                    .monthlyPrice((Long) s[1])
+                    .monthlyAmount((Long) s[2])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return monthlyList;
+    }
+
+    @Override
+    public List<SalesMonthlyDTO> getSubCategorySalesByMonth(String month, Long categoryId) {
+        // 월간 카테고리 소분류별 데이터 가져오기
+        List<Object[]> categoryList = salesMonthlyRepository.getSubCategorySalesByMonth(month, categoryId);
+
+        List<SalesMonthlyDTO> monthlyList = categoryList.stream().map(s -> {
+            SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .categoryId((Long) s[0])
+                    .subCategoryId((Long) s[1])
+                    .monthlyPrice((Long) s[2])
+                    .monthlyAmount((Long) s[3])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+        return monthlyList;
+    }
 }

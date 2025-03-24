@@ -11,10 +11,6 @@ import java.util.List;
 @Repository
 public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCompositeKey> {
 
-    // 선택한 날짜의 시간별 + 카테고리별 매출 통계
-    @Query("SELECT s FROM SalesDaily s WHERE s.dailyCompositeKey.salesDate = :date")
-    List<SalesDaily> findBySalesDate(@Param("date") LocalDate date);
-
     // 선택한 날짜의 시간별 매출 통계
     @Query("""
             SELECT
@@ -40,4 +36,34 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             ORDER BY s.dailyCompositeKey.salesDate
             """)
     List<Object[]> getDailySalesByMonth(@Param("month") String month);
+
+    // 선택한 날짜의 카테고리별 매출통계 - 대분류 조회
+    @Query("""
+            SELECT
+                s.dailyCompositeKey.categoryId as categoryId,
+                SUM(s.dailyPrice) as totalPrice,
+                SUM(s.dailyAmount) as totalAmount
+            FROM SalesDaily s
+            WHERE s.dailyCompositeKey.salesDate = :date
+            GROUP BY s.dailyCompositeKey.categoryId
+            ORDER BY s.dailyCompositeKey.categoryId
+            """)
+    List<Object[]> getCategorySalesByDate(@Param("date") LocalDate date);
+
+    // 선택한 날짜의 카테고리별 매출통계 - 소분류 조회
+    @Query("""
+            SELECT 
+                s.dailyCompositeKey.categoryId as categoryId,
+                s.dailyCompositeKey.subCategoryId as subCategoryId,
+                SUM(s.dailyPrice) as totalPrice,
+                SUM(s.dailyAmount) as totalAmount
+            FROM SalesDaily s
+            WHERE s.dailyCompositeKey.salesDate = :date
+            AND s.dailyCompositeKey.categoryId = :categoryId
+            GROUP BY s.dailyCompositeKey.categoryId, s.dailyCompositeKey.subCategoryId
+            ORDER BY s.dailyCompositeKey.subCategoryId
+            """)
+    List<Object[]> getSubCategorySalesByDate(@Param("date") LocalDate date, @Param("categoryId") Long categoryId);
 }
+
+
