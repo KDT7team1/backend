@@ -87,7 +87,7 @@ public class SalesController {
             log.info("LOGGER: 조회할 날짜: {}", searchDate);
 
             List<SalesDailyDTO> salesDaily = salesDailyService.getCategorySalesByDate(searchDate);
-            log.info("LOGGER: salesDaily 정보 획득: {}", salesDaily);
+            log.info("LOGGER: salesDaily 카테고리 대분류 정보 획득: {}", salesDaily);
 
             return ResponseEntity.status(200).body(salesDaily);
         } catch (DateTimeException e) {
@@ -109,7 +109,7 @@ public class SalesController {
             log.info("LOGGER: 조회할 날짜: {}, 조회할 대분류: {}", searchDate, subCategory);
 
             List<SalesDailyDTO> salesDaily = salesDailyService.getSubCategorySalesByDate(searchDate, subCategory);
-            log.info("LOGGER: salesDaily 정보 획득: {}", salesDaily);
+            log.info("LOGGER: salesDaily 카테고리 소분류 정보 획득: {}", salesDaily);
 
             return ResponseEntity.status(200).body(salesDaily);
         } catch (DateTimeException e) {
@@ -125,7 +125,7 @@ public class SalesController {
         log.info("LOGGER: 조회할 월: {}", salesMonth);
 
         List<SalesMonthlyDTO> salesMonthly = salesMonthlyService.getCategorySalesByMonth(salesMonth);
-        log.info("LOGGER: salesMonth 정보 획득: {}", salesMonthly);
+        log.info("LOGGER: salesMonth 카테고리 대분류 정보 획득: {}", salesMonthly);
 
         return ResponseEntity.status(200).body(salesMonthly);
     } // end findBySalesMonth
@@ -137,7 +137,7 @@ public class SalesController {
         log.info("LOGGER: 조회할 월: {}, 조회할 카테고리: {}", salesMonth, categoryId);
 
         List<SalesMonthlyDTO> salesMonthly = salesMonthlyService.getSubCategorySalesByMonth(salesMonth, categoryId);
-        log.info("LOGGER: salesMonth 정보 획득: {}", salesMonthly);
+        log.info("LOGGER: salesMonth 카테고리 소분류 정보 획득: {}", salesMonthly);
 
         return ResponseEntity.status(200).body(salesMonthly);
     } // end getSubCategorySalesByMonth
@@ -175,7 +175,7 @@ public class SalesController {
     } // end getSalesDifference
 
     @GetMapping("/salesMonthlyDiff/{targetMonth}")
-    public ResponseEntity<Map<String, List<SalesMonthlyDTO>>> getMontlySalesDiff(@PathVariable String targetMonth) {
+    public ResponseEntity<Map<String, List<SalesMonthlyDTO>>> getMonthlySalesDiff(@PathVariable String targetMonth) {
         log.info("LOGGER: 이번 달과 월간 매출 비교를 요청함");
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
