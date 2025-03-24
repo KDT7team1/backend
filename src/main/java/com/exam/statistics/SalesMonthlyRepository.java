@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface SalesMonthlyRepository extends JpaRepository<SalesMonthly, MonthlyCompositeKey> {
+
     // 선택한 월의 매출 통계
     @Query("SELECT s FROM SalesMonthly s WHERE s.monthlyCompositeKey.salesMonth = :salesMonth")
     List<SalesMonthly> findBySalesMonth(String salesMonth);
@@ -57,4 +58,6 @@ public interface SalesMonthlyRepository extends JpaRepository<SalesMonthly, Mont
             ORDER BY s.monthlyCompositeKey.subCategoryId
             """)
     List<Object[]> getSubCategorySalesByMonth(@Param("month") String month, @Param("categoryId") Long categoryId);
+
+
 }

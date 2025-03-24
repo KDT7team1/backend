@@ -21,10 +21,12 @@ public class SalesController {
 
     SalesDailyService salesDailyService;
     SalesMonthlyService salesMonthlyService;
+    SalesYearlyService salesYearlyService;
 
-    public SalesController(SalesDailyService salesDailyService, SalesMonthlyService salesMonthlyService) {
+    public SalesController(SalesDailyService salesDailyService, SalesMonthlyService salesMonthlyService, SalesYearlyService salesYearlyService) {
         this.salesDailyService = salesDailyService;
         this.salesMonthlyService = salesMonthlyService;
+        this.salesYearlyService = salesYearlyService;
     }
 
     // 시간 - 일 - 월별 매출조회
@@ -141,6 +143,30 @@ public class SalesController {
 
         return ResponseEntity.status(200).body(salesMonthly);
     } // end getSubCategorySalesByMonth
+
+    // 연간 - 카테고리 대분류 매출 조회
+    @GetMapping("/salesYearlyCategory/{salesYear}")
+    public ResponseEntity<List<SalesYearlyDTO>> getCategorySalesByYear(@PathVariable String salesYear) {
+        log.info("LOGGER: 연간 카테고리 대분류 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 연도: {}", salesYear);
+
+        List<SalesYearlyDTO> salesYearly = salesYearlyService.getCategorySalesByYear(salesYear);
+        log.info("LOGGER: salesYearly 카테고리 대분류 정보 획득: {}", salesYearly);
+
+        return ResponseEntity.status(200).body(salesYearly);
+    }
+
+    // 연간 - 카테고리 소분류 매출 조회
+    @GetMapping("/salesYearlyCategory/{salesYear}/{categoryId}")
+    public ResponseEntity<List<SalesYearlyDTO>> getSubCategorySalesByYear(@PathVariable String salesYear, @PathVariable Long categoryId) {
+        log.info("LOGGER: 연간 카테고리 소분류 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 연도: {}, 조회할 카테고리: {}", salesYear, categoryId);
+
+        List<SalesYearlyDTO> salesYearly = salesYearlyService.getSubCategorySalesByYear(salesYear, categoryId);
+        log.info("LOGGER: salesMonth 카테고리 소분류 정보 획득: {}", salesYearly);
+
+        return ResponseEntity.status(200).body(salesYearly);
+    }
 
 
     //  매출 비교
