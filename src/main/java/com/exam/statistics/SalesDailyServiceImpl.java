@@ -17,23 +17,6 @@ public class SalesDailyServiceImpl implements SalesDailyService{
     }
 
     @Override
-    public List<SalesDailyDTO> findBySalesDate(LocalDate searchDate) {
-        List<SalesDaily> dailyList = salesDailyRepository.findBySalesDate(searchDate);
-
-        List<SalesDailyDTO> dailyDTO = dailyList.stream().map(s -> {
-            SalesDailyDTO dto = SalesDailyDTO.builder()
-                    .salesDate(s.dailyCompositeKey.getSalesDate())
-                    .salesHour(s.dailyCompositeKey.getSalesHour())
-                    .categoryId(s.dailyCompositeKey.getSubCategoryId())
-                    .dailyPrice(s.getDailyPrice())
-                    .dailyAmount(s.getDailyAmount())
-                    .build();
-            return dto;
-        }).collect(Collectors.toList());
-        return dailyDTO;
-    }
-
-    @Override
     public List<SalesDailyDTO> getHourlySalesByDate(LocalDate date) {
         // 0 ~ 23시까지의 모든 시간대 배열
         List<Integer> allHours = IntStream.range(0, 24).boxed().collect(Collectors.toList());
@@ -68,7 +51,7 @@ public class SalesDailyServiceImpl implements SalesDailyService{
 
     @Override
     public List<SalesDailyDTO> getDailySalesByMonth(String month) {
-        // 일별 매출 데이터 가져오기
+        // 선택한 월의 일별 매출 데이터 가져오기
         List<Object[]> monthlyList = salesDailyRepository.getDailySalesByMonth(month);
 
         List<SalesDailyDTO> dailyList = monthlyList.stream().map(d -> {
@@ -82,4 +65,43 @@ public class SalesDailyServiceImpl implements SalesDailyService{
 
         return dailyList;
     }
+
+    @Override
+    public List<SalesDailyDTO> getCategorySalesByDate(LocalDate date) {
+        // 해당하는 날짜의 카테고리별 매출 데이터 - 대분류
+        List<Object[]> categoryList = salesDailyRepository.getCategorySalesByDate(date);
+
+        List<SalesDailyDTO> list = categoryList.stream().map(c -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .salesDate(date)
+                    .categoryId((Long)c[0])
+                    .dailyPrice((Long)c[1])
+                    .dailyAmount((Long)c[2])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return list;
+    }
+
+    @Override
+    public List<SalesDailyDTO> getSubCategorySalesByDate(LocalDate date, Long categoryId) {
+        // 해당하는 날짜와 대분류의 소분류별 매출 데이터
+        List<Object[]> categoryList = salesDailyRepository.getSubCategorySalesByDate(date, categoryId);
+
+        List<SalesDailyDTO> list = categoryList.stream().map(c -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .salesDate(date)
+                    .categoryId((Long) c[0])
+                    .subCategoryId((Long) c[1])
+                    .dailyPrice((Long) c[2])
+                    .dailyAmount((Long) c[3])
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return list;
+    }
+
+
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface SalesMonthlyRepository extends JpaRepository<SalesMonthly, MonthlyCompositeKey> {
+
     // 선택한 월의 매출 통계
     @Query("SELECT s FROM SalesMonthly s WHERE s.monthlyCompositeKey.salesMonth = :salesMonth")
     List<SalesMonthly> findBySalesMonth(String salesMonth);
@@ -29,4 +30,34 @@ public interface SalesMonthlyRepository extends JpaRepository<SalesMonthly, Mont
             ORDER BY s.monthlyCompositeKey.salesMonth
             """)
     List<Object[]> getMonthlySalesByYear(@Param("year") String year);
+
+    // 월간 카테고리 대분류별 매출 통계
+    @Query("""
+            SELECT
+                s.monthlyCompositeKey.categoryId as categoryId,
+                SUM(s.monthlyPrice) as monthlyPrice,
+                SUM(s.monthlyAmount) as monthlyAmount
+            FROM SalesMonthly s
+            WHERE s.monthlyCompositeKey.salesMonth = :month
+            GROUP BY s.monthlyCompositeKey.categoryId
+            ORDER BY s.monthlyCompositeKey.categoryId
+            """)
+    List<Object[]> getCategorySalesByMonth(@Param("month") String month);
+
+    // 월간 카테고리 소분류별 매출 통계
+    @Query("""
+            SELECT
+                s.monthlyCompositeKey.categoryId as categoryId,
+                s.monthlyCompositeKey.subCategoryId as subCategoryId,
+                SUM(s.monthlyPrice) as monthlyPrice,
+                SUM(s.monthlyAmount) as monthlyAmount
+            FROM SalesMonthly s
+            WHERE s.monthlyCompositeKey.salesMonth = :month
+            AND s.monthlyCompositeKey.categoryId = :categoryId
+            GROUP BY s.monthlyCompositeKey.categoryId, s.monthlyCompositeKey.subCategoryId
+            ORDER BY s.monthlyCompositeKey.subCategoryId
+            """)
+    List<Object[]> getSubCategorySalesByMonth(@Param("month") String month, @Param("categoryId") Long categoryId);
+
+
 }
