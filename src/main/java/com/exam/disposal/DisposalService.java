@@ -21,7 +21,11 @@ public interface DisposalService {
     // 폐기처리 안 된 상품
     List<InventoryDTO> findExpiredButNotDisposed();
 
-    //
+    // 수동 폐기 처리
     @Transactional
     void manualDispose(List<Long> selectedBatchIds);
+
+    // 폐기통계 (월별/카테고리별)
+    List<DisposalStatsDTO> getDisposalStatsByMonth(int month, int year);
+
 }
