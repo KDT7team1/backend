@@ -168,57 +168,6 @@ public class SalesController {
         return ResponseEntity.status(200).body(salesYearly);
     }
 
-
-    //  매출 비교
-    @GetMapping("/salesDailyDiff/{targetDate}")
-    public ResponseEntity<Map<String, List<SalesDailyDTO>>> getDailySalesDiff(@PathVariable String targetDate) {
-        log.info("LOGGER: 오늘과 특정 날짜의 매출 비교를 요청함");
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        // 두 날짜의 매출 정보를 저장할 MAP
-        Map<String, List<SalesDailyDTO>> salesDiff = new HashMap<>();
-
-        try {
-            // 오늘 날짜의 매출 정보 획득
-            List<SalesDailyDTO> todaySales = salesDailyService.getHourlySalesByDate(today);
-            log.info("LOGGER: 오늘 날짜의 매출 정보 획득: {}", todaySales);
-
-            // 비교할 날짜의 매출 정보 획득
-            LocalDate target = LocalDate.parse(targetDate, formatter);
-
-            List<SalesDailyDTO> targetDateSales = salesDailyService.getHourlySalesByDate(target);
-            log.info("LOGGER: 비교할 날짜의 매출 정보 획득: {}", targetDateSales);
-
-            salesDiff.put("today", todaySales);
-            salesDiff.put("target", targetDateSales);
-
-            return ResponseEntity.status(200).body(salesDiff);
-        } catch (DateTimeException e) {
-            log.error("날짜 형식이 올바르지 않습니다.", e);
-            return ResponseEntity.badRequest().body(null);
-        }
-    } // end getSalesDifference
-
-    @GetMapping("/salesMonthlyDiff/{targetMonth}")
-    public ResponseEntity<Map<String, List<SalesMonthlyDTO>>> getMonthlySalesDiff(@PathVariable String targetMonth) {
-        log.info("LOGGER: 이번 달과 월간 매출 비교를 요청함");
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-
-        String thisMonth = today.format(formatter);
-        log.info("LOGGER: 이번 달: {}, 비교할 월: {}", thisMonth, targetMonth);
-
-        Map<String, List<SalesMonthlyDTO>> salesDiff = new HashMap<>();
-
-        List<SalesMonthlyDTO> thisMonthSales = salesMonthlyService.findBySalesMonth(thisMonth);
-        log.info("LOGGER: thisMonthSales 정보 획득: {}", thisMonthSales);
-        salesDiff.put("thisMonth", thisMonthSales);
-
-        List<SalesMonthlyDTO> targetMonthSales = salesMonthlyService.findBySalesMonth(targetMonth);
-        log.info("LOGGER: targetMonth 정보 획득: {}", targetMonthSales);
-        salesDiff.put("targetMonth", targetMonthSales);
-
-        return ResponseEntity.status(200).body(salesDiff);
-    } // end findBySalesMonth
+    // 매출 평균 조회 -> salesAnalysis/SalesAlertController
+//    public ResponseEntity<SalesDailyDTO>
 }

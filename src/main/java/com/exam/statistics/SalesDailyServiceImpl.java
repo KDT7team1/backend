@@ -105,5 +105,33 @@ public class SalesDailyServiceImpl implements SalesDailyService{
         return list;
     }
 
+    @Override
+    public SalesDailyDTO getAvgHourlySalesByDate(LocalDate startDate, LocalDate endDate) {
+        // 선택한 날짜 사이의 시간별 매출 평균 값
+        Object[] entityList = salesDailyRepository.getAvgHourlySalesByDate(startDate, endDate);
+
+        SalesDailyDTO dto = SalesDailyDTO.builder()
+                .salesHour((int) entityList[0])
+                .dailyPrice((Long) entityList[1])
+                .dailyAmount((Long) entityList[2])
+                .build();
+
+        return dto;
+    }
+
+    @Override
+    public SalesDailyDTO getAvgCategorySalesByDate(LocalDate startDate, LocalDate endDate) {
+        // 선택한 날짜 사이의 카테고리별 매출 평균 값
+        Object[] entityList = salesDailyRepository.getAvgCategorySalesByDate(startDate, endDate);
+
+        SalesDailyDTO dto = SalesDailyDTO.builder()
+                .categoryId((Long) entityList[0])
+                .subCategoryId((Long) entityList[1])
+                .dailyPrice((Long) entityList[2])
+                .dailyAmount((Long) entityList[3])
+                .build();
+
+        return dto;
+    }
 
 }
