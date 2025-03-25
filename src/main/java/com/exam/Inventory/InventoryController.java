@@ -73,4 +73,12 @@ public class InventoryController {
         return ResponseEntity.ok("재고 감소 완료");
     }
 
+    // 유통기한 만료 상품 조회
+    @GetMapping("/expiring-soon")
+    public ResponseEntity<List<InventoryDTO>>getExpiringSoonItems(){
+        List<InventoryDTO> list = inventoryService.getExpiringSoonItems();
+        return ResponseEntity.status(200).body(list);
+    }
+
+
 }

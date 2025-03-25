@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @Entity
 public class Disposal {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long disposal_id; // 상품 아이디
@@ -32,7 +31,6 @@ public class Disposal {
 
     Long disposed_quantity;
     String disposal_reason; // 상품 설명
-
 
     @CreationTimestamp
     @Column(updatable = false )
