@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -58,6 +59,5 @@ public interface SalesMonthlyRepository extends JpaRepository<SalesMonthly, Mont
             ORDER BY s.monthlyCompositeKey.subCategoryId
             """)
     List<Object[]> getSubCategorySalesByMonth(@Param("month") String month, @Param("categoryId") Long categoryId);
-
 
 }
