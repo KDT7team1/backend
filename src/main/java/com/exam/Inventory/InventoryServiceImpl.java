@@ -170,6 +170,24 @@ public class InventoryServiceImpl implements InventoryService {
 
     }
 
+    @Override
+    public List<InventoryDTO> getExpiringSoonItems() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime limit = now.plusDays(3); // 3일 더하기
+
+        List<Inventory> list = inventoryRepository.findExpiringSoonItems(now, limit);
+
+        return list.stream().map(i -> InventoryDTO.builder()
+                .batchId(i.getBatchId())
+                .goodsId(i.getGoods().getGoods_id())
+                .goodsName(i.getGoods().getGoods_name())
+                .expirationDate(i.getExpirationDate())
+                .stockQuantity(i.getStockQuantity())
+                .stockStatus(i.getStockStatus())
+                .build()
+        ).toList();
+
+    }
 
 
 }
