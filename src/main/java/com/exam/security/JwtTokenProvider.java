@@ -65,4 +65,9 @@ public class JwtTokenProvider {
         log.info("LOGGER: encodedtoken:{}", encodedtoken);
         return encodedtoken;
     }
+
+    public String getMemberIdFromToken(String token) {
+        return tokenService.getMemberIdFromToken(token);
+    }
+
 }
