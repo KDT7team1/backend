@@ -21,7 +21,8 @@ public class SalesAlert {
     Long alertId;
 
     @Column(name="trend_basis")
-    int trendBasis; // 7: 요일 기반, 30: 월별 계절 트렌드 기반
+    // 1: 저번 주 같은 요일 대비 | 7: 7일간 평균 | 30: 30일간 평균 대비
+    int trendBasis;
 
     @Column(name="alert_date")
     LocalDate alertDate;

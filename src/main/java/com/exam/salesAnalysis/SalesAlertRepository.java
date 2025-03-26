@@ -21,15 +21,15 @@ public interface SalesAlertRepository extends JpaRepository<SalesAlert, Long> {
     // 입력받은 날짜의 트렌드 기반 알림기록 조회 7: 단기 트렌드, 30: 장기 트렌드
     @Query("SELECT s FROM SalesAlert s WHERE s.trendBasis = :trendBasis AND s.alertDate = :alertDate ORDER BY s.alertId")
     List<SalesAlert> findByTrendBasis(@Param("alertDate") LocalDate alertDate, @Param("trendBasis") int trendBasis);
-
-    // 이상치 데이터 저장
-    void save(SalesAlertDTO salesAlertDTO);
-
+    
     // 사용자가 코멘트를 작성하거나 수정
     @Modifying
     @Query("UPDATE SalesAlert s SET s.userComment = :userComment WHERE s.alertId = :alertId")
     void updateUserComment(Long alertId, String userComment);
 
     // 이상치 기록 삭제
-    void deleteByAlertId(Long alertId);
+    @Modifying
+    @Query("DELETE FROM SalesAlert s WHERE s.alertId = :alertId")
+    void deleteByAlertId(@Param("alertId") Long alertId);
+
 }
