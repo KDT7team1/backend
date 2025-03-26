@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,5 +29,14 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     ORDER BY i.expirationDate ASC
     """)
     List<Inventory> findExpiredButNotDisposed();
+
+
+    @Query("""
+    select i from Inventory i 
+    where i.expirationDate BETWEEN :now AND :limit
+    and i.stockQuantity > 0 
+    order by i.expirationDate ASC  
+    """)
+    List<Inventory> findExpiringSoonItems(@Param("now") LocalDateTime now, @Param("limit") LocalDateTime limit);
 
 }
