@@ -24,19 +24,19 @@ public class SalesAlert {
     int trendBasis; // 7: 요일 기반, 30: 월별 계절 트렌드 기반
 
     @Column(name="alert_date")
-    LocalDate date;
+    LocalDate alertDate;
 
     @Column(name="previous_sales")
-    Long previous;
+    Long previousSales;
 
     @Column(name="current_sales")
-    Long current;
+    Long currentSales;
 
     @Column(name="difference")
     Long difference;
 
     @Column(name="alert_message")
-    String message;
+    String alertMessage;
 
     @Column(name="user_comment")
     String userComment;

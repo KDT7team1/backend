@@ -1,6 +1,7 @@
 package com.exam.salesAnalysis;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,9 +23,11 @@ public interface SalesAlertRepository extends JpaRepository<SalesAlert, Long> {
     List<SalesAlert> findByTrendBasis(@Param("alertDate") LocalDate alertDate, @Param("trendBasis") int trendBasis);
 
     // 이상치 데이터 저장
-    void saveSalesAlert(SalesAlertDTO salesAlertDTO);
+    void save(SalesAlertDTO salesAlertDTO);
 
     // 사용자가 코멘트를 작성하거나 수정
+    @Modifying
+    @Query("UPDATE SalesAlert s SET s.userComment = :userComment WHERE s.alertId = :alertId")
     void updateUserComment(Long alertId, String userComment);
 
     // 이상치 기록 삭제

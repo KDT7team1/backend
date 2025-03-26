@@ -77,7 +77,7 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             GROUP BY s.dailyCompositeKey.salesHour
             ORDER BY s.dailyCompositeKey.salesHour
             """)
-    Object[] getAvgHourlySalesByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    List<Object[]> getAvgHourlySalesByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     // 선택한 날짜 사이(7, 30일간)의 카테고리별 매출 평균
     @Query("""
@@ -91,7 +91,7 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             GROUP BY s.dailyCompositeKey.categoryId, s.dailyCompositeKey.subCategoryId
             ORDER BY s.dailyCompositeKey.categoryId, s.dailyCompositeKey.subCategoryId
             """)
-    Object[] getAvgCategorySalesByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    List<Object[]> getAvgCategorySalesByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     // 선택한 날짜 사이(7, 30일간)의 시간대별 매출량 전체
     @Query("""
@@ -102,8 +102,8 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
                 SUM(s.dailyAmount) as averageAmount
             FROM SalesDaily s
             WHERE s.dailyCompositeKey.salesDate BETWEEN :startDate AND :endDate
-            GROUP BY s.dailyCompositeKey.salesHour
-            ORDER BY s.dailyCompositeKey.salesHour
+            GROUP BY s.dailyCompositeKey.salesDate, s.dailyCompositeKey.salesHour
+            ORDER BY s.dailyCompositeKey.salesDate, s.dailyCompositeKey.salesHour
             """)
     List<Object[]> getTotalHourlySalesByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
@@ -117,8 +117,8 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
                 SUM(s.dailyAmount) as averageAmount
             FROM SalesDaily s
             WHERE s.dailyCompositeKey.salesDate BETWEEN :startDate AND :endDate
-            GROUP BY s.dailyCompositeKey.categoryId, s.dailyCompositeKey.subCategoryId
-            ORDER BY s.dailyCompositeKey.categoryId, s.dailyCompositeKey.subCategoryId
+            GROUP BY s.dailyCompositeKey.salesDate, s.dailyCompositeKey.categoryId, s.dailyCompositeKey.subCategoryId
+            ORDER BY s.dailyCompositeKey.salesDate, s.dailyCompositeKey.categoryId, s.dailyCompositeKey.subCategoryId
             """)
     List<Object[]> getTotalCategorySalesByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 

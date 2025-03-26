@@ -20,9 +20,14 @@ public interface SalesDailyService {
     List<SalesDailyDTO> getSubCategorySalesByDate(LocalDate date, Long categoryId);
 
     // 5) 선택한 날짜로부터 n일간의 시간별 매출 평균
-    SalesDailyDTO getAvgHourlySalesByDate(LocalDate startDate, LocalDate endDate);
+    List<SalesDailyDTO> getAvgHourlySalesByDate(LocalDate startDate, LocalDate endDate);
 
     // 6) 선택한 날짜로부터 n일간의 카테고리별 매출 평균
-    SalesDailyDTO getAvgCategorySalesByDate(LocalDate startDate, LocalDate endDate);
+    List<SalesDailyDTO> getAvgCategorySalesByDate(LocalDate startDate, LocalDate endDate);
 
+    // 7) 선택한 날짜 사이(7, 30일간)의 시간대별 매출량 전체
+    List<SalesDailyDTO> getTotalHourlySalesByDate(LocalDate startDate, LocalDate endDate);
+
+    // 8) 선택한 날짜 사이(7, 30일간)의 카테고리별 매출량 전체
+    List<SalesDailyDTO> getTotalCategorySalesByDate(LocalDate startDate, LocalDate endDate);
 }

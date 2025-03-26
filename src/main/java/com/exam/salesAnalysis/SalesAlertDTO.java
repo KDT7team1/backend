@@ -19,19 +19,19 @@ public class SalesAlertDTO {
     int trendBasis;
 
     @NotNull
-    LocalDate date;
+    LocalDate alertDate;
 
     @NotNull
-    Long previous;
+    Long previousSales;
 
     @NotNull
-    Long current;
+    Long currentSales;
 
     @NotNull
     Long difference;
 
     @NotNull
-    String message;
+    String alertMessage;
 
     String userComment;
     

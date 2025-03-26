@@ -4,7 +4,6 @@ public class SalesAlertController {
 
     SalesAlertService alertService;
 
-
     public SalesAlertController(SalesAlertService alertService) {
         this.alertService = alertService;
     }

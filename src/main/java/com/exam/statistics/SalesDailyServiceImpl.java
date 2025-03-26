@@ -1,5 +1,6 @@
 package com.exam.statistics;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
+@Slf4j
 public class SalesDailyServiceImpl implements SalesDailyService{
 
     SalesDailyRepository salesDailyRepository;
@@ -106,32 +108,73 @@ public class SalesDailyServiceImpl implements SalesDailyService{
     }
 
     @Override
-    public SalesDailyDTO getAvgHourlySalesByDate(LocalDate startDate, LocalDate endDate) {
+    public List<SalesDailyDTO> getAvgHourlySalesByDate(LocalDate startDate, LocalDate endDate) {
         // 선택한 날짜 사이의 시간별 매출 평균 값
-        Object[] entityList = salesDailyRepository.getAvgHourlySalesByDate(startDate, endDate);
+        List<Object[]> entityList = salesDailyRepository.getAvgHourlySalesByDate(startDate, endDate);
 
-        SalesDailyDTO dto = SalesDailyDTO.builder()
-                .salesHour((int) entityList[0])
-                .dailyPrice((Long) entityList[1])
-                .dailyAmount((Long) entityList[2])
-                .build();
+        List<SalesDailyDTO> dtoList = entityList.stream().map(s -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .salesHour(((Number) s[0]).intValue())
+                    .dailyPrice(((Number) s[1]).longValue())
+                    .dailyAmount(((Number) s[2]).longValue())
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
 
-        return dto;
+        return dtoList;
     }
 
     @Override
-    public SalesDailyDTO getAvgCategorySalesByDate(LocalDate startDate, LocalDate endDate) {
+    public List<SalesDailyDTO> getAvgCategorySalesByDate(LocalDate startDate, LocalDate endDate) {
         // 선택한 날짜 사이의 카테고리별 매출 평균 값
-        Object[] entityList = salesDailyRepository.getAvgCategorySalesByDate(startDate, endDate);
+        List<Object[]> entityList = salesDailyRepository.getAvgCategorySalesByDate(startDate, endDate);
 
-        SalesDailyDTO dto = SalesDailyDTO.builder()
-                .categoryId((Long) entityList[0])
-                .subCategoryId((Long) entityList[1])
-                .dailyPrice((Long) entityList[2])
-                .dailyAmount((Long) entityList[3])
-                .build();
+        List<SalesDailyDTO> dtoList = entityList.stream().map(s -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .categoryId(((Number) s[0]).longValue())
+                    .subCategoryId(((Number) s[1]).longValue())
+                    .dailyPrice(((Number) s[2]).longValue())
+                    .dailyAmount(((Number) s[3]).longValue())
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
 
-        return dto;
+        return dtoList;
+    }
+
+    @Override
+    public List<SalesDailyDTO> getTotalHourlySalesByDate(LocalDate startDate, LocalDate endDate) {
+        List<Object[]> entityList = salesDailyRepository.getTotalHourlySalesByDate(startDate, endDate);
+
+        List<SalesDailyDTO> dtoList = entityList.stream().map(s -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .salesDate((LocalDate) s[0])
+                    .salesHour(((Number) s[1]).intValue())
+                    .dailyPrice(((Number) s[2]).longValue())
+                    .dailyAmount(((Number) s[3]).longValue())
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return dtoList;
+    }
+
+    @Override
+    public List<SalesDailyDTO> getTotalCategorySalesByDate(LocalDate startDate, LocalDate endDate) {
+        List<Object[]> entityList = salesDailyRepository.getTotalCategorySalesByDate(startDate, endDate);
+
+        List<SalesDailyDTO> dtoList = entityList.stream().map(s -> {
+            SalesDailyDTO dto = SalesDailyDTO.builder()
+                    .salesDate((LocalDate) s[0])
+                    .categoryId(((Number) s[1]).longValue())
+                    .subCategoryId(((Number) s[2]).longValue())
+                    .dailyPrice(((Number) s[3]).longValue())
+                    .dailyAmount(((Number) s[4]).longValue())
+                    .build();
+            return dto;
+        }).collect(Collectors.toList());
+
+        return dtoList;
     }
 
 }

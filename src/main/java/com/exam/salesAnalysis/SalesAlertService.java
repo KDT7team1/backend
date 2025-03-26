@@ -15,7 +15,7 @@ public interface SalesAlertService {
     List<SalesAlertDTO> findByTrendBasis(LocalDate alertDate, int trendBasis);
 
     // 이상치 데이터 저장
-    void saveSalesAlert(SalesAlertDTO salesAlertDTO);
+    void save(SalesAlertDTO salesAlertDTO);
 
     // 사용자가 코멘트를 작성하거나 수정
     void updateUserComment(Long alertId, String userComment);

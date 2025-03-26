@@ -1,5 +1,6 @@
 package com.exam.salesAnalysis;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class SalesAlertServiceImpl implements SalesAlertService{
 
     SalesAlertRepository salesAlertRepository;
@@ -24,11 +26,11 @@ public class SalesAlertServiceImpl implements SalesAlertService{
             SalesAlertDTO dto = SalesAlertDTO.builder()
                     .alertId(s.getAlertId())
                     .trendBasis(s.getTrendBasis())
-                    .date(s.getDate())
-                    .previous(s.getPrevious())
-                    .current(s.getCurrent())
+                    .alertDate(s.getAlertDate())
+                    .previousSales(s.getPreviousSales())
+                    .currentSales(s.getCurrentSales())
                     .difference(s.getDifference())
-                    .message(s.getMessage())
+                    .alertMessage(s.getAlertMessage())
                     .userComment(s.getUserComment())
                     .build();
             return dto;
@@ -45,11 +47,11 @@ public class SalesAlertServiceImpl implements SalesAlertService{
             SalesAlertDTO dto = SalesAlertDTO.builder()
                     .alertId(s.getAlertId())
                     .trendBasis(s.getTrendBasis())
-                    .date(s.getDate())
-                    .previous(s.getPrevious())
-                    .current(s.getCurrent())
+                    .alertDate(s.getAlertDate())
+                    .previousSales(s.getPreviousSales())
+                    .currentSales(s.getCurrentSales())
                     .difference(s.getDifference())
-                    .message(s.getMessage())
+                    .alertMessage(s.getAlertMessage())
                     .userComment(s.getUserComment())
                     .build();
             return dto;
@@ -66,11 +68,11 @@ public class SalesAlertServiceImpl implements SalesAlertService{
             SalesAlertDTO dto = SalesAlertDTO.builder()
                     .alertId(s.getAlertId())
                     .trendBasis(s.getTrendBasis())
-                    .date(s.getDate())
-                    .previous(s.getPrevious())
-                    .current(s.getCurrent())
+                    .alertDate(s.getAlertDate())
+                    .previousSales(s.getPreviousSales())
+                    .currentSales(s.getCurrentSales())
                     .difference(s.getDifference())
-                    .message(s.getMessage())
+                    .alertMessage(s.getAlertMessage())
                     .userComment(s.getUserComment())
                     .build();
             return dto;
@@ -80,14 +82,15 @@ public class SalesAlertServiceImpl implements SalesAlertService{
     }
 
     @Override
-    public void saveSalesAlert(SalesAlertDTO salesAlertDTO) {
+    public void save(SalesAlertDTO salesAlertDTO) {
         SalesAlert salesAlert = SalesAlert.builder()
+                .alertId(salesAlertDTO.getAlertId())
                 .trendBasis(salesAlertDTO.getTrendBasis())
-                .date(salesAlertDTO.getDate())
-                .previous(salesAlertDTO.getPrevious())
-                .current(salesAlertDTO.getCurrent())
+                .alertDate(salesAlertDTO.getAlertDate())
+                .previousSales(salesAlertDTO.getPreviousSales())
+                .currentSales(salesAlertDTO.getCurrentSales())
                 .difference(salesAlertDTO.getDifference())
-                .message(salesAlertDTO.getMessage())
+                .alertMessage(salesAlertDTO.getAlertMessage())
                 .userComment(salesAlertDTO.getUserComment())
                 .build();
 
