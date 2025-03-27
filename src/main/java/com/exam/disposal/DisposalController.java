@@ -7,7 +7,10 @@ import com.exam.Inventory.InventoryDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -72,6 +75,18 @@ public class DisposalController {
     ) {
         List<DisposalStatsDTO> list = disposalService.getDisposalStatsByMonth(month, year);
         return ResponseEntity.ok(list);
+    }
+
+    // 폐기 비율(입고대비폐기)
+    @GetMapping("/rate")
+    public ResponseEntity<List<DisposalRateDTO>> getDisposalRates(
+            @RequestParam String subNames,
+            @RequestParam("month") int month,
+            @RequestParam("year") int year
+    ){
+        List<String> subNameList = Arrays.asList(subNames.split(","));
+        List<DisposalRateDTO> list = disposalService.getDisposalRateStats(subNameList,month,year);
+        return ResponseEntity.status(200).body(list);
     }
 
 

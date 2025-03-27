@@ -28,4 +28,6 @@ public interface DisposalService {
     // 폐기통계 (월별/카테고리별)
     List<DisposalStatsDTO> getDisposalStatsByMonth(int month, int year);
 
+    // 폐기 비율
+    List<DisposalRateDTO> getDisposalRateStats(List<String> subNames,int month, int year);
 }
