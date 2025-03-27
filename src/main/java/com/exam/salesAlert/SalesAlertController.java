@@ -97,11 +97,6 @@ public class SalesAlertController {
         }
     }
 
-    public void save() {
-        // 스케줄 기반으로 자동으로 저장되는 로직 구현
-
-    }
-
     @PutMapping("/updateComment")
     public ResponseEntity<String> updateUserComment(@RequestParam Long alertId, @RequestParam String userComment) {
         try {

@@ -170,26 +170,27 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
         // 1주일 전과의 비교
         if (Math.abs(percentDiffAWeekAgo) >= 10) {
             String alertMessage = generateAlertMessage(1, percentDiffAWeekAgo, todaySales, aWeekAgoSales);
-            return createSalesAlertDTO(targetDate, aWeekAgoSales, todaySales, diffAWeekAgo, alertMessage);
+            return createSalesAlertDTO(1, targetDate, aWeekAgoSales, todaySales, diffAWeekAgo, alertMessage);
         }
 
         // 7일 평균 대비 비교
         if (Math.abs(percentDiffAvg7Days) >= 10) {
             String alertMessage = generateAlertMessage(7, percentDiffAvg7Days, todaySales, avg7DaysSales);
-            return createSalesAlertDTO(targetDate, avg7DaysSales, todaySales, diffAvg7Days, alertMessage);
+            return createSalesAlertDTO(7, targetDate, avg7DaysSales, todaySales, diffAvg7Days, alertMessage);
         }
 
         // 30일 평균 대비 비교
         if (Math.abs(percentDiffAvg30Days) >= 10) {
             String alertMessage = generateAlertMessage(30, percentDiffAvg30Days, todaySales, avg30DaysSales);
-            return createSalesAlertDTO(targetDate, avg30DaysSales, todaySales, diffAvg30Days, alertMessage);
+            return createSalesAlertDTO(30, targetDate, avg30DaysSales, todaySales, diffAvg30Days, alertMessage);
         }
 
         return null;
     }
 
-    private SalesAlertDTO createSalesAlertDTO(LocalDate targetDate, long previousSales, long currentSales, long diffPrice, String alertMessage) {
+    private SalesAlertDTO createSalesAlertDTO(int trendBasis, LocalDate targetDate, long previousSales, long currentSales, long diffPrice, String alertMessage) {
         return SalesAlertDTO.builder()
+                .trendBasis(trendBasis)
                 .alertDate(targetDate)
                 .previousSales(previousSales)
                 .currentSales(currentSales)
