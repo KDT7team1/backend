@@ -37,4 +37,7 @@ public class Inventory {
     @Column(name = "expiration_date")
     LocalDateTime expirationDate;
 
+    @Column(name = "initial_stock_quantity")
+    Long initialStockQuantity;
+
 }

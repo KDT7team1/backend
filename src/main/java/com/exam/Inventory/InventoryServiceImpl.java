@@ -151,6 +151,7 @@ public class InventoryServiceImpl implements InventoryService {
             newInventory.setStockStatus(addStock >= 5 ? "정상" : "재고부족");
             newInventory.setStockUpdateAt(LocalDateTime.now());
             newInventory.setExpirationDate(expirationDate);
+            newInventory.setInitialStockQuantity(addStock);
 
             inventoryRepository.save(newInventory);
 
