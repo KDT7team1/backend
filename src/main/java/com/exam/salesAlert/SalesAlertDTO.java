@@ -22,6 +22,9 @@ public class SalesAlertDTO {
     LocalDate alertDate;
 
     @NotNull
+    int alertHour;
+
+    @NotNull
     Long previousSales;
 
     @NotNull

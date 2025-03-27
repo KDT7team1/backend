@@ -19,6 +19,6 @@ public interface SalesAnalysisService {
     Map<String, Object> getAverageSalesLast30Days(LocalDate salesDate, int salesHour);
 
     // 오늘 매출 데이터와 비교하여 이상 감지
-    SalesAlertDTO detectSalesAnomaly(LocalDate salesDate, int salesHour);
+    void detectSalesAnomaly(LocalDate salesDate, int salesHour);
 
 }

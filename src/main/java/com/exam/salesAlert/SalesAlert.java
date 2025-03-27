@@ -27,6 +27,9 @@ public class SalesAlert {
     @Column(name="alert_date")
     LocalDate alertDate;
 
+    @Column(name="alert_hour")
+    int alertHour;
+
     @Column(name="previous_sales")
     Long previousSales;
 

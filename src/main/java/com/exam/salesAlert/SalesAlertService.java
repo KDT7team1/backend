@@ -11,7 +11,7 @@ public interface SalesAlertService {
     // 날짜 범위로 이상치 알림기록 조회
     List<SalesAlertDTO> findByAlertDateBetween(LocalDate startDate, LocalDate endDate);
 
-    // 입력받은 날짜의 트렌드 기반 알림기록 조회 7: 단기 트렌드, 30: 장기 트렌드
+    // 입력받은 날짜의 트렌드 기반 알림기록 조회 1: 전주 동요일, 7: 단기 트렌드, 30: 장기 트렌드
     List<SalesAlertDTO> findByTrendBasis(LocalDate alertDate, int trendBasis);
 
     // 이상치 데이터 저장

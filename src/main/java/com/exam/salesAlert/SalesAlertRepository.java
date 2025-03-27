@@ -18,7 +18,7 @@ public interface SalesAlertRepository extends JpaRepository<SalesAlert, Long> {
     // 날짜 범위로 이상치 알림기록 조회
     List<SalesAlert> findByAlertDateBetween(LocalDate startDate, LocalDate endDate);
 
-    // 입력받은 날짜의 트렌드 기반 알림기록 조회 7: 단기 트렌드, 30: 장기 트렌드
+    // 입력받은 날짜의 트렌드 기반 알림기록 조회 1: 전주 동요일, 7: 단기 트렌드, 30: 장기 트렌드
     @Query("SELECT s FROM SalesAlert s WHERE s.trendBasis = :trendBasis AND s.alertDate = :alertDate ORDER BY s.alertId")
     List<SalesAlert> findByTrendBasis(@Param("alertDate") LocalDate alertDate, @Param("trendBasis") int trendBasis);
     
