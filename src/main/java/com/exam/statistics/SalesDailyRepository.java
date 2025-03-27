@@ -122,6 +122,21 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             """)
     List<Object[]> getTotalCategorySalesByDate(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    // 특정 날짜와 시간대의 매출 데이터 조회
+    @Query("SELECT s FROM SalesDaily s WHERE s.dailyCompositeKey.salesDate = :salesDate AND s.dailyCompositeKey.salesHour = :salesHour")
+    List<SalesDaily> findBySalesDateAndSalesHour(@Param("salesDate") LocalDate salesDate, @Param("salesHour") int salesHour);
+
+    // 특정 날짜 범위에서 시간대의 매출 데이터 조회
+    @Query("""
+            SELECT s FROM SalesDaily s
+            WHERE s.dailyCompositeKey.salesDate BETWEEN :startDate AND :endDate
+            AND s.dailyCompositeKey.salesHour = :salesHour
+            """)
+    List<SalesDaily> findBySalesDateBetweenAndSalesHour(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("salesHour") int salesHour
+    );
 }
 
 

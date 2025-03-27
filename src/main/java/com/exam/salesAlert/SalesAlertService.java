@@ -1,4 +1,4 @@
-package com.exam.salesAnalysis;
+package com.exam.salesAlert;
 
 import java.time.LocalDate;
 import java.util.List;

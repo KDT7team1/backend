@@ -1,4 +1,4 @@
-package com.exam.salesAnalysis;
+package com.exam.salesAlert;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

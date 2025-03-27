@@ -1,4 +1,4 @@
-package com.exam.salesAnalysis;
+package com.exam.salesAlert;
 
 import jakarta.persistence.*;
 import lombok.*;

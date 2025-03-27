@@ -1,9 +1,7 @@
-package com.exam.salesAnalysis;
+package com.exam.salesAlert;
 
-import com.exam.statistics.SalesDailyDTO;
 import com.exam.statistics.SalesDailyService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
