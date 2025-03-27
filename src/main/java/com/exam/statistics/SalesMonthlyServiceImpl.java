@@ -76,6 +76,7 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         List<SalesMonthlyDTO> monthlyList = categoryList.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .salesMonth(month)
                     .categoryId((Long) s[0])
                     .monthlyPrice((Long) s[1])
                     .monthlyAmount((Long) s[2])
@@ -93,6 +94,7 @@ public class SalesMonthlyServiceImpl implements SalesMonthlyService{
 
         List<SalesMonthlyDTO> monthlyList = categoryList.stream().map(s -> {
             SalesMonthlyDTO dto = SalesMonthlyDTO.builder()
+                    .salesMonth(month)
                     .categoryId((Long) s[0])
                     .subCategoryId((Long) s[1])
                     .monthlyPrice((Long) s[2])
