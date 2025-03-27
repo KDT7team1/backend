@@ -78,6 +78,14 @@ public class MemberController {
 //		return ResponseEntity.status(200).body(response);
 //	}
 
+    // 로그인한 사용자 정보 반환 API
+    @GetMapping("/my")
+    public ResponseEntity<Map<String, String>> getUserInfo(@RequestHeader("Authorization") String token) {
+        String memberId = tokenProvider.getMemberIdFromToken(token.replace("Bearer ", ""));
+
+        return ResponseEntity.ok(Map.of("memberId", memberId));
+    }
+
     // 로그아웃 처리
     @PostMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {

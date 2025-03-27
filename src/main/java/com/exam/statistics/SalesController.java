@@ -2,10 +2,7 @@ package com.exam.statistics;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -21,10 +18,12 @@ public class SalesController {
 
     SalesDailyService salesDailyService;
     SalesMonthlyService salesMonthlyService;
+    SalesYearlyService salesYearlyService;
 
-    public SalesController(SalesDailyService salesDailyService, SalesMonthlyService salesMonthlyService) {
+    public SalesController(SalesDailyService salesDailyService, SalesMonthlyService salesMonthlyService, SalesYearlyService salesYearlyService) {
         this.salesDailyService = salesDailyService;
         this.salesMonthlyService = salesMonthlyService;
+        this.salesYearlyService = salesYearlyService;
     }
 
     // 시간 - 일 - 월별 매출조회
@@ -72,11 +71,11 @@ public class SalesController {
         return ResponseEntity.status(200).body(salesYearly);
     }
 
-
     // 카테고리별 매출 조회
-    @GetMapping("/salesDaily/{salesDate}")
-    public ResponseEntity<List<SalesDailyDTO>> findBySalesDate(@PathVariable String salesDate) {
-        log.info("LOGGER: 일간(카테고리별) 매출 조회를 요청함");
+    // 일간 - 카테고리 대분류 매출 조회
+    @GetMapping("/salesDailyCategory/{salesDate}")
+    public ResponseEntity<List<SalesDailyDTO>> getCategorySalesByDate(@PathVariable String salesDate) {
+        log.info("LOGGER: 카테고리 대분류별 매출 조회를 요청함");
 
         // 날짜 포매팅
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -86,8 +85,8 @@ public class SalesController {
 
             log.info("LOGGER: 조회할 날짜: {}", searchDate);
 
-            List<SalesDailyDTO> salesDaily = salesDailyService.findBySalesDate(searchDate);
-            log.info("LOGGER: salesDaily 정보 획득: {}", salesDaily);
+            List<SalesDailyDTO> salesDaily = salesDailyService.getCategorySalesByDate(searchDate);
+            log.info("LOGGER: salesDaily 카테고리 대분류 정보 획득: {}", salesDaily);
 
             return ResponseEntity.status(200).body(salesDaily);
         } catch (DateTimeException e) {
@@ -96,80 +95,208 @@ public class SalesController {
         }
     } // end findBySalesDate
 
-    @GetMapping("/salesMontly/{salesMonth}")
-    public ResponseEntity<List<SalesMonthlyDTO>> findBySalesMonth(@PathVariable String salesMonth) {
-        log.info("LOGGER: 월간 매출 조회를 요청함");
-        log.info("LOGGER: 조회할 월: {}", salesMonth);
+    // 일간 - 카테고리 소분류 매출 조회
+    @GetMapping("/salesDailyCategory/{salesDate}/{subCategory}")
+    public ResponseEntity<List<SalesDailyDTO>> getSubCategorySalesByDate(@PathVariable String salesDate, @PathVariable Long subCategory) {
+        log.info("LOGGER: 카테고리 소분류별 매출 조회를 요청함");
 
-        List<SalesMonthlyDTO> salesMonthly = salesMonthlyService.findBySalesMonth(salesMonth);
-        log.info("LOGGER: salesMonth 정보 획득: {}", salesMonthly);
-
-        return ResponseEntity.status(200).body(salesMonthly);
-    } // end findBySalesMonth
-
-    @GetMapping("/salesYearly/{year}")
-    public ResponseEntity<List<SalesMonthlyDTO>> findBySalesYear(@PathVariable String year) {
-        log.info("LOGGER: 연간 매출 조회를 요청함");
-        log.info("LOGGER: 조회할 연도: {}", year);
-
-        String searchyear = year + "%";
-        List<SalesMonthlyDTO> salesMonthlyDTOList = salesMonthlyService.findBySalesYear(searchyear);
-
-        log.info("LOGGER: 조회한 연도의 데이터: {}", salesMonthlyDTOList);
-        return ResponseEntity.status(200).body(salesMonthlyDTOList);
-    } // end findBySalesYear
-
-
-    //  매출 비교
-    @GetMapping("/salesDailyDiff/{targetDate}")
-    public ResponseEntity<Map<String, List<SalesDailyDTO>>> getDailySalesDiff(@PathVariable String targetDate) {
-        log.info("LOGGER: 오늘과 특정 날짜의 매출 비교를 요청함");
-        LocalDate today = LocalDate.now();
+        // 날짜 포매팅
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        // 두 날짜의 매출 정보를 저장할 MAP
-        Map<String, List<SalesDailyDTO>> salesDiff = new HashMap<>();
-
         try {
-            // 오늘 날짜의 매출 정보 획득
-            List<SalesDailyDTO> todaySales = salesDailyService.findBySalesDate(today);
-            log.info("LOGGER: 오늘 날짜의 매출 정보 획득: {}", todaySales);
+            // 날짜 데이터 타입 변환
+            LocalDate searchDate = LocalDate.parse(salesDate, formatter);
+            log.info("LOGGER: 조회할 날짜: {}, 조회할 대분류: {}", searchDate, subCategory);
 
-            // 비교할 날짜의 매출 정보 획득
-            LocalDate target = LocalDate.parse(targetDate, formatter);
+            List<SalesDailyDTO> salesDaily = salesDailyService.getSubCategorySalesByDate(searchDate, subCategory);
+            log.info("LOGGER: salesDaily 카테고리 소분류 정보 획득: {}", salesDaily);
 
-            List<SalesDailyDTO> targetDateSales = salesDailyService.findBySalesDate(target);
-            log.info("LOGGER: 비교할 날짜의 매출 정보 획득: {}", targetDateSales);
-
-            salesDiff.put("today", todaySales);
-            salesDiff.put("target", targetDateSales);
-
-            return ResponseEntity.status(200).body(salesDiff);
+            return ResponseEntity.status(200).body(salesDaily);
         } catch (DateTimeException e) {
             log.error("날짜 형식이 올바르지 않습니다.", e);
             return ResponseEntity.badRequest().body(null);
         }
-    } // end getSalesDifference
+    } // end getSubCategorySalesByDate
 
-    @GetMapping("/salesMonthlyDiff/{targetMonth}")
-    public ResponseEntity<Map<String, List<SalesMonthlyDTO>>> getMontlySalesDiff(@PathVariable String targetMonth) {
-        log.info("LOGGER: 이번 달과 월간 매출 비교를 요청함");
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+    // 월간 - 카테고리별 대분류 매출 조회
+    @GetMapping("/salesMonthlyCategory/{salesMonth}")
+    public ResponseEntity<List<SalesMonthlyDTO>> getCategorySalesByMonth(@PathVariable String salesMonth) {
+        log.info("LOGGER: 월간 카테고리 대분류 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 월: {}", salesMonth);
 
-        String thisMonth = today.format(formatter);
-        log.info("LOGGER: 이번 달: {}, 비교할 월: {}", thisMonth, targetMonth);
+        List<SalesMonthlyDTO> salesMonthly = salesMonthlyService.getCategorySalesByMonth(salesMonth);
+        log.info("LOGGER: salesMonth 카테고리 대분류 정보 획득: {}", salesMonthly);
 
-        Map<String, List<SalesMonthlyDTO>> salesDiff = new HashMap<>();
-
-        List<SalesMonthlyDTO> thisMonthSales = salesMonthlyService.findBySalesMonth(thisMonth);
-        log.info("LOGGER: thisMonthSales 정보 획득: {}", thisMonthSales);
-        salesDiff.put("thisMonth", thisMonthSales);
-
-        List<SalesMonthlyDTO> targetMonthSales = salesMonthlyService.findBySalesMonth(targetMonth);
-        log.info("LOGGER: targetMonth 정보 획득: {}", targetMonthSales);
-        salesDiff.put("targetMonth", targetMonthSales);
-
-        return ResponseEntity.status(200).body(salesDiff);
+        return ResponseEntity.status(200).body(salesMonthly);
     } // end findBySalesMonth
+
+    // 월간 - 카테고리 소분류 매출 조회
+    @GetMapping("/salesMonthlyCategory/{salesMonth}/{categoryId}")
+    public ResponseEntity<List<SalesMonthlyDTO>> getSubCategorySalesByMonth(@PathVariable String salesMonth, @PathVariable Long categoryId) {
+        log.info("LOGGER: 월간 카테고리 소분류 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 월: {}, 조회할 카테고리: {}", salesMonth, categoryId);
+
+        List<SalesMonthlyDTO> salesMonthly = salesMonthlyService.getSubCategorySalesByMonth(salesMonth, categoryId);
+        log.info("LOGGER: salesMonth 카테고리 소분류 정보 획득: {}", salesMonthly);
+
+        return ResponseEntity.status(200).body(salesMonthly);
+    } // end getSubCategorySalesByMonth
+
+    // 연간 - 카테고리 대분류 매출 조회
+    @GetMapping("/salesYearlyCategory/{salesYear}")
+    public ResponseEntity<List<SalesYearlyDTO>> getCategorySalesByYear(@PathVariable String salesYear) {
+        log.info("LOGGER: 연간 카테고리 대분류 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 연도: {}", salesYear);
+
+        List<SalesYearlyDTO> salesYearly = salesYearlyService.getCategorySalesByYear(salesYear);
+        log.info("LOGGER: salesYearly 카테고리 대분류 정보 획득: {}", salesYearly);
+
+        return ResponseEntity.status(200).body(salesYearly);
+    }
+
+    // 연간 - 카테고리 소분류 매출 조회
+    @GetMapping("/salesYearlyCategory/{salesYear}/{categoryId}")
+    public ResponseEntity<List<SalesYearlyDTO>> getSubCategorySalesByYear(@PathVariable String salesYear, @PathVariable Long categoryId) {
+        log.info("LOGGER: 연간 카테고리 소분류 매출 조회를 요청함");
+        log.info("LOGGER: 조회할 연도: {}, 조회할 카테고리: {}", salesYear, categoryId);
+
+        List<SalesYearlyDTO> salesYearly = salesYearlyService.getSubCategorySalesByYear(salesYear, categoryId);
+        log.info("LOGGER: salesMonth 카테고리 소분류 정보 획득: {}", salesYearly);
+
+        return ResponseEntity.status(200).body(salesYearly);
+    }
+
+    // 매출 평균 조회 -> salesAnalysis/SalesAlertController
+    // 주어진 날짜 사이의 시간대별 평균 매출 조회
+    @GetMapping("/salesHourlyAverage/{date1}/{date2}")
+    public ResponseEntity<List<SalesDailyDTO>> getAvgHourlySalesByDate(@PathVariable String date1, @PathVariable String date2) {
+        log.info("LOGGER: 날짜 사이의 시간대별 평균 매출 조회를 요청함");
+
+        // 날짜 포매팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            // 날짜 데이터 타입 변환
+            LocalDate startDate = LocalDate.parse(date1, formatter);
+            LocalDate endDate = LocalDate.parse(date2, formatter);
+
+            // startDate가 endDate보다 미래면 서로 바꿔주기
+            if (startDate.isAfter(endDate)) {
+                LocalDate temp = startDate;
+                startDate = endDate;
+                endDate = temp;
+            }
+
+            log.info("LOGGER: 조회할 기간: {} ~ {}", startDate, endDate);
+
+            List<SalesDailyDTO> avgData = salesDailyService.getAvgHourlySalesByDate(startDate, endDate);
+            log.info("LOGGER: 7/30일간의 시간대별 평균 매출 정보 획득: {}", avgData);
+
+            return ResponseEntity.status(200).body(avgData);
+        } catch (DateTimeException e) {
+            log.error("날짜 형식이 올바르지 않습니다.", e);
+            return ResponseEntity.badRequest().body(null);
+        }
+    } // end getAvgHourlySalesByDate
+
+    // 주어진 날짜 사이의 시간대별 평균 매출 조회
+    @GetMapping("/salesCategoryAverage/{date1}/{date2}")
+    public ResponseEntity<List<SalesDailyDTO>> getAvgCategorySalesByDate(@PathVariable String date1, @PathVariable String date2) {
+        log.info("LOGGER: 날짜 사이의 카테고리별 평균 매출 조회를 요청함");
+
+        // 날짜 포매팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            // 날짜 데이터 타입 변환
+            LocalDate startDate = LocalDate.parse(date1, formatter);
+            LocalDate endDate = LocalDate.parse(date2, formatter);
+
+            // startDate가 endDate보다 미래면 서로 바꿔주기
+            if (startDate.isAfter(endDate)) {
+                LocalDate temp = startDate;
+                startDate = endDate;
+                endDate = temp;
+            }
+
+            log.info("LOGGER: 조회할 기간: {} ~ {}", startDate, endDate);
+
+            List<SalesDailyDTO> avgData = salesDailyService.getAvgCategorySalesByDate(startDate, endDate);
+            log.info("LOGGER: 7/30일간의 카테고리별 평균 매출 정보 획득: {}", avgData);
+
+            return ResponseEntity.status(200).body(avgData);
+        } catch (DateTimeException e) {
+            log.error("날짜 형식이 올바르지 않습니다.", e);
+            return ResponseEntity.badRequest().body(null);
+        }
+    } // end getAvgCategorySalesByDate
+
+    // 주어진 날짜 사이의 시간대별 전체 매출 조회
+    @GetMapping("/salesHourlyTotal/{date1}/{date2}")
+    public ResponseEntity<List<SalesDailyDTO>> getTotalHourlySalesByDate(@PathVariable String date1, @PathVariable String date2) {
+        log.info("LOGGER: 날짜 사이의 시간대별 전체 매출 조회를 요청함");
+
+        // 날짜 포매팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            // 날짜 데이터 타입 변환
+            LocalDate startDate = LocalDate.parse(date1, formatter);
+            LocalDate endDate = LocalDate.parse(date2, formatter);
+
+            // startDate가 endDate보다 미래면 서로 바꿔주기
+            if (startDate.isAfter(endDate)) {
+                LocalDate temp = startDate;
+                startDate = endDate;
+                endDate = temp;
+            }
+
+            log.info("LOGGER: 조회할 기간: {} ~ {}", startDate, endDate);
+
+            List<SalesDailyDTO> totalData = salesDailyService.getTotalHourlySalesByDate(startDate, endDate);
+            log.info("LOGGER: 7/30일간의 시간대별 평균 매출 정보 획득: {}", totalData);
+
+            return ResponseEntity.status(200).body(totalData);
+        } catch (DateTimeException e) {
+            log.error("날짜 형식이 올바르지 않습니다.", e);
+            return ResponseEntity.badRequest().body(null);
+        }
+    } // end getTotalHourlySalesByDate
+
+    // 주어진 날짜 사이의 시간대별 전체 매출 조회
+    @GetMapping("/salesCategoryTotal/{date1}/{date2}")
+    public ResponseEntity<List<SalesDailyDTO>> getTotalCategorySalesByDate(@PathVariable String date1, @PathVariable String date2) {
+        log.info("LOGGER: 날짜 사이의 시간대별 전체 매출 조회를 요청함");
+
+        // 날짜 포매팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            // 날짜 데이터 타입 변환
+            LocalDate startDate = LocalDate.parse(date1, formatter);
+            LocalDate endDate = LocalDate.parse(date2, formatter);
+
+            // startDate가 endDate보다 미래면 서로 바꿔주기
+            if (startDate.isAfter(endDate)) {
+                LocalDate temp = startDate;
+                startDate = endDate;
+                endDate = temp;
+            }
+
+            log.info("LOGGER: 조회할 기간: {} ~ {}", startDate, endDate);
+
+            List<SalesDailyDTO> totalData = salesDailyService.getTotalCategorySalesByDate(startDate, endDate);
+            log.info("LOGGER: 7/30일간의 시간대별 평균 매출 정보 획득: {}", totalData);
+
+            return ResponseEntity.status(200).body(totalData);
+        } catch (DateTimeException e) {
+            log.error("날짜 형식이 올바르지 않습니다.", e);
+            return ResponseEntity.badRequest().body(null);
+        }
+    } // end getTotalCategorySalesByDate
+
+    @GetMapping("/sales/week")
+    public ResponseEntity<List<SalesChartDTO>> getWeeklySalesData(
+            @RequestParam Long categoryId,
+            @RequestParam Long subCategoryId) {
+        System.out.println("요청 도착!");
+        List<SalesChartDTO> result = salesDailyService.getWeeklySales(categoryId, subCategoryId);
+        return ResponseEntity.status(200).body(result);
+    }
+
 }
