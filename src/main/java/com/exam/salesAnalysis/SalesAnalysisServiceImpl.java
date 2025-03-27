@@ -156,7 +156,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
     private String generateAlertMessage(int trendBasis, int targetHour, double percentDiffAWeekAgo, long todaySales, long aWeekAgoSales) {
         String trend = (percentDiffAWeekAgo > 0) ? "상승" : "하락";
         String trendPeriod = switch (trendBasis) {
-            case 1 -> "1주일 전 같은 요일 대비";
+            case 1 -> "[동요일] 일주일 전 같은 요일 대비";
             case 7 -> "[단기 트렌드] 7일 평균 대비";
             case 30 -> "[장기 트렌드] 30일 평균 대비";
             default -> throw new IllegalStateException("Unexpected value: " + trendBasis); // 예외 처리
@@ -164,7 +164,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
 
         // 메세지 포매팅
         // 예시) [14시] [단기 트렌드] 7일 평균 대비 30.7% 하락 : 오늘 매출: 53,000원, 비교 매출: 20,000원
-        return String.format("\\uD83D\\uDCC5 [%d시] **%s** %.1f%% %s : \\uD83D\\uDCCA **오늘 매출**: %,d원, \\uD83D\\uDCC9 **비교 매출**: %,d원",
+        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원",
                 targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, aWeekAgoSales);
     }
 
