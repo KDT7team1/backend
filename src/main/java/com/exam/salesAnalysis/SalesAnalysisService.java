@@ -1,8 +1,6 @@
 package com.exam.salesAnalysis;
 
-import com.exam.salesAlert.SalesAlert;
 import com.exam.salesAlert.SalesAlertDTO;
-import com.exam.statistics.SalesDaily;
 import com.exam.statistics.SalesDailyDTO;
 
 import java.time.LocalDate;

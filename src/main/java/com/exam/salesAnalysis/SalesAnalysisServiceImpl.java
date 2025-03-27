@@ -1,10 +1,11 @@
 package com.exam.salesAnalysis;
 
+import com.exam.cartAnalysis.repository.SaleDataRepository;
 import com.exam.salesAlert.SalesAlertDTO;
+import com.exam.salesAlert.SalesAlertRepository;
 import com.exam.statistics.SalesDaily;
 import com.exam.statistics.SalesDailyDTO;
 import com.exam.statistics.SalesDailyRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,15 +16,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class SalesAnalysisServiceImpl implements SalesAnalysisService{
+public class SalesAnalysisServiceImpl implements SalesAnalysisService {
 
     SalesDailyRepository dailyRepository;
-    SalesDataRepository dataRepository;
+    SaleDataRepository dataRepository;
+    SalesAlertRepository alertRepository;
 
-    public SalesAnalysisServiceImpl(SalesDailyRepository dailyRepository, SalesDataRepository dataRepository) {
+    public SalesAnalysisServiceImpl(SalesDailyRepository dailyRepository, SaleDataRepository dataRepository, SalesAlertRepository alertRepository) {
         this.dailyRepository = dailyRepository;
         this.dataRepository = dataRepository;
+        this.alertRepository = alertRepository;
     }
 
     @Override
@@ -133,9 +135,82 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService{
     }
 
     @Override
-    public SalesAlertDTO detectSalesAnomaly(LocalDate salesDate, int salesHour) {
+    public SalesAlertDTO detectSalesAnomaly(LocalDate targetDate, int targetHour) {
+        List<SalesDailyDTO> todaySalesList = getSalesDailyByDateAndHour(targetDate, targetHour);
+        if (todaySalesList.isEmpty()) {
+            return null; // 오늘의 데이터가 없으면 처리하지 않음
+        }
+
+        // 이전 시간대의 총 매출액 계산
+        long todaySales = todaySalesList.stream().mapToLong(SalesDailyDTO::getDailyPrice).sum();
+
+        // 7일 전 같은 시간대의 매출액
+        LocalDate aWeekAgo = targetDate.minusDays(7);
+        List<SalesDailyDTO> aWeekAgoSalesList = getSalesDailyByDateAndHour(aWeekAgo, targetHour);
+        long aWeekAgoSales = aWeekAgoSalesList.stream().mapToLong(SalesDailyDTO::getDailyPrice).sum();
+
+        // 7일간의 평균 매출액 계산 - 단기 트렌드 분석
+        Map<String, Object> avg7DaysData = getAverageSalesLast7Days(targetDate, targetHour);
+        long avg7DaysSales = (long) avg7DaysData.get("averagePrice");
+
+        // 30일간의 평균 매출액 계산 - 장기 트렌드 분석
+        Map<String, Object> avg30DaysData = getAverageSalesLast30Days(targetDate, targetHour);
+        long avg30DaysSales = (long) avg30DaysData.get("averagePrice");
+
+        // 매출 차이 계산
+        long diffAWeekAgo = todaySales - aWeekAgoSales;
+        long diffAvg7Days = todaySales - avg7DaysSales;
+        long diffAvg30Days = todaySales - avg30DaysSales;
+
+        // 비율 차이 계산
+        double percentDiffAWeekAgo = (aWeekAgoSales > 0) ? (diffAWeekAgo * 100.0 / aWeekAgoSales) : 0;
+        double percentDiffAvg7Days = (avg7DaysSales > 0) ? (diffAvg7Days * 100.0 / avg7DaysSales) : 0;
+        double percentDiffAvg30Days = (avg30DaysSales > 0) ? (diffAvg30Days * 100.0 / avg30DaysSales) : 0;
+
+        // 1주일 전과의 비교
+        if (Math.abs(percentDiffAWeekAgo) >= 10) {
+            String alertMessage = generateAlertMessage(1, percentDiffAWeekAgo, todaySales, aWeekAgoSales);
+            return createSalesAlertDTO(targetDate, aWeekAgoSales, todaySales, diffAWeekAgo, alertMessage);
+        }
+
+        // 7일 평균 대비 비교
+        if (Math.abs(percentDiffAvg7Days) >= 10) {
+            String alertMessage = generateAlertMessage(7, percentDiffAvg7Days, todaySales, avg7DaysSales);
+            return createSalesAlertDTO(targetDate, avg7DaysSales, todaySales, diffAvg7Days, alertMessage);
+        }
+
+        // 30일 평균 대비 비교
+        if (Math.abs(percentDiffAvg30Days) >= 10) {
+            String alertMessage = generateAlertMessage(30, percentDiffAvg30Days, todaySales, avg30DaysSales);
+            return createSalesAlertDTO(targetDate, avg30DaysSales, todaySales, diffAvg30Days, alertMessage);
+        }
+
         return null;
     }
 
+    private SalesAlertDTO createSalesAlertDTO(LocalDate targetDate, long previousSales, long currentSales, long diffPrice, String alertMessage) {
+        return SalesAlertDTO.builder()
+                .alertDate(targetDate)
+                .previousSales(previousSales)
+                .currentSales(currentSales)
+                .difference(diffPrice)
+                .alertMessage(alertMessage)
+                .build();
+    }
+
+    private String generateAlertMessage(int trendBasis, double percentDiffAWeekAgo, long todaySales, long aWeekAgoSales) {
+        String trend = (percentDiffAWeekAgo > 0) ? "상승" : "하락";
+        String trendPeriod = switch (trendBasis) {
+            case 1 -> "1주일 전 같은 요일 대비";
+            case 7 -> "[단기 트렌드] 7일 평균 대비";
+            case 30 -> "[장기 트렌드] 30일 평균 대비";
+            default -> throw new IllegalStateException("Unexpected value: " + trendBasis); // 예외 처리
+        };
+
+        // 메세지 포매팅
+        // 예시) [단기 트렌드] 7일 평균 대비 30.7% 하락 : 오늘 매출: 53,000원, 비교 매출: 20,000원
+        return String.format("\\uD83D\\uDCC5 **%s** %.1f%% %s : \\uD83D\\uDCCA **오늘 매출**: %,d원, \\uD83D\\uDCC9 **비교 매출**: %,d원",
+                trendPeriod, percentDiffAWeekAgo, trend, todaySales, aWeekAgoSales);
+    }
 
 }

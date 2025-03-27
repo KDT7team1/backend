@@ -74,7 +74,7 @@ public class SalesAlertController {
     public ResponseEntity<List<SalesAlertDTO>> findByTrendBasis(@PathVariable String date, @PathVariable int trendBasis) {
         /*
         date: 분석 데이터를 조회할 날짜
-        trendBasis: 트렌드의 타입 | 7 : 단기 트렌드, 30: 장기 트렌드
+        trendBasis: 트렌드의 타입 | 1: [요일 트렌드] 일주일 전 같은 요일, 7 : [단기 트렌드] 일주일 평균, 30: [장기 트렌드] 한달 평균
          */
         // 특정 날짜의 이상치 알림기록 조회
         log.info("LOGGER: 트렌드 타입에 해당하는 일간 이상치 알림기록 조회를 요청함");
