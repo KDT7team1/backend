@@ -52,17 +52,6 @@ public class InventoryController {
         return ResponseEntity.ok("Stock updated successfully");
     }
 
-    // 상품 입고 로직
-    @PostMapping("/addStock")
-    public ResponseEntity<String> addStock(
-            @RequestParam Long goodsId,
-            @RequestParam Long addStock,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime expirationDate
-    ){
-        inventoryService.addStock(goodsId, addStock, expirationDate);
-        return ResponseEntity.ok("새로운 배치 추가 완료");
-    }
-
     // 상품 감소 로직
     @PostMapping("reduceStock")
     public ResponseEntity<String> reduceStock(
@@ -80,5 +69,16 @@ public class InventoryController {
         return ResponseEntity.status(200).body(list);
     }
 
+
+    // 상품 입고 로직
+    @PostMapping("/addStock")
+    public ResponseEntity<String> addStock(
+            @RequestParam Long goodsId,
+            @RequestParam Long addStock,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime expirationDate
+    ){
+        inventoryService.addStock(goodsId, addStock, expirationDate);
+        return ResponseEntity.ok("새로운 배치 추가 완료");
+    }
 
 }
