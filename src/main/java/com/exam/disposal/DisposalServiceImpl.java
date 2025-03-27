@@ -143,7 +143,14 @@ public class DisposalServiceImpl implements DisposalService {
         return disposalRepository.findMonthlyDisposal(month, year);
     }
 
-    // 유통기한 만료 상품
+    // 폐기 비율
+    @Override
+    public List<DisposalRateDTO> getDisposalRateStats(List<String> subNames, int month, int year) {
+        return disposalRepository.getDisposalRate(subNames, month, year);
+    }
+
+
+
 
 
 
