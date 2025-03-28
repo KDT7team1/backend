@@ -12,6 +12,9 @@ public interface SalesAnalysisService {
     // 특정 날짜와 시간대의 매출 데이터 조회
     List<SalesDailyDTO> getSalesDailyByDateAndHour(LocalDate salesDate, int salesHour);
 
+    // 특정 날짜와 시간대의 매출 상품 조회
+    List<SalesProductDTO> getSoldProductsByDateAndHour(LocalDate targetDate, int targetHour);
+
     // 지난 7일간의 시간대 평균 매출액
     long getAverageSalesLast7Days(LocalDate salesDate, int salesHour);
 

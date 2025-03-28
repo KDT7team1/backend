@@ -1,5 +1,6 @@
 package com.exam.salesAnalysis;
 
+import com.exam.cartAnalysis.entity.SaleData;
 import com.exam.cartAnalysis.repository.SaleDataRepository;
 import com.exam.salesAlert.SalesAlertDTO;
 import com.exam.salesAlert.SalesAlertRepository;
@@ -10,7 +11,11 @@ import com.exam.statistics.SalesDailyRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +48,36 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                     .dailyAmount(s.getDailyAmount())
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SalesProductDTO> getSoldProductsByDateAndHour(LocalDate targetDate, int targetHour) {
+        // 특정 날짜와 시간대의 매출 데이터 상세조회 - 시간대와 상품
+        LocalDateTime startTime = LocalDateTime.of(targetDate, LocalTime.of(targetHour, 0, 0));
+        LocalDateTime endTime = LocalDateTime.of(targetDate, LocalTime.of(targetHour, 59, 59));
+
+        List<SaleData> salesList = dataRepository.findSalesByDateTimeRange(startTime, endTime);
+
+        // 상품별 매출 & 판매량 합산
+        Map<String, SalesProductDTO> productSalesMap = salesList.stream()
+                .collect(Collectors.toMap(
+                        sale -> sale.getGoods().getGoods_name(),
+                        sale -> new SalesProductDTO(
+                                sale.getGoods().getGoods_name(), // 상품명
+                                sale.getSaleAmount(),            // 판매수량
+                                sale.getSalePrice(),             // 총판매액
+                                0L                               // 매출차이 -> 나중에 업데이트
+                        ),
+                        (dto1, dto2) -> new SalesProductDTO(
+                                dto1.getProductName(),
+                                dto1.getTotalAmount() + dto2.getTotalAmount(),
+                                dto1.getTotalPrice() + dto2.getTotalPrice(),
+                                0L
+                        )
+                ));
+
+        // DTO 리스트로 변환
+        return productSalesMap.values().stream().toList();
     }
 
     @Override
@@ -94,13 +129,15 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
             return; // 오늘의 데이터가 없으면 처리하지 않음
         }
 
-        // 이전 시간대의 총 매출액 계산
+        // 해당 시간대의 매출액과 상품 목록 조회
+        List<SalesProductDTO> todayProducts = getSoldProductsByDateAndHour(targetDate, targetHour);
         long todaySales = todaySalesList.stream().mapToLong(SalesDailyDTO::getDailyPrice).sum();
 
-        // 7일 전 같은 시간대의 매출액
+        // 7일 전 같은 시간대의 매출액과 상품 조회
         LocalDate aWeekAgo = targetDate.minusDays(7);
         List<SalesDailyDTO> aWeekAgoSalesList = getSalesDailyByDateAndHour(aWeekAgo, targetHour);
         long aWeekAgoSales = aWeekAgoSalesList.stream().mapToLong(SalesDailyDTO::getDailyPrice).sum();
+        List<SalesProductDTO> aWeekAgoProducts = getSoldProductsByDateAndHour(aWeekAgo, targetHour);
 
         // 7일간의 평균 매출액 계산 - 단기 트렌드 분석
         long avg7DaysSales = getAverageSalesLast7Days(targetDate, targetHour);
@@ -119,21 +156,23 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
         double percentDiffAvg30Days = (avg30DaysSales > 0) ? (diffAvg30Days * 100.0 / avg30DaysSales) : 0;
 
         // 1주일 전과의 비교
-        if (Math.abs(percentDiffAWeekAgo) >= 10) {
-            String alertMessage = generateAlertMessage(1, targetHour, percentDiffAWeekAgo, todaySales, aWeekAgoSales);
+        if (Math.abs(percentDiffAWeekAgo) >= 50) {
+            // 매출 차이가 큰 상품들을 계산
+            List<SalesProductDTO> topProductsAWeekAgo = findTopChangingProducts(aWeekAgo, targetHour);
+            String alertMessage = generateAlertMessage(targetHour, percentDiffAWeekAgo, todaySales, aWeekAgoSales, topProductsAWeekAgo);
             SalesAlertDTO alertDTO = createSalesAlertDTO(1, targetDate, targetHour, aWeekAgoSales, todaySales, diffAWeekAgo, alertMessage);
             alertService.save(alertDTO);// 바로 DB에 저장
         }
 
         // 7일 평균 대비 비교
-        if (Math.abs(percentDiffAvg7Days) >= 10) {
+        if (Math.abs(percentDiffAvg7Days) >= 200) {
             String alertMessage = generateAlertMessage(7, targetHour, percentDiffAvg7Days, todaySales, avg7DaysSales);
             SalesAlertDTO alertDTO = createSalesAlertDTO(7, targetDate, targetHour, avg7DaysSales, todaySales, diffAvg7Days, alertMessage);
             alertService.save(alertDTO);// 바로 DB에 저장
         }
 
         // 30일 평균 대비 비교
-        if (Math.abs(percentDiffAvg30Days) >= 10) {
+        if (Math.abs(percentDiffAvg30Days) >= 200) {
             String alertMessage = generateAlertMessage(30, targetHour, percentDiffAvg30Days, todaySales, avg30DaysSales);
             SalesAlertDTO alertDTO = createSalesAlertDTO(30, targetDate, targetHour, avg30DaysSales, todaySales, diffAvg30Days, alertMessage);
             alertService.save(alertDTO);// 바로 DB에 저장
@@ -153,19 +192,47 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                 .build();
     }
 
-    private String generateAlertMessage(int trendBasis, int targetHour, double percentDiffAWeekAgo, long todaySales, long aWeekAgoSales) {
+    private String generateAlertMessage(int targetHour, double percentDiffAWeekAgo, long todaySales, long comparisonSales, List<SalesProductDTO> topProducts) {
+        String trend = (percentDiffAWeekAgo > 0) ? "상승" : "하락";
+        String trendPeriod = "[동요일] 일주일 전 같은 요일 대비";
+
+        StringBuilder productInfo = new StringBuilder();
+        for (SalesProductDTO product : topProducts) {
+            productInfo.append(String.format("\n - %s: %,d원 변화", product.getProductName(), product.getSalesDiff()));
+        }
+
+        return String.format("[%d시] [%s] %s : 오늘 매출: %,d원, 비교 매출: %,d원%s", targetHour, trendPeriod, trend, todaySales, comparisonSales, productInfo);
+    }
+
+    private String generateAlertMessage(int trendBasis, int targetHour, double percentDiffAWeekAgo, long todaySales, long comparisonSales) {
         String trend = (percentDiffAWeekAgo > 0) ? "상승" : "하락";
         String trendPeriod = switch (trendBasis) {
-            case 1 -> "[동요일] 일주일 전 같은 요일 대비";
             case 7 -> "[단기 트렌드] 7일 평균 대비";
             case 30 -> "[장기 트렌드] 30일 평균 대비";
             default -> throw new IllegalStateException("Unexpected value: " + trendBasis); // 예외 처리
         };
 
-        // 메세지 포매팅
-        // 예시) [14시] [단기 트렌드] 7일 평균 대비 30.7% 하락 : 오늘 매출: 53,000원, 비교 매출: 20,000원
-        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원",
-                targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, aWeekAgoSales);
+        return String.format("[%d시] [%s] %s : 오늘 매출: %,d원, 비교 매출: %,d원", targetHour, trendPeriod, trend, todaySales, comparisonSales);
     }
 
+    // 매출 변화가 큰 상품들을 구하는 메서드
+    private List<SalesProductDTO> findTopChangingProducts(LocalDate targetDate, int targetHour) {
+        // 오늘과 7일 전 같은 시간대에 팔린 상품들을 비교하는 로직
+        List<SalesProductDTO> todayProducts = getSoldProductsByDateAndHour(targetDate, targetHour);
+        List<SalesProductDTO> aWeekAgoProducts = getSoldProductsByDateAndHour(targetDate.minusDays(7), targetHour);
+
+        return todayProducts.stream()
+                .map(product -> {
+                    long todaySales = product.getTotalPrice();
+                    long aWeekAgoSales = aWeekAgoProducts.stream()
+                            .filter(p -> p.getProductName().equals(product.getProductName()))
+                            .mapToLong(SalesProductDTO::getTotalPrice)
+                            .sum();
+                    long diffSales = todaySales - aWeekAgoSales;
+                    product.setSalesDiff(diffSales);
+                    return product;
+                })
+                .sorted(Comparator.comparingDouble(SalesProductDTO::getSalesDiff).reversed()) // 매출 변화가 큰 순으로 정렬
+                .collect(Collectors.toList());
+    }
 }
