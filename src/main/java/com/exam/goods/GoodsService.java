@@ -19,14 +19,12 @@ public interface GoodsService {
     // 상품 저장
     void save(GoodsDTO dto);
 
-    //상품 조회
-    // GoodsDTO findById(Long goodsId);
+    //상품 수정
+    void updateGoodsPrice(Long id, Long newPrice);
 
-    // 상품 수정
-    // void update(Long goodsId, GoodsDTO dto);
-    // void update(GoodsDTO dto);
+    // 상품 할인 적용
+    void applyDiscount(Long id, int discountRate, int period);
 
-    // 상품 삭제
-    // void delete(Long goodsId);
-
+    // 할인 취소
+    void cancelDiscount(Long id);
 }
