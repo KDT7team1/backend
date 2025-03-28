@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -201,7 +202,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
             productInfo.append(String.format("\n - %s: %,d원 변화", product.getProductName(), product.getSalesDiff()));
         }
 
-        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원 \n 가장 큰 판매량 변화를 보인 top3 상품은 다음과 같습니다. \n%s", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales, productInfo);
+        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원\n매출 변화에 영향을 준 상품은 다음과 같습니다.\n%s", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales, productInfo);
     }
 
     private String generateAlertMessage(int trendBasis, int targetHour, double percentDiffAWeekAgo, long todaySales, long comparisonSales) {
@@ -233,10 +234,25 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                     return product;
                 }).collect(Collectors.toList());
 
-        // 판매 변화량의 절대값이 큰 상품 3개만 출력
-        return resultList.stream()
-                .sorted(Comparator.comparingDouble((SalesProductDTO product) -> Math.abs(product.getSalesDiff())).reversed())
-                .limit(3)  // 상위 3개 상품만 가져옴
+        // 매출 상승 상품: +값 기준으로 상위 3개
+        List<SalesProductDTO> topIncreaseProducts = resultList.stream()
+                .filter(product -> product.getSalesDiff() > 0) // 상승한 상품만 필터링
+                .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff).reversed()) // 큰 매출 변화 순으로 정렬
+                .limit(3) // 상위 3개만 선택
                 .collect(Collectors.toList());
+
+        // 매출 하락 상품: -값 기준으로 상위 3개
+        List<SalesProductDTO> topDecreaseProducts = resultList.stream()
+                .filter(product -> product.getSalesDiff() < 0) // 하락한 상품만 필터링
+                .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff)) // 작은 매출 변화 순으로 정렬
+                .limit(3) // 상위 3개만 선택
+                .collect(Collectors.toList());
+
+        // 상승/하락 상품 결합 (원하는 방식에 맞게 반환)
+        List<SalesProductDTO> combinedList = new ArrayList<>();
+        combinedList.addAll(topIncreaseProducts);
+        combinedList.addAll(topDecreaseProducts);
+
+        return combinedList;
     }
 }
