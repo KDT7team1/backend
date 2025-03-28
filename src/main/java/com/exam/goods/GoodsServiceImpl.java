@@ -6,6 +6,7 @@ import com.exam.category.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,10 @@ public class GoodsServiceImpl implements GoodsService {
                             .goods_stock(item.getGoods_stock())
                             .goods_created_at(item.getGoods_created_at())
                             .goods_updated_at(item.getGoods_updated_at())
-                            .goods_views(item.getGoods_views())
                             .goods_orders(item.getGoods_orders())
+                            .originalPrice(item.getOriginalPrice())
+                            .discountRate(item.getDiscountRate())
+                            .discountEndAt(item.getDiscountEndAt())
                             .build();
                     return dto;
 
@@ -69,8 +72,10 @@ public class GoodsServiceImpl implements GoodsService {
                 .goods_stock(goods.getGoods_stock())
                 .goods_created_at(goods.getGoods_created_at())
                 .goods_updated_at(goods.getGoods_updated_at())
-                .goods_views(goods.getGoods_views())
                 .goods_orders(goods.getGoods_orders())
+                .originalPrice(goods.getOriginalPrice())
+                .discountRate(goods.getDiscountRate())
+                .discountEndAt(goods.getDiscountEndAt())
                 .build();
         return goodsDTO;
     }
@@ -90,8 +95,10 @@ public class GoodsServiceImpl implements GoodsService {
                             .goods_stock(item.getGoods_stock())
                             .goods_created_at(item.getGoods_created_at())
                             .goods_updated_at(item.getGoods_updated_at())
-                            .goods_views(item.getGoods_views())
                             .goods_orders(item.getGoods_orders())
+                            .originalPrice(item.getOriginalPrice())
+                            .discountRate(item.getDiscountRate())
+                            .discountEndAt(item.getDiscountEndAt())
                             .build();
                     return dto;
                 }).collect(Collectors.toList());
@@ -113,8 +120,10 @@ public class GoodsServiceImpl implements GoodsService {
                             .goods_stock(item.getGoods_stock())
                             .goods_created_at(item.getGoods_created_at())
                             .goods_updated_at(item.getGoods_updated_at())
-                            .goods_views(item.getGoods_views())
                             .goods_orders(item.getGoods_orders())
+                            .originalPrice(item.getOriginalPrice())
+                            .discountRate(item.getDiscountRate())
+                            .discountEndAt(item.getDiscountEndAt())
                             .build();
                     return dto;
                 }).collect(Collectors.toList());
@@ -143,29 +152,65 @@ public class GoodsServiceImpl implements GoodsService {
                 .goods_image(dto.getGoods_image())
                 .goods_created_at(dto.getGoods_created_at())
                 .goods_updated_at(dto.getGoods_updated_at())
-                .goods_views(dto.getGoods_views())
                 .goods_orders(dto.getGoods_orders())
+                .originalPrice(dto.getOriginalPrice())
+                .discountRate(dto.getDiscountRate())
+                .discountEndAt(dto.getDiscountEndAt())
                 .build();
 
         goodsRepository.save(goodsEntity);
     }
 
-    //상품 조회
-//    @Override
-//    public GoodsDTO findById(Long goodsId) {
-//
-//        GoodsEntity entity = goodsRepository.findById(goodsId)
-//                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다. ID: " + goodsId));
-//
-//         return GoodsDTO.builder()
-//                    .goods_id(entity.getGoods_id())
-//                    .category_id(entity.getCategory().getCategory_id())
-//                    .goods_name(entity.getGoods_name())
-//                    .goods_price(entity.getGoods_price())
-//                    .goods_description(entity.getGoods_description())
-//                    .goods_stock(entity.getGoods_stock())
-//                    .goods_image(entity.getGoods_image())
-//                    .build();
-//        }
+    @Override
+    public void updateGoodsPrice(Long id, Long newPrice) {
+        Goods goods = goodsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다: " + id));
+        goods.setGoods_price(newPrice);
+        goodsRepository.save(goods);
+    }
 
+    @Override
+    public void applyDiscount(Long id, int discountRate, int period) {
+        Goods goods = goodsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 ID: " + id));
+
+        if(goods.getOriginalPrice() == null){
+            goods.setOriginalPrice(goods.getGoods_price());
+        }
+
+        Long originalPrice = goods.getOriginalPrice();
+        Long discountPrice = Math.round(originalPrice * (1 - discountRate / 100.0));
+        // 할인율 적용
+
+        goods.setOriginalPrice(originalPrice);
+
+        goods.setGoods_price(discountPrice);
+        goods.setDiscountRate(discountRate);
+
+
+    if(period == 1){
+        goods.setDiscountEndAt(LocalDateTime.now().plusMinutes(1)); // 일단 7일 할인기간
+    }else {
+        goods.setDiscountEndAt(LocalDateTime.now().plusDays(period)); // 일단 7일 할인기간
+    }
+
+        goods.setGoods_updated_at(LocalDateTime.now());
+
+        goodsRepository.save(goods);
+    }
+
+    @Override
+    public void cancelDiscount(Long id) {
+        Goods goods = goodsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 ID"));
+
+        if(goods.getOriginalPrice() != null){
+            goods.setGoods_price(goods.getOriginalPrice());
+            goods.setOriginalPrice(null);
+            goods.setDiscountRate(null);
+            goods.setDiscountEndAt(null);
+            goods.setGoods_updated_at(LocalDateTime.now());
+            goodsRepository.save(goods);
+        }
+    }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/goods")
@@ -32,20 +33,13 @@ public class GoodsController {
     @PostMapping("/save")
     public ResponseEntity<String> save(
             @RequestParam(value="goods_image", required=false) MultipartFile goods_image, // 수정!
-            @RequestParam("goods_id") Long goods_id,
             @RequestParam("category_id") Long category_id,
+            @RequestParam("sub_category_id") Long sub_category_id,
             @RequestParam("goods_name") String goods_name,
             @RequestParam("goods_price") Long goods_price,
             @RequestParam("goods_description") String goods_description,
             @RequestParam("goods_stock") Long goods_stock) {
 
-        System.out.println("Received goods_image1: " + goods_image);
-        System.out.println("Received goods_id1: " + goods_id);
-        System.out.println("Received category_id1: " + category_id);
-        System.out.println("Received goods_name1: " + goods_name);
-        System.out.println("Received goods_price1: " + goods_price);
-        System.out.println("Received goods_description1: " + goods_description);
-        System.out.println("Received goods_stock1: " + goods_stock);
 
         String imagePath = null;
 
@@ -56,7 +50,7 @@ public class GoodsController {
 
             System.out.println("Received fileName: " + fileName);
 
-            File uploadDir = new File("C:\\Users\\01min\\Desktop\\upload", fileName);
+            File uploadDir = new File("C:\\upload", fileName);
 
             try {
                 goods_image.transferTo(uploadDir);
@@ -66,15 +60,10 @@ public class GoodsController {
             }
         }
 
-        // DTO에 이미지 경로 저장
-//        GoodsDTO dto2 = new GoodsDTO(goods_id,
-//                category_id,
-//                goods_name, goods_price, goods_description, goods_stock, "/" + imagePath);
-
         GoodsDTO dto = GoodsDTO.builder()
-                .goods_id(goods_id)
                 .category_id(category_id)
                 .goods_name(goods_name)
+                .sub_category_id(sub_category_id)
                 .goods_price(goods_price)
                 .goods_description(goods_description)
                 .goods_stock(goods_stock)
@@ -86,4 +75,35 @@ public class GoodsController {
 
         return ResponseEntity.ok("상품이 저장되었습니다.");
     }
+
+
+    // 상품 수정
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> GoodsUpdate( @PathVariable("id") Long id,
+                                               @RequestBody Map<String, Object> body){
+        Long newPrice = Long.parseLong(body.get("goods_price").toString());
+        goodsService.updateGoodsPrice(id,newPrice);
+        return ResponseEntity.ok("상품이 수정되었습니다.");
+    }
+
+    // 할인 적용 로직
+    @PutMapping("/update/discount")
+    public ResponseEntity<String> applyDiscount(
+            @RequestParam("id")  Long id,
+            @RequestParam("discount_rate") int discountRate,
+            @RequestParam("period") int period){
+        goodsService.applyDiscount(id, discountRate,period);
+        return ResponseEntity.ok("할인 적용 완료");
+    }
+
+    // 할인 취소 로직
+    @PutMapping("/update/cancel-discount")
+    public ResponseEntity<String> cancelDiscount(
+        @RequestParam("id") Long id
+    ){
+        goodsService.cancelDiscount(id);
+        return ResponseEntity.ok("할인 취소 완료");
+    }
+
 }
+
