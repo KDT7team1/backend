@@ -201,7 +201,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
             productInfo.append(String.format("\n - %s: %,d원 변화", product.getProductName(), product.getSalesDiff()));
         }
 
-        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원%s", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales, productInfo);
+        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원 \n 가장 큰 판매량 변화를 보인 top3 상품은 다음과 같습니다. \n%s", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales, productInfo);
     }
 
     private String generateAlertMessage(int trendBasis, int targetHour, double percentDiffAWeekAgo, long todaySales, long comparisonSales) {
@@ -221,7 +221,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
         List<SalesProductDTO> todayProducts = getSoldProductsByDateAndHour(targetDate, targetHour);
         List<SalesProductDTO> aWeekAgoProducts = getSoldProductsByDateAndHour(targetDate.minusDays(7), targetHour);
 
-        return todayProducts.stream()
+        List<SalesProductDTO> resultList = todayProducts.stream()
                 .map(product -> {
                     long todaySales = product.getTotalPrice();
                     long aWeekAgoSales = aWeekAgoProducts.stream()
@@ -231,8 +231,12 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                     long diffSales = todaySales - aWeekAgoSales;
                     product.setSalesDiff(diffSales);
                     return product;
-                })
-                .sorted(Comparator.comparingDouble(SalesProductDTO::getSalesDiff).reversed()) // 매출 변화가 큰 순으로 정렬
+                }).collect(Collectors.toList());
+
+        // 판매 변화량의 절대값이 큰 상품 3개만 출력
+        return resultList.stream()
+                .sorted(Comparator.comparingDouble((SalesProductDTO product) -> Math.abs(product.getSalesDiff())).reversed())
+                .limit(3)  // 상위 3개 상품만 가져옴
                 .collect(Collectors.toList());
     }
 }
