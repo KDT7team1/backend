@@ -49,8 +49,18 @@ public class Goods {
     @Column(insertable = false)
     LocalDateTime goods_updated_at;  // 상품 수정 시간
 
-    Long goods_views;  // 상품 조회수
     Long goods_orders; // 상품 주문수
+
+
+
+    @Column(name = "original_price")
+    private Long originalPrice;
+
+    @Column(name = "discount_end_at")
+    private LocalDateTime discountEndAt;
+
+    @Column(name = "discount_rate")
+    private Integer discountRate;
 
     @OneToMany(mappedBy = "goods")
     private List<Inventory> inventoryList;
