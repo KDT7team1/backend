@@ -1,5 +1,7 @@
 package com.exam.salesAlert;
 
+import com.exam.salesAnalysis.SalesAnalysisService;
+import com.exam.statistics.SalesDailyDTO;
 import com.exam.statistics.SalesDailyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -17,10 +20,12 @@ public class SalesAlertController {
 
     SalesAlertService alertService;
     SalesDailyService dailyService;
+    SalesAnalysisService analysisService;
 
-    public SalesAlertController(SalesAlertService alertService, SalesDailyService dailyService) {
+    public SalesAlertController(SalesAlertService alertService, SalesDailyService dailyService, SalesAnalysisService analysisService) {
         this.alertService = alertService;
         this.dailyService = dailyService;
+        this.analysisService = analysisService;
     }
 
     @GetMapping("/searchList/byDate/{date}")
@@ -98,23 +103,54 @@ public class SalesAlertController {
     }
 
     @PutMapping("/updateComment")
-    public ResponseEntity<String> updateUserComment(@RequestParam Long alertId, @RequestParam String userComment) {
+    public ResponseEntity<String> updateUserComment(@RequestBody Map<String, Object> requestBody) {
+        // 사용자(점주)가 직접 기록한 이상치 매출 데이터의 코멘트를 업데이트
+        log.info("사용자가 이상치 매출 데이터의 코멘트를 수정함");
+
+        Long alertId = ((Number) requestBody.get("alertId")).longValue();
+        String userComment = (String) requestBody.get("userComment");
+        log.info("수정할 기록 번호: {}, 수정할 코멘트: {}", alertId, userComment);
+
         try {
             alertService.updateUserComment(alertId, userComment);
-            return ResponseEntity.status(200).body("코멘트가 수정되었습니다.");
+            return ResponseEntity.status(201).body("코멘트가 수정되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(400).body("수정에 실패했습니다.");
         }
     }
 
-    @DeleteMapping("/deleteAlert")
-    public ResponseEntity<String> deleteByAlertId(@RequestParam Long alertId) {
+    @DeleteMapping("/deleteAlert/{alertId}")
+    public ResponseEntity<String> deleteByAlertId(@PathVariable Long alertId) {
+        // 이상치 기록을 삭제
+        log.info("사용자가 이상치 기록의 삭제를 요청함. 삭제할 기록 id: {}", alertId);
         try {
             alertService.deleteByAlertId(alertId);
-            return ResponseEntity.status(200).body("정상적으로 삭제되었습니다.");
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(400).body("삭제에 실패했습니다.");
         }
     }
 
+    @GetMapping("/salesHourly/{salesDate}/{salesHour}")
+    public ResponseEntity<List<SalesDailyDTO>> getSalesDailyByDateAndHour(@PathVariable String salesDate, @PathVariable int salesHour) {
+        // 해당하는 날짜와 시간대의 매출 기록을 조회(카테고리 대분류/소분류)
+        log.info("LOGGER: 날짜와 시간대를 기반으로 한 매출 기록 조회를 요청함");
+        // 날짜 포매팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            // 날짜 데이터 타입 변환
+            LocalDate searchDate = LocalDate.parse(salesDate, formatter);
+
+            log.info("LOGGER: 조회할 날짜: {}, 조회할 시간: {}", searchDate, salesHour);
+
+            List<SalesDailyDTO> list = analysisService.getSalesDailyByDateAndHour(searchDate, salesHour);
+            log.info("LOGGER: 해당하는 날짜와 시간대의 매출 데이터: {}", list);
+
+            return ResponseEntity.status(200).body(list);
+        } catch (DateTimeException e) {
+            log.error("날짜 형식이 올바르지 않습니다.", e);
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+    
 }
