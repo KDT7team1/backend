@@ -201,7 +201,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
             productInfo.append(String.format("\n - %s: %,d원 변화", product.getProductName(), product.getSalesDiff()));
         }
 
-        return String.format("[%d시] [%s] %s : 오늘 매출: %,d원, 비교 매출: %,d원%s", targetHour, trendPeriod, trend, todaySales, comparisonSales, productInfo);
+        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원%s", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales, productInfo);
     }
 
     private String generateAlertMessage(int trendBasis, int targetHour, double percentDiffAWeekAgo, long todaySales, long comparisonSales) {
@@ -212,7 +212,7 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
             default -> throw new IllegalStateException("Unexpected value: " + trendBasis); // 예외 처리
         };
 
-        return String.format("[%d시] [%s] %s : 오늘 매출: %,d원, 비교 매출: %,d원", targetHour, trendPeriod, trend, todaySales, comparisonSales);
+        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales);
     }
 
     // 매출 변화가 큰 상품들을 구하는 메서드
