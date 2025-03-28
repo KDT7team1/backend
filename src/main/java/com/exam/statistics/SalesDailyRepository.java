@@ -37,6 +37,24 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             """)
     List<Object[]> getDailySalesByMonth(@Param("month") String month);
 
+
+    // 장바구니 분석에서 최근 7일간 판매량 조회를 위한 함수
+    @Query("SELECT s.dailyCompositeKey.salesDate, SUM(s.dailyAmount) " +
+            "FROM SalesDaily s " +
+            "WHERE s.dailyCompositeKey.categoryId = :categoryId " +
+            "AND s.dailyCompositeKey.subCategoryId = :subCategoryId " +
+            "AND s.dailyCompositeKey.salesDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY s.dailyCompositeKey.salesDate " +
+            "ORDER BY s.dailyCompositeKey.salesDate")
+    List<Object[]> findWeeklySalesByCategory(
+            @Param("categoryId") Long categoryId,
+            @Param("subCategoryId") Long subCategoryId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+
+
     // 선택한 날짜의 카테고리별 매출통계 - 대분류 조회
     @Query("""
             SELECT

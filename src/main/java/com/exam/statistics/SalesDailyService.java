@@ -30,4 +30,9 @@ public interface SalesDailyService {
 
     // 8) 선택한 날짜 사이(7, 30일간)의 카테고리별 매출량 전체
     List<SalesDailyDTO> getTotalCategorySalesByDate(LocalDate startDate, LocalDate endDate);
+
+
+    // 9) 최근 7일간의 판매량 조회 (장바구니분석)
+    List<SalesChartDTO> getWeeklySales(Long categoryId, Long subCategoryId);
+
 }
