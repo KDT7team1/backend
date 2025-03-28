@@ -2,10 +2,7 @@ package com.exam.statistics;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -292,5 +289,14 @@ public class SalesController {
             return ResponseEntity.badRequest().body(null);
         }
     } // end getTotalCategorySalesByDate
+
+    @GetMapping("/sales/week")
+    public ResponseEntity<List<SalesChartDTO>> getWeeklySalesData(
+            @RequestParam Long categoryId,
+            @RequestParam Long subCategoryId) {
+        System.out.println("요청 도착!");
+        List<SalesChartDTO> result = salesDailyService.getWeeklySales(categoryId, subCategoryId);
+        return ResponseEntity.status(200).body(result);
+    }
 
 }

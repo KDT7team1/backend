@@ -3,6 +3,7 @@ package com.exam.statistics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,6 +69,22 @@ public class SalesDailyServiceImpl implements SalesDailyService{
         }).collect(Collectors.toList());
 
         return dailyList;
+    }
+
+    // 장바구니 분석에서 상품 7일치 판매기록 조회
+    @Override
+    public List<SalesChartDTO> getWeeklySales(Long categoryId, Long subCategoryId) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate sevenDaysAgo = today.minusDays(6); // 총 7일치
+
+        List<Object[]> rawResults = salesDailyRepository.findWeeklySalesByCategory(categoryId, subCategoryId, sevenDaysAgo, today);
+        System.out.println("Raw Results Size: " + rawResults.size());
+
+        return rawResults.stream()
+                .map(row -> new SalesChartDTO((LocalDate) row[0], ((Number) row[1]).intValue()))
+                .collect(Collectors.toList());
+
     }
 
     @Override
