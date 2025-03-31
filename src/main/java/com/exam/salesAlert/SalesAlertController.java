@@ -1,6 +1,7 @@
 package com.exam.salesAlert;
 
 import com.exam.salesAnalysis.SalesAnalysisService;
+import com.exam.salesAnalysis.SalesProductDTO;
 import com.exam.statistics.SalesDailyDTO;
 import com.exam.statistics.SalesDailyService;
 import lombok.extern.slf4j.Slf4j;
@@ -131,9 +132,9 @@ public class SalesAlertController {
         }
     }
 
-    @GetMapping("/salesHourly/{salesDate}/{salesHour}")
-    public ResponseEntity<List<SalesDailyDTO>> getSalesDailyByDateAndHour(@PathVariable String salesDate, @PathVariable int salesHour) {
-        // 해당하는 날짜와 시간대의 매출 기록을 조회(카테고리 대분류/소분류)
+    @GetMapping("/salesRecordHourly/{salesDate}/{salesHour}")
+    public ResponseEntity<List<SalesProductDTO>> getSalesDailyByDateAndHour(@PathVariable String salesDate, @PathVariable int salesHour) {
+        // 해당하는 날짜와 시간대의 매출 기록을 조회(상품별 수량과 매출액의 합계)
         log.info("LOGGER: 날짜와 시간대를 기반으로 한 매출 기록 조회를 요청함");
         // 날짜 포매팅
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -143,7 +144,7 @@ public class SalesAlertController {
 
             log.info("LOGGER: 조회할 날짜: {}, 조회할 시간: {}", searchDate, salesHour);
 
-            List<SalesDailyDTO> list = analysisService.getSalesDailyByDateAndHour(searchDate, salesHour);
+            List<SalesProductDTO> list = analysisService.getSoldProductsByDateAndHour(searchDate, salesHour);
             log.info("LOGGER: 해당하는 날짜와 시간대의 매출 데이터: {}", list);
 
             return ResponseEntity.status(200).body(list);
