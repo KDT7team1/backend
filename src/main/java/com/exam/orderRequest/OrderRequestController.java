@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,6 +23,14 @@ public class OrderRequestController {
 
         orderRequestService.placeOrder(goodsId, quantity);
         return ResponseEntity.ok("발주 요청 완료");
+    }
+
+
+    // 발주 리스트 조회
+    @GetMapping("/list")
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        List<OrderDTO> orders = orderRequestService.getAllOrders();
+        return ResponseEntity.status(200).body(orders);
     }
 
 

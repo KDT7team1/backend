@@ -7,7 +7,7 @@ public interface OrderRequestService {
 
     void placeOrder(Long goodsId, Long quantity);
 
-    List<OrderRequest> getAllOrders();
+    List<OrderDTO> getAllOrders();
 
     void completeOrder(Long orderId);
 
