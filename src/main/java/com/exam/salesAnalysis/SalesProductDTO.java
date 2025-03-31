@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class SalesProductDTO {
 
+    Long productId;
     String productName; // 상품명
     Long totalAmount; // 총 판매수량
     Long totalPrice; // 총 매출금액

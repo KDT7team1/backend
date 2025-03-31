@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,25 +57,29 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
         List<SaleData> salesList = dataRepository.findSalesByDateTimeRange(startTime, endTime);
 
         // 상품별 매출 & 판매량 합산
-        Map<String, SalesProductDTO> productSalesMap = salesList.stream()
-                .collect(Collectors.toMap(
-                        sale -> sale.getGoods().getGoods_name(),
-                        sale -> new SalesProductDTO(
-                                sale.getGoods().getGoods_name(), // 상품명
-                                sale.getSaleAmount(),            // 판매수량
-                                sale.getSalePrice(),             // 총판매액
-                                0L                               // 매출차이 -> 나중에 업데이트
-                        ),
-                        (dto1, dto2) -> new SalesProductDTO(
-                                dto1.getProductName(),
-                                dto1.getTotalAmount() + dto2.getTotalAmount(),
-                                dto1.getTotalPrice() + dto2.getTotalPrice(),
-                                0L
-                        )
-                ));
+        Map<Long, SalesProductDTO> productSalesMap = new HashMap<>();
 
-        // DTO 리스트로 변환
-        return productSalesMap.values().stream().toList();
+        for (SaleData sale : salesList) {
+            Long productId = sale.getGoods().getGoods_id();
+            String productName = sale.getGoods().getGoods_name();
+            long saleAmount = sale.getSaleAmount();
+            long salePrice = sale.getSalePrice() * sale.getSaleAmount();
+
+            // 기존에 존재하면 합산, 없으면 추가
+            productSalesMap.merge(productId,
+                    new SalesProductDTO(productId, productName, saleAmount, salePrice, 0L),
+                    (existing, newItem) -> {
+                        existing.setTotalAmount(existing.getTotalAmount() + newItem.getTotalAmount());
+                        existing.setTotalPrice(existing.getTotalPrice() + newItem.getTotalPrice());
+                        return existing;
+                    }
+            );
+        }
+
+        // DTO 리스트로 변환 + 매출액 기준 내림차순 정렬
+        return productSalesMap.values().stream()
+                .sorted(Comparator.comparing(SalesProductDTO::getTotalPrice).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -224,14 +225,14 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                     return product;
                 }).collect(Collectors.toList());
 
-        // 매출 상승 상품: +값 기준으로 상위 4개
+        // 매출 상승 상품: +값 기준으로 상위 3개
         List<SalesProductDTO> topIncreaseProducts = resultList.stream()
                 .filter(product -> product.getSalesDiff() > 0) // 상승한 상품만 필터링
                 .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff).reversed()) // 큰 매출 변화 순으로 정렬
                 .limit(3) // 상위 3개만 선택
                 .collect(Collectors.toList());
 
-        // 매출 하락 상품: -값 기준으로 상위 4개
+        // 매출 하락 상품: -값 기준으로 상위 3개
         List<SalesProductDTO> topDecreaseProducts = resultList.stream()
                 .filter(product -> product.getSalesDiff() < 0) // 하락한 상품만 필터링
                 .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff)) // 작은 매출 변화 순으로 정렬
