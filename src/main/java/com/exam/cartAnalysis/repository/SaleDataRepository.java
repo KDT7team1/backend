@@ -1,6 +1,7 @@
 package com.exam.cartAnalysis.repository;
 
 import com.exam.cartAnalysis.entity.SaleData;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,5 +14,10 @@ public interface SaleDataRepository extends JpaRepository<SaleData, Long>{
     @Query("SELECT s FROM SaleData s WHERE s.saleDate BETWEEN :startTime AND :endTime")
     List<SaleData> findSalesByDateTimeRange(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
+    @Query("SELECT count(s) FROM SaleData s WHERE s.saleDate BETWEEN :startTime AND :endTime")
+    Long getTodayVisitors(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
+
+    @Query("SELECT sum(s.salePrice) FROM SaleData s WHERE s.saleDate BETWEEN :startTime AND :endTime")
+    Long getTodaySales(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 }
 
