@@ -31,6 +31,7 @@ public class SalesAlertServiceImpl implements SalesAlertService{
                     .previousSales(s.getPreviousSales())
                     .currentSales(s.getCurrentSales())
                     .difference(s.getDifference())
+                    .percentageDifference(s.getPercentageDifference())
                     .alertMessage(s.getAlertMessage())
                     .userComment(s.getUserComment())
                     .build();
@@ -53,6 +54,7 @@ public class SalesAlertServiceImpl implements SalesAlertService{
                     .previousSales(s.getPreviousSales())
                     .currentSales(s.getCurrentSales())
                     .difference(s.getDifference())
+                    .percentageDifference(s.getPercentageDifference())
                     .alertMessage(s.getAlertMessage())
                     .userComment(s.getUserComment())
                     .build();
@@ -75,6 +77,7 @@ public class SalesAlertServiceImpl implements SalesAlertService{
                     .previousSales(s.getPreviousSales())
                     .currentSales(s.getCurrentSales())
                     .difference(s.getDifference())
+                    .percentageDifference(s.getPercentageDifference())
                     .alertMessage(s.getAlertMessage())
                     .userComment(s.getUserComment())
                     .build();
@@ -94,6 +97,7 @@ public class SalesAlertServiceImpl implements SalesAlertService{
                 .previousSales(salesAlertDTO.getPreviousSales())
                 .currentSales(salesAlertDTO.getCurrentSales())
                 .difference(salesAlertDTO.getDifference())
+                .percentageDifference(salesAlertDTO.getPercentageDifference())
                 .alertMessage(salesAlertDTO.getAlertMessage())
                 .userComment(salesAlertDTO.getUserComment())
                 .build();

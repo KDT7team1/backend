@@ -160,28 +160,28 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
         if (Math.abs(percentDiffAWeekAgo) >= 50) {
             // 매출 차이가 큰 상품들을 계산
             List<SalesProductDTO> topProductsAWeekAgo = findTopChangingProducts(aWeekAgo, targetHour);
-            String alertMessage = generateAlertMessage(targetHour, percentDiffAWeekAgo, todaySales, aWeekAgoSales, topProductsAWeekAgo);
-            SalesAlertDTO alertDTO = createSalesAlertDTO(1, targetDate, targetHour, aWeekAgoSales, todaySales, diffAWeekAgo, alertMessage);
+            String alertMessage = generateAlertMessage(1, targetHour, percentDiffAWeekAgo, todaySales, aWeekAgoSales);
+            SalesAlertDTO alertDTO = createSalesAlertDTO(1, targetDate, targetHour, aWeekAgoSales, todaySales, diffAWeekAgo, percentDiffAWeekAgo, alertMessage);
             alertService.save(alertDTO);// 바로 DB에 저장
         }
 
         // 7일 평균 대비 비교
         if (Math.abs(percentDiffAvg7Days) >= 200) {
             String alertMessage = generateAlertMessage(7, targetHour, percentDiffAvg7Days, todaySales, avg7DaysSales);
-            SalesAlertDTO alertDTO = createSalesAlertDTO(7, targetDate, targetHour, avg7DaysSales, todaySales, diffAvg7Days, alertMessage);
+            SalesAlertDTO alertDTO = createSalesAlertDTO(7, targetDate, targetHour, avg7DaysSales, todaySales, diffAvg7Days, percentDiffAvg7Days, alertMessage);
             alertService.save(alertDTO);// 바로 DB에 저장
         }
 
         // 30일 평균 대비 비교
         if (Math.abs(percentDiffAvg30Days) >= 200) {
             String alertMessage = generateAlertMessage(30, targetHour, percentDiffAvg30Days, todaySales, avg30DaysSales);
-            SalesAlertDTO alertDTO = createSalesAlertDTO(30, targetDate, targetHour, avg30DaysSales, todaySales, diffAvg30Days, alertMessage);
+            SalesAlertDTO alertDTO = createSalesAlertDTO(30, targetDate, targetHour, avg30DaysSales, todaySales, diffAvg30Days, percentDiffAvg30Days, alertMessage);
             alertService.save(alertDTO);// 바로 DB에 저장
         }
 
     }
 
-    private SalesAlertDTO createSalesAlertDTO(int trendBasis, LocalDate targetDate, int targetHour, long previousSales, long currentSales, long diffPrice, String alertMessage) {
+    private SalesAlertDTO createSalesAlertDTO(int trendBasis, LocalDate targetDate, int targetHour, long previousSales, long currentSales, long diffPrice, double percent, String alertMessage) {
         return SalesAlertDTO.builder()
                 .trendBasis(trendBasis)
                 .alertDate(targetDate)
@@ -189,31 +189,21 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                 .previousSales(previousSales)
                 .currentSales(currentSales)
                 .difference(diffPrice)
+                .percentageDifference(percent)
                 .alertMessage(alertMessage)
                 .build();
     }
 
-    private String generateAlertMessage(int targetHour, double percentDiffAWeekAgo, long todaySales, long comparisonSales, List<SalesProductDTO> topProducts) {
-        String trend = (percentDiffAWeekAgo > 0) ? "상승" : "하락";
-        String trendPeriod = "[동요일] 일주일 전 같은 요일 대비";
-
-        StringBuilder productInfo = new StringBuilder();
-        for (SalesProductDTO product : topProducts) {
-            productInfo.append(String.format("\n - %s: %,d원 변화", product.getProductName(), product.getSalesDiff()));
-        }
-
-        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원\n매출 변화에 영향을 준 상품은 다음과 같습니다.\n%s", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales, productInfo);
-    }
-
-    private String generateAlertMessage(int trendBasis, int targetHour, double percentDiffAWeekAgo, long todaySales, long comparisonSales) {
-        String trend = (percentDiffAWeekAgo > 0) ? "상승" : "하락";
+    private String generateAlertMessage(int trendBasis, int targetHour, double percentDiff, long todaySales, long comparisonSales) {
+        String trend = (percentDiff > 0) ? "상승" : "하락";
         String trendPeriod = switch (trendBasis) {
+            case 1 -> "[동요일] 일주일 전 같은 요일 대비";
             case 7 -> "[단기 트렌드] 7일 평균 대비";
             case 30 -> "[장기 트렌드] 30일 평균 대비";
             default -> throw new IllegalStateException("Unexpected value: " + trendBasis); // 예외 처리
         };
 
-        return String.format("[%d시] [%s] %.1f%% %s : 오늘 매출: %,d원, 비교 매출: %,d원", targetHour, trendPeriod, percentDiffAWeekAgo, trend, todaySales, comparisonSales);
+        return String.format("[%d시] [%s] %.1f%% %s\n오늘 매출: %,d원, 비교 매출: %,d원", targetHour, trendPeriod, percentDiff, trend, todaySales, comparisonSales);
     }
 
     // 매출 변화가 큰 상품들을 구하는 메서드
@@ -234,14 +224,14 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                     return product;
                 }).collect(Collectors.toList());
 
-        // 매출 상승 상품: +값 기준으로 상위 3개
+        // 매출 상승 상품: +값 기준으로 상위 4개
         List<SalesProductDTO> topIncreaseProducts = resultList.stream()
                 .filter(product -> product.getSalesDiff() > 0) // 상승한 상품만 필터링
                 .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff).reversed()) // 큰 매출 변화 순으로 정렬
                 .limit(3) // 상위 3개만 선택
                 .collect(Collectors.toList());
 
-        // 매출 하락 상품: -값 기준으로 상위 3개
+        // 매출 하락 상품: -값 기준으로 상위 4개
         List<SalesProductDTO> topDecreaseProducts = resultList.stream()
                 .filter(product -> product.getSalesDiff() < 0) // 하락한 상품만 필터링
                 .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff)) // 작은 매출 변화 순으로 정렬

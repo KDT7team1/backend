@@ -34,6 +34,9 @@ public class SalesAlertDTO {
     Long difference;
 
     @NotNull
+    Double percentageDifference;
+
+    @NotNull
     String alertMessage;
 
     String userComment;
