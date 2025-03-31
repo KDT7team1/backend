@@ -6,10 +6,12 @@ import com.exam.Inventory.InventoryService;
 import com.exam.cartAnalysis.repository.OrdersRepository;
 import com.exam.goods.Goods;
 import com.exam.goods.GoodsRepository;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -63,8 +65,23 @@ public class OrderRequestServiceImpl implements OrderRequestService {
 
      // 발주 요청 리스트 전체 조회
     @Override
-    public List<OrderRequest> getAllOrders() {
-        return orderRequestRepository.findAll();
+    public List<OrderDTO> getAllOrders() {
+
+         List<OrderDTO> orders = orderRequestRepository.findAll().stream()
+                 .map((item) -> {
+                     OrderDTO order = OrderDTO.builder()
+                             .orderId(item.getOrderId())
+                             .goodsId(item.getGoods().getGoods_id())
+                             .goodsName(item.getGoods().getGoods_name())
+                             .orderQuantity(item.getOrderQuantity())
+                             .orderTime(item.getOrderTime())
+                             .status(item.getStatus())
+                             .scheduledTime(item.getScheduledTime())
+                             .build();
+                     return order;
+                 }).collect(Collectors.toList());
+
+     return orders;
     }
 
     // 발주 요청 처리 후 완료 로직
