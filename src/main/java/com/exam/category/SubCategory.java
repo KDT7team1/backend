@@ -18,7 +18,7 @@ public class SubCategory {
 	Long sub_category_id;
 
 	@ManyToOne
-			@JoinColumn(name="category_id")
+	@JoinColumn(name="category_id")
     Category category;
 
 	String sub_name;
