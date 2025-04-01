@@ -53,7 +53,7 @@ public class GoodsServiceImpl implements GoodsService {
         return goodsList;
     }
 
-    // 2. 상품 상제보기
+    // 2. 상품 상세보기
     @Override
     public GoodsDTO findById(Long id){
         Goods goods =  goodsRepository.findById(id).orElse(null);
