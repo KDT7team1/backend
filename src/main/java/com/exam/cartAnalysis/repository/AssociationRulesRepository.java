@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface AssociationRulesRepository extends JpaRepository<AssociationRules, Long>{
     List<AssociationRules> findByPeriodLabel(String periodLabel);
+
 }
 

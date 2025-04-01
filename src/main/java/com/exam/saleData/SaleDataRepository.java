@@ -1,7 +1,5 @@
-package com.exam.cartAnalysis.repository;
+package com.exam.saleData;
 
-import com.exam.cartAnalysis.entity.SaleData;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +17,19 @@ public interface SaleDataRepository extends JpaRepository<SaleData, Long>{
 
     @Query("SELECT sum(s.salePrice) FROM SaleData s WHERE s.saleDate BETWEEN :startTime AND :endTime")
     Long getTodaySales(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
+
+    // 최근 7일 판매량
+    @Query("SELECT DATE(s.saleDate), SUM(s.saleAmount) " +
+            "FROM SaleData s " +
+            "WHERE s.goods.goods_id = :goodsId " +
+            "AND s.saleDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY DATE(s.saleDate) " +
+            "ORDER BY DATE(s.saleDate)")
+    List<Object[]> findWeeklySalesByGoodsId(
+            @Param("goodsId") Long goodsId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
+
 }
 

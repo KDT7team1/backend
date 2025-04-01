@@ -1,7 +1,9 @@
 package com.exam.salesAnalysis;
 
-import com.exam.cartAnalysis.entity.SaleData;
-import com.exam.cartAnalysis.repository.SaleDataRepository;
+
+
+import com.exam.saleData.SaleData;
+import com.exam.saleData.SaleDataRepository;
 import com.exam.salesAlert.SalesAlertDTO;
 import com.exam.salesAlert.SalesAlertRepository;
 import com.exam.salesAlert.SalesAlertService;
