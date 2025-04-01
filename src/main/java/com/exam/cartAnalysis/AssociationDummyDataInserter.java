@@ -2,9 +2,9 @@
 //
 //
 //import com.exam.cartAnalysis.entity.Orders;
-//import com.exam.cartAnalysis.entity.SaleData;
+//import com.exam.sale.SaleData;
 //import com.exam.cartAnalysis.repository.OrdersRepository;
-//import com.exam.cartAnalysis.repository.SaleDataRepository;
+//import com.exam.saleData.SaleDataRepository;
 //import com.exam.goods.Goods;
 //import com.exam.goods.GoodsRepository;
 //import com.exam.member.Member;

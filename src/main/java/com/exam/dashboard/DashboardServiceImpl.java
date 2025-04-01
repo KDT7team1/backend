@@ -1,6 +1,6 @@
 package com.exam.dashboard;
 
-import com.exam.cartAnalysis.repository.SaleDataRepository;
+import com.exam.saleData.SaleDataRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

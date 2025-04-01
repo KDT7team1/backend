@@ -155,6 +155,10 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             @Param("endDate") LocalDate endDate,
             @Param("salesHour") int salesHour
     );
+
+
+
+
 }
 
 

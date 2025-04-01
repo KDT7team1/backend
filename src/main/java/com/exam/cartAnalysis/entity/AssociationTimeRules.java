@@ -1,8 +1,8 @@
 package com.exam.cartAnalysis.entity;
 
-import com.exam.goods.Goods;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -13,25 +13,22 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 @Entity
-@Table(name="sale_data")
-public class SaleData {
-
+@Table(name="association_timerules")
+public class AssociationTimeRules {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long salesId;
+	Long id;
 
-	@ManyToOne
-	@JoinColumn(name="orders_id")
-	Orders orders;
+	String time_period;
+	String itemset_a;
+	String itemset_b;
 
-	@ManyToOne
-	@JoinColumn(name="goods_id")
-	Goods goods;
+	Double support;
+	Double confidence;
+	Double lift;
 
-	Long saleAmount;
-	Long salePrice;
-
+	@CreationTimestamp
 	@Column(updatable = false)
-	LocalDateTime saleDate;
+	LocalDateTime created_at;
 
 }
