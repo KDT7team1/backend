@@ -79,7 +79,6 @@ public class SalesDailyServiceImpl implements SalesDailyService{
         LocalDate sevenDaysAgo = today.minusDays(6); // 총 7일치
 
         List<Object[]> rawResults = salesDailyRepository.findWeeklySalesByCategory(categoryId, subCategoryId, sevenDaysAgo, today);
-        System.out.println("Raw Results Size: " + rawResults.size());
 
         return rawResults.stream()
                 .map(row -> new SalesChartDTO((LocalDate) row[0], ((Number) row[1]).intValue()))
