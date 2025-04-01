@@ -1,6 +1,7 @@
 package com.exam.salesAlert;
 
 import com.exam.salesAnalysis.SalesAnalysisService;
+import com.exam.salesAnalysis.SalesProductDTO;
 import com.exam.statistics.SalesDailyDTO;
 import com.exam.statistics.SalesDailyService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class SalesAlertController {
             log.info("LOGGER: 조회할 날짜: {}", searchDate);
 
             List<SalesAlertDTO> alertList = alertService.findByAlertDate(searchDate);
-            log.info("LOGGER: 해당하는 날짜의 알림 정보 획득: {}", alertList);
+            log.info("LOGGER: 해당하는 날짜의 알림 정보 획득 성공");
 
             return ResponseEntity.status(200).body(alertList);
         } catch (DateTimeException e) {
@@ -66,7 +67,7 @@ public class SalesAlertController {
             log.info("LOGGER: 조회할 기간: {} ~ {}", date1, date2);
 
             List<SalesAlertDTO> alertList = alertService.findByAlertDateBetween(searchDate1, searchDate2);
-            log.info("LOGGER: 해당하는 기간의 알림 정보 획득: {}", alertList);
+            log.info("LOGGER: 해당하는 기간의 알림 정보 획득 성공");
 
             return ResponseEntity.status(200).body(alertList);
         } catch (DateTimeException e) {
@@ -93,7 +94,7 @@ public class SalesAlertController {
             log.info("LOGGER: 조회할 날짜: {}, 트렌드 타입: {}", searchDate, trendBasis);
 
             List<SalesAlertDTO> alertList = alertService.findByTrendBasis(searchDate, trendBasis);
-            log.info("LOGGER: 해당하는 날짜와 트렌드 타입의 알림 정보 획득: {}", alertList);
+            log.info("LOGGER: 해당하는 날짜와 트렌드 타입의 알림 정보 획득 성공");
 
             return ResponseEntity.status(200).body(alertList);
         } catch (DateTimeException e) {
@@ -131,9 +132,9 @@ public class SalesAlertController {
         }
     }
 
-    @GetMapping("/salesHourly/{salesDate}/{salesHour}")
-    public ResponseEntity<List<SalesDailyDTO>> getSalesDailyByDateAndHour(@PathVariable String salesDate, @PathVariable int salesHour) {
-        // 해당하는 날짜와 시간대의 매출 기록을 조회(카테고리 대분류/소분류)
+    @GetMapping("/salesRecordHourly/{salesDate}/{salesHour}")
+    public ResponseEntity<List<SalesProductDTO>> getSalesDailyByDateAndHour(@PathVariable String salesDate, @PathVariable int salesHour) {
+        // 해당하는 날짜와 시간대의 매출 기록을 조회(상품별 수량과 매출액의 합계)
         log.info("LOGGER: 날짜와 시간대를 기반으로 한 매출 기록 조회를 요청함");
         // 날짜 포매팅
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -143,8 +144,8 @@ public class SalesAlertController {
 
             log.info("LOGGER: 조회할 날짜: {}, 조회할 시간: {}", searchDate, salesHour);
 
-            List<SalesDailyDTO> list = analysisService.getSalesDailyByDateAndHour(searchDate, salesHour);
-            log.info("LOGGER: 해당하는 날짜와 시간대의 매출 데이터: {}", list);
+            List<SalesProductDTO> list = analysisService.getSoldProductsByDateAndHour(searchDate, salesHour);
+            log.info("매출 데이터 조회에 성공함. 매출 데이터 반환");
 
             return ResponseEntity.status(200).body(list);
         } catch (DateTimeException e) {

@@ -39,6 +39,9 @@ public class SalesAlert {
     @Column(name="difference")
     Long difference;
 
+    @Column(name="percentage_difference")
+    Double percentageDifference;
+
     @Column(name="alert_message")
     String alertMessage;
 

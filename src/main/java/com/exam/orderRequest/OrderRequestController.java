@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orderRequest")
 public class OrderRequestController {
 
     @Autowired
@@ -28,9 +27,16 @@ public class OrderRequestController {
 
     // 발주 리스트 조회
     @GetMapping("/list")
-    public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        List<OrderDTO> orders = orderRequestService.getAllOrders();
+    public ResponseEntity<List<OrderRequestDTO>> getAllOrders() {
+        List<OrderRequestDTO> orders = orderRequestService.getAllOrders();
         return ResponseEntity.status(200).body(orders);
+    }
+
+    // 가장 최신 발주 1건 조회
+    @GetMapping("/latest/{goodsId}")
+    public ResponseEntity<OrderRequestDTO> getLatestOrder(@PathVariable Long goodsId) {
+        OrderRequestDTO orderRequestDTO = orderRequestService.findTop1ByGoodsOrderByScheduledTimeDesc(goodsId);
+        return ResponseEntity.status(200).body(orderRequestDTO);
     }
 
 
