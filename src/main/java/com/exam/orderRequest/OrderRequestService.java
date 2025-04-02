@@ -14,4 +14,5 @@ public interface OrderRequestService {
 
     OrderRequestDTO findTop1ByGoodsOrderByScheduledTimeDesc(Long goodsId);
 
+    void confirmOrder(Long orderId);
 }
