@@ -38,7 +38,7 @@ public class OrderRequestServiceImpl implements OrderRequestService {
                 .goods(goods)
                 .orderQuantity(quantity)
                 .orderTime(LocalDateTime.now())
-                .status("대기")
+                .status("발주 진행중")
                 .scheduledTime(LocalDateTime.now().plusSeconds(5))
                 .build();
 
@@ -46,13 +46,13 @@ public class OrderRequestServiceImpl implements OrderRequestService {
 
         new Thread(() -> {
             try {
-                Thread.sleep(10_000); // 10초 대기
+                Thread.sleep(300000); // 10초 대기
                 inventoryService.addStock(
                         goods.getGoods_id(),
                         quantity,
                         LocalDateTime.now().plusDays(7) // 유통기한 임의 지정
                 );
-                order.setStatus("입고완료");
+                order.setStatus("발주완료");
                 orderRequestRepository.save(order);
                 System.out.println("✅ 자동 입고 처리 완료: " + order.getOrderId());
             } catch (Exception e) {
@@ -72,6 +72,7 @@ public class OrderRequestServiceImpl implements OrderRequestService {
                              .orderId(item.getOrderId())
                              .goodsId(item.getGoods().getGoods_id())
                              .goodsName(item.getGoods().getGoods_name())
+                             .goodsImage(item.getGoods().getGoods_image()) // 발주 리스트의 이미지 출력을 위해 추가
                              .orderQuantity(item.getOrderQuantity())
                              .orderTime(item.getOrderTime())
                              .status(item.getStatus())
@@ -109,6 +110,7 @@ public class OrderRequestServiceImpl implements OrderRequestService {
                .orderId(orderRequest.getOrderId())
                .goodsId(orderRequest.getGoods().getGoods_id())
                .goodsName(orderRequest.getGoods().getGoods_name())
+               .goodsImage(orderRequest.getGoods().getGoods_image()) // 발주 리스트의 이미지 출력을 위해 추가
                .orderQuantity(orderRequest.getOrderQuantity())
                .orderTime(orderRequest.getOrderTime())
                .status(orderRequest.getStatus())
@@ -116,5 +118,13 @@ public class OrderRequestServiceImpl implements OrderRequestService {
                .build();
 
        return orderRequestDTO;
+    }
+
+    @Override
+    public void confirmOrder(Long orderId) {
+            OrderRequest orderRequest = orderRequestRepository.findById(orderId)
+                    .orElseThrow();
+            orderRequest.setStatus("입고완료");
+            orderRequestRepository.save(orderRequest);
     }
 }

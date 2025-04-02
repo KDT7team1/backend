@@ -52,7 +52,6 @@ public class Goods {
     Long goods_orders; // 상품 주문수
 
 
-
     @Column(name = "original_price")
     private Long originalPrice;
 
