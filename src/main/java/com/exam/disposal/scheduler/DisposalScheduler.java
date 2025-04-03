@@ -14,7 +14,7 @@ public class DisposalScheduler {
         this.disposalService = disposalService;
     }
 
-    @Scheduled(cron = "0 0 2 * * *") // 매일 오전 2시
+    @Scheduled(cron = "0 30 9 * * *") // 매일 오전 9시 30분에 실행
     public void runCheckDisposal() {
         disposalService.checkDisposal();
         System.out.println("⏰ 자동 폐기 처리 실행됨");

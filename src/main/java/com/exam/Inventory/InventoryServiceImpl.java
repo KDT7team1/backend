@@ -1,6 +1,7 @@
 package com.exam.Inventory;
 
 
+import com.exam.category.SubCategory;
 import com.exam.goods.Goods;
 import com.exam.goods.GoodsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,18 +140,27 @@ public class InventoryServiceImpl implements InventoryService {
     /* 재고 증가 로직 : 새 배치 단위로 추가해야됨 */
     @Override
     @Transactional
-    public void addStock(Long goodsId, Long addStock, LocalDateTime expirationDate) {
+    public void addStock(Long goodsId, Long addStock) {
         Optional<Goods> goodsOpt = goodsRepository.findById(goodsId);
 
         if (goodsOpt.isPresent()) {
             Goods goods = goodsOpt.get();
+            SubCategory subCategory = goods.getSubCategory();
+
+            // 유통기한 가져오기
+            Integer expirationPeriod = subCategory.getExpirationPeriod();
+            LocalDateTime expirationDate = null;
+
+            if (expirationPeriod != null && expirationPeriod > 0) {
+                expirationDate = LocalDateTime.now().plusDays(expirationPeriod);
+            }
 
             Inventory newInventory = new Inventory();
             newInventory.setGoods(goods);
             newInventory.setStockQuantity(addStock);
             newInventory.setStockStatus(addStock >= 5 ? "정상" : "재고부족");
             newInventory.setStockUpdateAt(LocalDateTime.now());
-            newInventory.setExpirationDate(expirationDate);
+            newInventory.setExpirationDate(expirationDate); // null이면 유통기한 없는 상품
             newInventory.setInitialStockQuantity(addStock);
 
             inventoryRepository.save(newInventory);
@@ -171,6 +181,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     }
 
+    // 유통기한 3일전 상품 조회
     @Override
     public List<InventoryDTO> getExpiringSoonItems() {
         LocalDateTime now = LocalDateTime.now();

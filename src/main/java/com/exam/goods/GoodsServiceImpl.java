@@ -1,30 +1,37 @@
 package com.exam.goods;
 
 import com.exam.Inventory.InventoryRepository;
+import com.exam.cartAnalysis.repository.AssociationRulesRepository;
 import com.exam.category.Category;
 import com.exam.category.CategoryRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class GoodsServiceImpl implements GoodsService {
 
+    private final AssociationRulesRepository associationRulesRepository;
     GoodsRepository goodsRepository;
     CategoryRepository categoryRepository;
     InventoryRepository inventoryRepository;
 
     public GoodsServiceImpl(GoodsRepository goodsRepository,
                             CategoryRepository categoryRepository,
-                            InventoryRepository inventoryRepository) {
+                            InventoryRepository inventoryRepository, AssociationRulesRepository associationRulesRepository) {
         super();
         this.goodsRepository = goodsRepository;
         this.categoryRepository = categoryRepository;
         this.inventoryRepository = inventoryRepository;
+        this.associationRulesRepository = associationRulesRepository;
     }
 
     // 1. 전체 목록 조회
@@ -213,4 +220,24 @@ public class GoodsServiceImpl implements GoodsService {
             goodsRepository.save(goods);
         }
     }
+
+    // 연관상품 가져오기
+    @Override
+    public List<Goods> getRecommendedGoods(String subName) {
+        List<String>  relatedSubNames = associationRulesRepository.findTopRelatedSubNames(subName);
+        List<Goods> recommendations = new ArrayList<>();
+        Set<Long> seenGoodsIds = new HashSet<>();
+
+        for(String sub:relatedSubNames){
+            List<Goods> randomGoods = goodsRepository.findRandomGoodsBySubName(sub,PageRequest.of(0, 3));
+            for (Goods goods : randomGoods) {
+                if (seenGoodsIds.add(goods.getGoods_id())) {
+                    recommendations.add(goods);
+                }
+            }
+        }
+        return recommendations;
+    }
+
+
 }
