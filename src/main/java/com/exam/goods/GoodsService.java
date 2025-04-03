@@ -30,4 +30,6 @@ public interface GoodsService {
 
     // 연관상품 가져오기
     List<Goods> getRecommendedGoods(String subName);
+
+    String getsubNameOfGoods(Long goodsId);
 }
