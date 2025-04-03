@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -104,6 +105,14 @@ public class GoodsController {
         goodsService.cancelDiscount(id);
         return ResponseEntity.ok("할인 취소 완료");
     }
+
+    // 연관상품 추천 로직
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<Goods>> getRecommendedGoods(@RequestParam String subName) {
+        List<Goods> list = goodsService.getRecommendedGoods(subName);
+        return ResponseEntity.ok(list);
+    }
+
 
 }
 

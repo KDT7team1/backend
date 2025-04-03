@@ -40,4 +40,8 @@ public class Inventory {
     @Column(name = "initial_stock_quantity")
     Long initialStockQuantity;
 
+
+    @Column(name = "stock_created_at")
+    LocalDateTime stockCreatedAt;
+
 }

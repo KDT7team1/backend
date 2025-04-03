@@ -27,4 +27,7 @@ public interface GoodsService {
 
     // 할인 취소
     void cancelDiscount(Long id);
+
+    // 연관상품 가져오기
+    List<Goods> getRecommendedGoods(String subName);
 }

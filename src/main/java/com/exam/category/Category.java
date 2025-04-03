@@ -1,6 +1,7 @@
 package com.exam.category;
 
 import com.exam.goods.Goods;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,8 @@ public class Category {
     @Column(name="second_name")
     String secondName;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Goods> goodsList;
 
 }

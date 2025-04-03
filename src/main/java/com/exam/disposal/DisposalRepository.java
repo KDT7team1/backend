@@ -46,7 +46,7 @@ JOIN Goods g ON g.subCategory.sub_category_id = sc.sub_category_id
 LEFT JOIN (
     SELECT i.goods.goods_id AS goodsId, SUM(i.initialStockQuantity) AS totalStock
     FROM Inventory i
-    WHERE FUNCTION('MONTH', i.stockUpdateAt) = :month AND FUNCTION('YEAR', i.stockUpdateAt) = :year
+    WHERE FUNCTION('MONTH', i.stockCreatedAt) = :month AND FUNCTION('YEAR', i.stockCreatedAt) = :year
     GROUP BY i.goods.goods_id
 ) AS inv ON g.goods_id = inv.goodsId
 LEFT JOIN (
