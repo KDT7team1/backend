@@ -74,10 +74,10 @@ public class InventoryController {
     @PostMapping("/addStock")
     public ResponseEntity<String> addStock(
             @RequestParam Long goodsId,
-            @RequestParam Long addStock,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime expirationDate
+            @RequestParam Long addStock
+
     ){
-        inventoryService.addStock(goodsId, addStock, expirationDate);
+        inventoryService.addStock(goodsId, addStock);
         return ResponseEntity.ok("새로운 배치 추가 완료");
     }
 

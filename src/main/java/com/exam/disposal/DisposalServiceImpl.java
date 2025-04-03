@@ -23,6 +23,8 @@ public class DisposalServiceImpl implements DisposalService {
 
     }
 
+    // 유통기한 지난 재고 조회
+    // Disposal 테이블에 폐기 기록 저장
     @Override
     public void checkDisposal() {
         List<Inventory> expiredStocks = inventoryRepository.findAll().stream()

@@ -46,11 +46,10 @@ public class OrderRequestServiceImpl implements OrderRequestService {
 
         new Thread(() -> {
             try {
-                Thread.sleep(300000); // 10초 대기
+                Thread.sleep(300000); // 3분 대기
                 inventoryService.addStock(
                         goods.getGoods_id(),
-                        quantity,
-                        LocalDateTime.now().plusDays(7) // 유통기한 임의 지정
+                        quantity
                 );
                 order.setStatus("발주완료");
                 orderRequestRepository.save(order);

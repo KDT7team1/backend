@@ -3,6 +3,7 @@ package com.exam.goods;
 import com.exam.Inventory.Inventory;
 import com.exam.category.Category;
 import com.exam.category.SubCategory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -61,7 +62,8 @@ public class Goods {
     @Column(name = "discount_rate")
     private Integer discountRate;
 
-    @OneToMany(mappedBy = "goods")
+    @OneToMany(mappedBy = "goods", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Inventory> inventoryList;
 
 }

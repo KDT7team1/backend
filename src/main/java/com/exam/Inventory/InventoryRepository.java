@@ -19,6 +19,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("select i from Inventory i order by i.goods.goods_id ASC, i.expirationDate ASC")
     List<Inventory> findAll();
 
+    // 유토이한이 지났는데, 폐기 테이블에 들어가지 않은 것
     @Query("""
     SELECT i FROM Inventory i
     WHERE i.expirationDate <= CURRENT_DATE
