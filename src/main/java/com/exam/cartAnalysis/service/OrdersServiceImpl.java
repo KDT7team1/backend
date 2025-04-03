@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class OrdersServiceImpl implements OrdersService {
@@ -21,7 +23,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         return OrdersDTO.builder()
                 .ordersId(entity.getOrdersId())
-                .member(entity.getMember())
+                .memberNo(entity.getMemberNo())
                 .ordersDate(entity.getOrdersDate())
                 .finalPrice(entity.getFinalPrice())
                 .orderSummary(entity.getOrderSummary())
@@ -37,6 +39,21 @@ public class OrdersServiceImpl implements OrdersService {
 
         order.setPaymentStatus(status);
         ordersRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public Long createOrder(OrdersDTO dto) {
+        Orders order = Orders.builder()
+                .memberNo(dto.getMemberNo())
+                .ordersDate(LocalDateTime.now())
+                .finalPrice(dto.getFinalPrice())
+                .orderSummary(dto.getOrderSummary())
+                .paymentStatus(dto.getPaymentStatus())
+                .build();
+
+        Orders savedOrder = ordersRepository.save(order);
+        return savedOrder.getOrdersId();
     }
 
 }

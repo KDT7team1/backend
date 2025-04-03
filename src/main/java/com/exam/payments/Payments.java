@@ -21,9 +21,8 @@ public class Payments {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    @ManyToOne
-    @JoinColumn(name = "orders_id", referencedColumnName = "ordersId")
-    private Orders orders;
+    @Column(name = "orders_id")
+    private Long ordersId;
 
     @Column(name = "member_no")
     private Long memberNo;
@@ -36,9 +35,6 @@ public class Payments {
 
     @Column(name = "payment_method")
     private String paymentMethod;
-
-    @Column(name = "payment_date")
-    private LocalDateTime paymentDate;
 
     @Column(name = "payment_approved")
     private LocalDateTime paymentApproved;

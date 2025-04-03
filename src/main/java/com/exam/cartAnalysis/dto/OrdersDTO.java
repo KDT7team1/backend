@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class OrdersDTO {
 
     Long ordersId;
-    Member member;
+    Long memberNo;
     LocalDateTime ordersDate;
     Long finalPrice;
     String orderSummary;

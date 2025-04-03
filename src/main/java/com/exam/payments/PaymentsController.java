@@ -21,7 +21,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -31,6 +34,16 @@ public class PaymentsController {
 
     private final PaymentsService paymentsService;
     private final OrdersService ordersService;
+
+    @PostMapping("/order")
+    public ResponseEntity<Map<String, Long>> createOrder(@RequestBody OrdersDTO ordersDTO) {
+        log.info("LOGGER: [PAYMENT] 주문 요청, orders 테이블에 주문내역 추가");
+        Long orderId = ordersService.createOrder(ordersDTO);
+        Map<String, Long> response = new HashMap<>();
+        response.put("orderId", orderId);
+        log.info("LOGGER: [PAYMENT] 새로운 주문내역 추가: {}", orderId);
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
@@ -64,7 +77,7 @@ public class PaymentsController {
         // 결제 승인 요청(Toss)
         JSONObject obj = new JSONObject();
         obj.put("orderId", orderId);
-        obj.put("amount", amount);
+        obj.put("amount", Integer.parseInt(amount));
         obj.put("paymentKey", paymentKey);
 
         // 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
@@ -88,30 +101,40 @@ public class PaymentsController {
         int code = connection.getResponseCode();
         boolean isSuccess = code == 200;
 
+        log.info("[TOSS PAY] HTTP Response Code: {}", code);
+
         InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
 
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
-        responseStream.close();
 
         // 결제 성공 및 실패 비즈니스 로직을 구현하세요.
-        // 결제 성공 시 - orders 테이블 상태 업데이트, payment 테이블에 저장
         if (isSuccess) {
-            log.info("[TOSS PAY] 결제 성공함 (1) paymentStatus 업데이트");
-            ordersService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.COMPLETED);
+            // JSON에서 받은 approvedAt 문자열
+            String approvedAtStr = (String) jsonObject.get("approvedAt");
 
-            log.info("[TOSS PAY] 결제 성공함 (2) payment 테이블에 저장");
+            // OffsetDateTime으로 변환 후 LocalDateTime으로 변환
+            OffsetDateTime offsetDateTime = OffsetDateTime.parse(approvedAtStr);
+            LocalDateTime approvedAt = offsetDateTime.toLocalDateTime();
+
+            log.info("[TOSS PAY] 결제 성공함 payment 테이블에 저장");
             PaymentsDTO dto = PaymentsDTO.builder()
                     .ordersId(Long.parseLong(orderId))
-                    .memberNo(orders.getMember().getMemberNo())
+                    .memberNo(orders.getMemberNo())
                     .finalPrice(orders.getFinalPrice())
                     .paymentAmount(Long.parseLong(amount))
                     .paymentMethod((String) jsonObject.get("method"))
-                    .paymentApproved((LocalDateTime) jsonObject.get("approvedAt"))
+                    .paymentApproved(approvedAt)
                     .build();
 
             paymentsService.savePayment(dto);
+
+            log.info("[TOSS PAY] 결제 성공함 paymentStatus 업데이트");
+            ordersService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.COMPLETED);
         }
+
+        responseStream.close();
+        log.error("Toss API Error Response: {}", jsonObject);
 
         return ResponseEntity.status(code).body(jsonObject);
     }

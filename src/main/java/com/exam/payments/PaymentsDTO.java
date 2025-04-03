@@ -18,7 +18,6 @@ public class PaymentsDTO {
     private Long finalPrice;
     private Long paymentAmount;
     private String paymentMethod;
-    private LocalDateTime paymentDate;
     private LocalDateTime paymentApproved;
 
 }

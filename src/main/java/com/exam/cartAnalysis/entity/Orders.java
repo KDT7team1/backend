@@ -22,9 +22,7 @@ public class Orders {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long ordersId;
 
-	@ManyToOne
-	@JoinColumn(name="member_no")
-	Member member;
+	Long memberNo;
 
 	@CreationTimestamp
 	LocalDateTime ordersDate;

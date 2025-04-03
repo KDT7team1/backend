@@ -31,12 +31,11 @@ public class PaymentsServiceImpl implements PaymentsService {
 
         // DTO -> Entity 변환
         Payments payment = Payments.builder()
-                .orders(orders)
+                .ordersId(paymentsDTO.getOrdersId())
                 .memberNo(paymentsDTO.getMemberNo())
                 .finalPrice(paymentsDTO.getFinalPrice())
                 .paymentAmount(paymentsDTO.getPaymentAmount())
                 .paymentMethod(paymentsDTO.getPaymentMethod())
-                .paymentDate(paymentsDTO.getPaymentDate())
                 .paymentApproved(paymentsDTO.getPaymentApproved())
                 .build();
 
