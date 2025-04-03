@@ -32,7 +32,7 @@ public interface InventoryService {
     void reduceStock(Long goodsId, Long reduceStock);
 
     // 상품 재고 증가
-    void addStock(Long goodsId, Long addStock, LocalDateTime expirationDate);
+    void addStock(Long goodsId, Long addStock);
 
     // 유통기한 임박 상품 조회
     List<InventoryDTO> getExpiringSoonItems();

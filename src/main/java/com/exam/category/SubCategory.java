@@ -23,5 +23,8 @@ public class SubCategory {
 
 	String sub_name;
 
+	@Column(name = "expiration_period")
+	Integer expirationPeriod;
+
 
 }
