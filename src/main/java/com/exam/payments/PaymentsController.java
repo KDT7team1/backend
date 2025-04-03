@@ -1,34 +1,47 @@
-package com.exam.shop;
+package com.exam.payments;
 
-import jakarta.servlet.http.HttpServletRequest;
+import com.exam.cartAnalysis.dto.OrdersDTO;
+import com.exam.cartAnalysis.service.OrdersService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Slf4j
 @Controller
+@RequestMapping("/payment")
+@RequiredArgsConstructor
 public class PaymentsController {
 
-    @RequestMapping("/confirm")
+    private final PaymentsService paymentsService;
+    private final OrdersService ordersService;
+
+    @PostMapping("/confirm")
     public ResponseEntity<JSONObject> confirmPayment(@RequestBody String jsonBody) throws Exception {
         log.info("LOGGER: [PAYMENT] Toss Pay 요청함");
+
         JSONParser parser = new JSONParser();
+
         String orderId;
         String amount;
         String paymentKey;
+
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
@@ -36,9 +49,19 @@ public class PaymentsController {
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.badRequest().body(createErrorResponse("Invalid request data"));
         }
-        ;
+
+        // 주문 정보 조회 - 주문이 없으면 예외 발생
+        OrdersDTO orders = ordersService.findById(Long.parseLong(orderId));
+
+        // 중복 결제 방지 - 이미 결제된 주문이면 예외 발생
+        if (orders.getPaymentStatus() == PaymentStatus.COMPLETED) {
+            log.info("[TOSS PAY] 예외 발생 - 이미 결제된 주문");
+            throw new IllegalArgumentException("이미 결제된 주문입니다.");
+        }
+
+        // 결제 승인 요청(Toss)
         JSONObject obj = new JSONObject();
         obj.put("orderId", orderId);
         obj.put("amount", amount);
@@ -67,11 +90,36 @@ public class PaymentsController {
 
         InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
 
-        // 결제 성공 및 실패 비즈니스 로직을 구현하세요.
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
         responseStream.close();
 
+        // 결제 성공 및 실패 비즈니스 로직을 구현하세요.
+        // 결제 성공 시 - orders 테이블 상태 업데이트, payment 테이블에 저장
+        if (isSuccess) {
+            log.info("[TOSS PAY] 결제 성공함 (1) paymentStatus 업데이트");
+            ordersService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.COMPLETED);
+
+            log.info("[TOSS PAY] 결제 성공함 (2) payment 테이블에 저장");
+            PaymentsDTO dto = PaymentsDTO.builder()
+                    .ordersId(Long.parseLong(orderId))
+                    .memberNo(orders.getMember().getMemberNo())
+                    .finalPrice(orders.getFinalPrice())
+                    .paymentAmount(Long.parseLong(amount))
+                    .paymentMethod((String) jsonObject.get("method"))
+                    .paymentApproved((LocalDateTime) jsonObject.get("approvedAt"))
+                    .build();
+
+            paymentsService.savePayment(dto);
+        }
+
         return ResponseEntity.status(code).body(jsonObject);
+    }
+
+    // 에러 응답을 위한 메서드
+    private JSONObject createErrorResponse(String message) {
+        JSONObject errorResponse = new JSONObject();
+        errorResponse.put("error", message);
+        return errorResponse;
     }
 }
