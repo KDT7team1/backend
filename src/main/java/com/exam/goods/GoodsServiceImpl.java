@@ -239,5 +239,10 @@ public class GoodsServiceImpl implements GoodsService {
         return recommendations;
     }
 
+    @Override
+    public String getsubNameOfGoods(Long goodsId) {
+        return  goodsRepository.findSubNameByGoodsId(goodsId);
+    }
+
 
 }

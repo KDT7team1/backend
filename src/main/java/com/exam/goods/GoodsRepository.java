@@ -40,5 +40,14 @@ public interface GoodsRepository extends JpaRepository<Goods, Long> {
     """)
     List<Goods> findRandomGoodsBySubName(@Param("subName") String subName,Pageable pageable);
 
+
+    // id로 sub_name 찾기
+    @Query("""
+        SELECT sc.sub_name
+        FROM Goods g
+        JOIN SubCategory sc ON g.subCategory.sub_category_id = sc.sub_category_id
+        WHERE g.goods_id = :goodsId
+        """)
+    String findSubNameByGoodsId(@Param("goodsId") Long goodsId);
 }
 
