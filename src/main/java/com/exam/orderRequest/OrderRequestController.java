@@ -1,5 +1,6 @@
 package com.exam.orderRequest;
 
+import com.exam.cartAnalysis.repository.OrdersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ public class OrderRequestController {
 
     @Autowired
     private OrderRequestService orderRequestService;
+    @Autowired
+    private OrdersRepository ordersRepository;
 
     // 👉 발주 요청 등록 API
     @PostMapping("/request")
@@ -39,5 +42,13 @@ public class OrderRequestController {
         return ResponseEntity.status(200).body(orderRequestDTO);
     }
 
+    // 발주 상태 업데이트
+    @PostMapping("/confirm/{orderId}")
+    public ResponseEntity<String> confirmOrder(
+            @PathVariable Long orderId
+    ) {
+        orderRequestService.confirmOrder(orderId);
+        return ResponseEntity.status(200).body("상태 변환 완료");
+    }
 
 }
