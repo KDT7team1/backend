@@ -21,7 +21,7 @@ public class restoreOriginalPriceScheduler {
         this.goodsRepository = goodsRepository;
     }
 
-    @Scheduled(cron = "0 0 3 * * ?")  // 이전 실행 종료 후 10초 뒤 실행
+    @Scheduled(cron = "0 * * * * *")  // 이전 실행 종료 후 10초 뒤 실행
     public void restoreOriginalPriceIfExpired() {
         List<Goods> expired = goodsRepository
                 .findAllByDiscountEndAtBefore(LocalDateTime.now());
