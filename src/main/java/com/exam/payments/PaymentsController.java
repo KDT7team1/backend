@@ -1,7 +1,14 @@
 package com.exam.payments;
 
+import com.exam.Inventory.InventoryService;
 import com.exam.cartAnalysis.dto.OrdersDTO;
+import com.exam.cartAnalysis.entity.Orders;
+import com.exam.cartAnalysis.repository.OrdersRepository;
 import com.exam.cartAnalysis.service.OrdersService;
+import com.exam.goods.Goods;
+import com.exam.goods.GoodsRepository;
+import com.exam.saleData.SaleData;
+import com.exam.saleData.SaleDataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -34,6 +41,10 @@ public class PaymentsController {
 
     private final PaymentsService paymentsService;
     private final OrdersService ordersService;
+    private final OrdersRepository ordersRepository;
+    private final GoodsRepository goodsRepository;
+    private final SaleDataRepository saleDataRepository;
+    private final InventoryService inventoryService;
 
     @PostMapping("/order")
     public ResponseEntity<Map<String, Long>> createOrder(@RequestBody OrdersDTO ordersDTO) {
@@ -131,6 +142,25 @@ public class PaymentsController {
 
             log.info("[TOSS PAY] 결제 성공함 paymentStatus 업데이트");
             ordersService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.COMPLETED);
+
+//            // 재고 감소 처리
+//            for (OrdersDTO.OrderItemDTO item : orders.getOrderItems()) {
+//                inventoryService.reduceStock(item.getGoodsId(), item.getSaleAmount().longValue());
+//            }
+            // 재고 감소 처리
+            if (orders.getOrderItems() == null) {
+                log.warn("[TOSS PAY] 주문 상세(orderItems)가 null입니다.");
+            } else {
+                for (OrdersDTO.OrderItemDTO item : orders.getOrderItems()) {
+                    log.info("[TOSS PAY] 재고 차감 대상 상품 - goodsId: {}, saleAmount: {}", item.getGoodsId(), item.getSaleAmount());
+                    inventoryService.reduceStock(item.getGoodsId(), item.getSaleAmount().longValue());
+                }
+                log.info("[TOSS PAY] 결제 성공 → 재고 감소 처리 완료");
+            }
+
+
+            //log.info("[TOSS PAY] 결제 성공 → 재고 감소 처리 완료");
+
         }
 
         responseStream.close();
