@@ -31,5 +31,10 @@ public interface SaleDataRepository extends JpaRepository<SaleData, Long>{
             @Param("endDate") LocalDateTime endDate
     );
 
+
+    // ordersIs d로 판매기록 찾기
+    @Query("select s from SaleData s where s.orders.ordersId = :ordersId")
+    List<SaleData> findByOrdersId( @Param("ordersId") Long ordersId);
+
 }
 
