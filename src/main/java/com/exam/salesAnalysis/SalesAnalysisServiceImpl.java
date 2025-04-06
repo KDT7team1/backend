@@ -1,7 +1,6 @@
 package com.exam.salesAnalysis;
 
 
-
 import com.exam.saleData.SaleData;
 import com.exam.saleData.SaleDataRepository;
 import com.exam.salesAlert.SalesAlertDTO;
@@ -15,8 +14,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SalesAnalysisServiceImpl implements SalesAnalysisService {
@@ -126,6 +127,14 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
         return count > 0 ? Math.round((double) totalPrice / count) : 0L;
     }
 
+    record ComparisonBasis(
+            int trendBasis, // 1, 2, 3 (일주일, 한 달, 일 년 전)
+            LocalDate compareDate,
+            long previousSales,
+            long diffPrice,
+            double percentDiff
+    ) {}
+
     @Override
     public void detectSalesAnomaly(LocalDate targetDate, int targetHour) {
         List<SalesDailyDTO> todaySalesList = getSalesDailyByDateAndHour(targetDate, targetHour);
@@ -133,53 +142,33 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
             return; // 오늘의 데이터가 없으면 처리하지 않음
         }
 
-        // 해당 시간대의 매출액과 상품 목록 조회
-        List<SalesProductDTO> todayProducts = getSoldProductsByDateAndHour(targetDate, targetHour);
+        // 해당 시간대의 매출액 조회
         long todaySales = todaySalesList.stream().mapToLong(SalesDailyDTO::getDailyPrice).sum();
 
-        // 7일 전 같은 시간대의 매출액과 상품 조회
-        LocalDate aWeekAgo = targetDate.minusDays(7);
-        List<SalesDailyDTO> aWeekAgoSalesList = getSalesDailyByDateAndHour(aWeekAgo, targetHour);
-        long aWeekAgoSales = aWeekAgoSalesList.stream().mapToLong(SalesDailyDTO::getDailyPrice).sum();
-        List<SalesProductDTO> aWeekAgoProducts = getSoldProductsByDateAndHour(aWeekAgo, targetHour);
+        // 비교 기준 리스트 생성
+        List<ComparisonBasis> comparisons = Stream.of(
+                new AbstractMap.SimpleEntry<>(1, targetDate.minusDays(7)),
+                new AbstractMap.SimpleEntry<>(2, targetDate.minusMonths(1)),
+                new AbstractMap.SimpleEntry<>(3, targetDate.minusYears(1))
+        ).map(entry -> {
+            List<SalesDailyDTO> pastList = getSalesDailyByDateAndHour(entry.getValue(), targetHour);
+            long pastSales = pastList.stream().mapToLong(SalesDailyDTO::getDailyPrice).sum();
+            long diff = todaySales - pastSales;
+            double percent = (pastSales != 0) ? (diff * 100.0 / pastSales) : 0;
+            return new ComparisonBasis(entry.getKey(), entry.getValue(), pastSales, diff, percent);
+        }).toList();
 
-        // 7일간의 평균 매출액 계산 - 단기 트렌드 분석
-        long avg7DaysSales = getAverageSalesLast7Days(targetDate, targetHour);
-
-        // 30일간의 평균 매출액 계산 - 장기 트렌드 분석
-        long avg30DaysSales = getAverageSalesLast30Days(targetDate, targetHour);
-
-        // 매출 차이 계산
-        long diffAWeekAgo = todaySales - aWeekAgoSales;
-        long diffAvg7Days = todaySales - avg7DaysSales;
-        long diffAvg30Days = todaySales - avg30DaysSales;
-
-        // 비율 차이 계산
-        double percentDiffAWeekAgo = (aWeekAgoSales > 0) ? (diffAWeekAgo * 100.0 / aWeekAgoSales) : 0;
-        double percentDiffAvg7Days = (avg7DaysSales > 0) ? (diffAvg7Days * 100.0 / avg7DaysSales) : 0;
-        double percentDiffAvg30Days = (avg30DaysSales > 0) ? (diffAvg30Days * 100.0 / avg30DaysSales) : 0;
-
-        // 1주일 전과의 비교
-        if (Math.abs(percentDiffAWeekAgo) >= 50) {
-            // 매출 차이가 큰 상품들을 계산
-            List<SalesProductDTO> topProductsAWeekAgo = findTopChangingProducts(aWeekAgo, targetHour);
-            String alertMessage = generateAlertMessage(1, targetHour, percentDiffAWeekAgo, todaySales, aWeekAgoSales);
-            SalesAlertDTO alertDTO = createSalesAlertDTO(1, targetDate, targetHour, aWeekAgoSales, todaySales, diffAWeekAgo, percentDiffAWeekAgo, alertMessage);
-            alertService.save(alertDTO);// 바로 DB에 저장
-        }
-
-        // 7일 평균 대비 비교
-        if (Math.abs(percentDiffAvg7Days) >= 200) {
-            String alertMessage = generateAlertMessage(7, targetHour, percentDiffAvg7Days, todaySales, avg7DaysSales);
-            SalesAlertDTO alertDTO = createSalesAlertDTO(7, targetDate, targetHour, avg7DaysSales, todaySales, diffAvg7Days, percentDiffAvg7Days, alertMessage);
-            alertService.save(alertDTO);// 바로 DB에 저장
-        }
-
-        // 30일 평균 대비 비교
-        if (Math.abs(percentDiffAvg30Days) >= 200) {
-            String alertMessage = generateAlertMessage(30, targetHour, percentDiffAvg30Days, todaySales, avg30DaysSales);
-            SalesAlertDTO alertDTO = createSalesAlertDTO(30, targetDate, targetHour, avg30DaysSales, todaySales, diffAvg30Days, percentDiffAvg30Days, alertMessage);
-            alertService.save(alertDTO);// 바로 DB에 저장
+        // 알림 저장
+        for (ComparisonBasis cb: comparisons) {
+            // 퍼센트 필터 제외
+//            if (Math.abs(cb.percentDiff()) >= 50) {
+               String alertMessage = generateAlertMessage(targetDate, cb.trendBasis(), targetHour, cb.percentDiff(), todaySales, cb.previousSales());
+               SalesAlertDTO alertDTO = createSalesAlertDTO(
+                       cb.trendBasis(), targetDate, targetHour, cb.previousSales(),todaySales,
+                       cb.diffPrice(), cb.percentDiff(), alertMessage
+               );
+               alertService.save(alertDTO);
+//            }
         }
 
     }
@@ -197,55 +186,17 @@ public class SalesAnalysisServiceImpl implements SalesAnalysisService {
                 .build();
     }
 
-    private String generateAlertMessage(int trendBasis, int targetHour, double percentDiff, long todaySales, long comparisonSales) {
+    private String generateAlertMessage(LocalDate targetDate, int trendBasis, int targetHour, double percentDiff, long todaySales, long comparisonSales) {
         String trend = (percentDiff > 0) ? "상승" : "하락";
         String trendPeriod = switch (trendBasis) {
-            case 1 -> "[동요일] 일주일 전 같은 요일 대비";
-            case 7 -> "[단기 트렌드] 7일 평균 대비";
-            case 30 -> "[장기 트렌드] 30일 평균 대비";
+            case 1 -> "일주일 전 대비";
+            case 2 -> "1개월 전 대비";
+            case 3 -> "1년 전 대비";
             default -> throw new IllegalStateException("Unexpected value: " + trendBasis); // 예외 처리
         };
+        String dateStr = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd (E)", Locale.KOREAN));
 
-        return String.format("[%d시] [%s] %.1f%% %s\n오늘 매출: %,d원, 비교 매출: %,d원", targetHour, trendPeriod, percentDiff, trend, todaySales, comparisonSales);
+        return String.format("[%s %d시] [%s] %.1f%% %s  금일 매출: %,d원, 비교 매출: %,d원", dateStr, targetHour, trendPeriod, percentDiff, trend, todaySales, comparisonSales);
     }
 
-    // 매출 변화가 큰 상품들을 구하는 메서드
-    private List<SalesProductDTO> findTopChangingProducts(LocalDate targetDate, int targetHour) {
-        // 오늘과 7일 전 같은 시간대에 팔린 상품들을 비교하는 로직
-        List<SalesProductDTO> todayProducts = getSoldProductsByDateAndHour(targetDate, targetHour);
-        List<SalesProductDTO> aWeekAgoProducts = getSoldProductsByDateAndHour(targetDate.minusDays(7), targetHour);
-
-        List<SalesProductDTO> resultList = todayProducts.stream()
-                .map(product -> {
-                    long todaySales = product.getTotalPrice();
-                    long aWeekAgoSales = aWeekAgoProducts.stream()
-                            .filter(p -> p.getProductName().equals(product.getProductName()))
-                            .mapToLong(SalesProductDTO::getTotalPrice)
-                            .sum();
-                    long diffSales = todaySales - aWeekAgoSales;
-                    product.setSalesDiff(diffSales);
-                    return product;
-                }).collect(Collectors.toList());
-
-        // 매출 상승 상품: +값 기준으로 상위 3개
-        List<SalesProductDTO> topIncreaseProducts = resultList.stream()
-                .filter(product -> product.getSalesDiff() > 0) // 상승한 상품만 필터링
-                .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff).reversed()) // 큰 매출 변화 순으로 정렬
-                .limit(3) // 상위 3개만 선택
-                .collect(Collectors.toList());
-
-        // 매출 하락 상품: -값 기준으로 상위 3개
-        List<SalesProductDTO> topDecreaseProducts = resultList.stream()
-                .filter(product -> product.getSalesDiff() < 0) // 하락한 상품만 필터링
-                .sorted(Comparator.comparingLong(SalesProductDTO::getSalesDiff)) // 작은 매출 변화 순으로 정렬
-                .limit(3) // 상위 3개만 선택
-                .collect(Collectors.toList());
-
-        // 상승/하락 상품 결합 (원하는 방식에 맞게 반환)
-        List<SalesProductDTO> combinedList = new ArrayList<>();
-        combinedList.addAll(topIncreaseProducts);
-        combinedList.addAll(topDecreaseProducts);
-
-        return combinedList;
-    }
 }

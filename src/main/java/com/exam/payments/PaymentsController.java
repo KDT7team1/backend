@@ -112,8 +112,6 @@ public class PaymentsController {
         int code = connection.getResponseCode();
         boolean isSuccess = code == 200;
 
-        log.info("[TOSS PAY] HTTP Response Code: {}", code);
-
         InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
 
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
@@ -164,7 +162,6 @@ public class PaymentsController {
         }
 
         responseStream.close();
-        log.error("Toss API Error Response: {}", jsonObject);
 
         return ResponseEntity.status(code).body(jsonObject);
     }
