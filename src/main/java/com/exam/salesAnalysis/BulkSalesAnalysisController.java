@@ -25,10 +25,10 @@ public class BulkSalesAnalysisController {
 
     @GetMapping("/generate-bulk-data")
     public ResponseEntity<String> generateBulkData() {
-        log.info("[매출 분석] 2024년 10월 ~ 2025년 4월 데이터 생성 시작");
+        log.info("[매출 분석] 벌크 데이터 생성 시작");
 
-        LocalDate startDate = LocalDate.of(2024, 10, 1);
-        LocalDate endDate = LocalDate.of(2025, 4, 30);
+        LocalDate startDate = LocalDate.of(2025, 4, 1);
+        LocalDate endDate = LocalDate.of(2025, 4, 2);
 
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
