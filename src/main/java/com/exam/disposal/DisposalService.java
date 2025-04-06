@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DisposalService {
 
-    // 폐기 수동 처리
+    // 폐기 자동 처리
     void checkDisposal();
 
     // 폐기 테이블 전체 조회
@@ -19,11 +19,11 @@ public interface DisposalService {
     List<DisposalDTO> findByDisposedAtDate(LocalDate selectedDate);
 
     // 폐기처리 안 된 상품
-    List<InventoryDTO> findExpiredButNotDisposed();
+    // List<InventoryDTO> findExpiredButNotDisposed();
 
     // 수동 폐기 처리
-    @Transactional
-    void manualDispose(List<Long> selectedBatchIds);
+//    @Transactional
+//    void manualDispose(List<Long> selectedBatchIds);
 
     // 폐기통계 (월별/카테고리별)
     List<DisposalStatsDTO> getDisposalStatsByMonth(int month, int year);
