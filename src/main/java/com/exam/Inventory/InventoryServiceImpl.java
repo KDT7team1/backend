@@ -192,6 +192,7 @@ public class InventoryServiceImpl implements InventoryService {
         return list.stream().map(i -> InventoryDTO.builder()
                 .batchId(i.getBatchId())
                 .goodsId(i.getGoods().getGoods_id())
+                .goodsPrice(i.getGoods().getGoods_price())
                 .goodsName(i.getGoods().getGoods_name())
                 .expirationDate(i.getExpirationDate())
                 .stockQuantity(i.getStockQuantity())

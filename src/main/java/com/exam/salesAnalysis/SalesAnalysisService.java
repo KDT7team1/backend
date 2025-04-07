@@ -1,11 +1,9 @@
 package com.exam.salesAnalysis;
 
-import com.exam.salesAlert.SalesAlertDTO;
 import com.exam.statistics.SalesDailyDTO;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public interface SalesAnalysisService {
 
