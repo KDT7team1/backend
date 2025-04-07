@@ -19,11 +19,14 @@ public class InventoryServiceImpl implements InventoryService {
 
     private static final Long STOCK_THRESHOLD = 5L; // 재고 임계값 설정
 
+
     @Autowired
     private InventoryRepository inventoryRepository;
 
+
     @Autowired
     GoodsRepository goodsRepository;
+
 
     // 1. 재고 테이블 전체 조회
     @Override
@@ -43,6 +46,7 @@ public class InventoryServiceImpl implements InventoryService {
                 }).collect(Collectors.toList());
         return inventoryList;
     }
+
 
     // 2. 특정 상품의 재고 정보를 조회
     @Override
@@ -86,6 +90,8 @@ public class InventoryServiceImpl implements InventoryService {
         }
     }
 
+
+
     // 상품 재고 수량 변경 (업데이트) => 재고 테이블도 동시에 수정됨
     @Override
     @Transactional
@@ -111,6 +117,8 @@ public class InventoryServiceImpl implements InventoryService {
         }
     }
 
+
+
     /* 재고 감소 로직*/
     @Override
     @Transactional
@@ -135,7 +143,9 @@ public class InventoryServiceImpl implements InventoryService {
             }
             inventoryRepository.save(inventory);
         }
+        updateGoodsStock(goodsId);
     }
+
 
     /* 재고 증가 로직 : 새 배치 단위로 추가해야됨 */
     @Override
@@ -180,6 +190,7 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
     }
+
 
     // 유통기한 3일전 상품 조회
     @Override
