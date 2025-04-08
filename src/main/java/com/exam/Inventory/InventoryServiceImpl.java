@@ -1,9 +1,11 @@
 package com.exam.Inventory;
 
 
+import com.exam.alert.SseService;
 import com.exam.category.SubCategory;
 import com.exam.goods.Goods;
 import com.exam.goods.GoodsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 public class InventoryServiceImpl implements InventoryService {
 
@@ -26,6 +28,8 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Autowired
     GoodsRepository goodsRepository;
+    @Autowired
+    private SseService sseService;
 
 
     // 1. 재고 테이블 전체 조회
@@ -142,8 +146,15 @@ public class InventoryServiceImpl implements InventoryService {
                 inventory.setStockStatus("재고부족"); // 현재배치 상태는 재고부좃
             }
             inventoryRepository.save(inventory);
+            if(inventory.getStockQuantity() < 5){
+                log.info("알림보내기!!");
+                sseService.sendNotification("admin","재고부족", inventory.getGoods().getGoods_name() + " 재고가 5개 미만입니다!");
+            }
+
         }
         updateGoodsStock(goodsId);
+
+
     }
 
 

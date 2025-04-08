@@ -4,6 +4,7 @@ package com.exam.disposal;
 import com.exam.Inventory.Inventory;
 import com.exam.Inventory.InventoryDTO;
 import com.exam.Inventory.InventoryRepository;
+import com.exam.alert.SseService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,13 +15,14 @@ import java.util.stream.Collectors;
 @Service
 public class DisposalServiceImpl implements DisposalService {
 
+    private final SseService sseService;
     InventoryRepository inventoryRepository;
     DisposalRepository disposalRepository;
 
-    public DisposalServiceImpl(InventoryRepository inventoryRepository, DisposalRepository disposalRepository) {
+    public DisposalServiceImpl(InventoryRepository inventoryRepository, DisposalRepository disposalRepository, SseService sseService) {
         this.inventoryRepository = inventoryRepository;
         this.disposalRepository = disposalRepository;
-
+        this.sseService = sseService;
     }
 
     // 유통기한 지난 재고 조회
@@ -45,12 +47,20 @@ public class DisposalServiceImpl implements DisposalService {
                     .build();
             disposalRepository.save(disposal);
 
+
             // 재고 업데이트
             inventory.setStockQuantity(0L);
             inventory.setStockStatus("폐기");
             inventory.setStockUpdateAt(LocalDateTime.now());
             inventoryRepository.save(inventory);
         }
+
+        if(!expiredStocks.isEmpty()){
+            sseService.sendNotification( "admin","자동폐기", "⏰ 자동 폐기된 상품이 " + expiredStocks.size() + "건 있습니다.");
+        }
+
+        // sseService.sendNotification("admin", "테스트", "📢 SSE 알림 테스트 전송됨");
+
         System.out.println("✅ 폐기 처리 완료: " + expiredStocks.size() + "건");
 
     }
