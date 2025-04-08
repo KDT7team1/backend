@@ -35,7 +35,7 @@ public interface SaleDataRepository extends JpaRepository<SaleData, Long>{
     );
 
 
-    // ordersIs d로 판매기록 찾기
+    // ordersId 로 판매기록 찾기
     @Query("select s from SaleData s where s.orders.ordersId = :ordersId")
     List<SaleData> findByOrdersId( @Param("ordersId") Long ordersId);
 
@@ -43,6 +43,14 @@ public interface SaleDataRepository extends JpaRepository<SaleData, Long>{
     @Transactional
     void deleteByOrders_OrdersId(Long ordersId); // Orders 객체 기준 FK 매핑된 필드 이름 사용
 
+    // ordersId로 상세 판매기록 찾기 - 영수증 조회용
+    @Query("""
+            SELECT s FROM SaleData s
+            JOIN FETCH s.goods g
+            JOIN FETCH s.orders o
+            WHERE o.ordersId = :ordersId
+            """)
+    List<SaleData> findByOrdersIdWithDetails(@Param("ordersId") Long ordersId);
 
 }
 

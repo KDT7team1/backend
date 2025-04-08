@@ -10,10 +10,10 @@ import com.exam.saleData.SaleData;
 import com.exam.saleData.SaleDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -102,17 +102,25 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public Page<OrdersDTO> getOrdersListByDate(LocalDate date, Pageable pageable) {
+    public Page<OrdersDTO> getOrdersListByDate(LocalDate date, PaymentStatus paymentStatus, Pageable pageable) {
         // 해당하는 날짜의 주문 기록 조회
         LocalDateTime startDate = date.atTime(0, 0, 0);
         LocalDateTime endDate = date.atTime(23, 59, 59);
 
-        Page<Orders> entityPage = ordersRepository.getOrdersListByDate(startDate, endDate, pageable);
+        Page<Orders> entityPage;
+
+        if (paymentStatus != null) {
+            // 결제 상태 필터링 포함해서 조회
+            entityPage = ordersRepository.getOrdersListByDateAndPaymentStatus(startDate, endDate, paymentStatus, pageable);
+        } else {
+            // 전체 조회
+            entityPage = ordersRepository.getOrdersListByDate(startDate, endDate, pageable);
+        }
 
         // Page.map으로 간단하게 DTO로 변환
         return entityPage.map(s -> OrdersDTO.builder()
                 .ordersId(s.getOrdersId())
-                .memberNo(s.getMemberNo())
+                .memberNo(null) // 회원정보 생략
                 .ordersDate(s.getOrdersDate())
                 .finalPrice(s.getFinalPrice())
                 .orderSummary(s.getOrderSummary())
