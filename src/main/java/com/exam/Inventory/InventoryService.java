@@ -4,7 +4,6 @@ package com.exam.Inventory;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface InventoryService {
@@ -17,9 +16,6 @@ public interface InventoryService {
     @Transactional
     InventoryDTO getInventory(Long batchId);
 
-    // 3. 재고 수량 업데이트
-//    @Transactional
-//    void updateInventory(Long goodsId);
 
     // 상품 재고 수정 (배치별)
     @Transactional

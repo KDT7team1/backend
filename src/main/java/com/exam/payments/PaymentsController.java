@@ -1,6 +1,7 @@
 package com.exam.payments;
 
 import com.exam.Inventory.InventoryService;
+import com.exam.alert.SseService;
 import com.exam.cartAnalysis.dto.OrdersDTO;
 import com.exam.cartAnalysis.entity.Orders;
 import com.exam.cartAnalysis.repository.OrdersRepository;
@@ -43,6 +44,7 @@ public class PaymentsController {
     private final GoodsRepository goodsRepository;
     private final SaleDataRepository saleDataRepository;
     private final InventoryService inventoryService;
+    private final SseService sseService;
 
     @PostMapping("/order")
     public ResponseEntity<Map<String, Long>> createOrder(@RequestBody OrdersDTO ordersDTO) {
@@ -65,7 +67,6 @@ public class PaymentsController {
         String paymentKey;
 
         try {
-            // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
             paymentKey = (String) requestData.get("paymentKey");
             orderId = (String) requestData.get("orderId");
@@ -74,29 +75,24 @@ public class PaymentsController {
             return ResponseEntity.badRequest().body(createErrorResponse("Invalid request data"));
         }
 
-        // 주문 정보 조회 - 주문이 없으면 예외 발생
         OrdersDTO orders = ordersService.findById(Long.parseLong(orderId));
 
-        // 중복 결제 방지 - 이미 결제된 주문이면 예외 발생
+        // 중복 결제 방지
         if (orders.getPaymentStatus() == PaymentStatus.COMPLETED) {
             log.info("[TOSS PAY] 예외 발생 - 이미 결제된 주문");
             throw new IllegalArgumentException("이미 결제된 주문입니다.");
         }
 
-        // 결제 승인 요청(Toss)
         JSONObject obj = new JSONObject();
         obj.put("orderId", orderId);
         obj.put("amount", Integer.parseInt(amount));
         obj.put("paymentKey", paymentKey);
 
-        // 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
-        // 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
         String widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
         Base64.Encoder encoder = Base64.getEncoder();
         byte[] encodedBytes = encoder.encode((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
         String authorizations = "Basic " + new String(encodedBytes);
 
-        // 결제를 승인하면 결제수단에서 금액이 차감돼요.
         URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestProperty("Authorization", authorizations);
@@ -111,16 +107,11 @@ public class PaymentsController {
         boolean isSuccess = code == 200;
 
         InputStream responseStream = isSuccess ? connection.getInputStream() : connection.getErrorStream();
-
         Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
         JSONObject jsonObject = (JSONObject) parser.parse(reader);
 
-        // 결제 성공 및 실패 비즈니스 로직을 구현하세요.
         if (isSuccess) {
-            // JSON에서 받은 approvedAt 문자열
             String approvedAtStr = (String) jsonObject.get("approvedAt");
-
-            // OffsetDateTime으로 변환 후 LocalDateTime으로 변환
             OffsetDateTime offsetDateTime = OffsetDateTime.parse(approvedAtStr);
             LocalDateTime approvedAt = offsetDateTime.toLocalDateTime();
 
@@ -138,12 +129,10 @@ public class PaymentsController {
 
             log.info("[TOSS PAY] 결제 성공함 paymentStatus 업데이트");
             ordersService.updatePaymentStatus(Long.parseLong(orderId), PaymentStatus.COMPLETED);
+            ordersRepository.flush();
 
-//            // 재고 감소 처리
-//            for (OrdersDTO.OrderItemDTO item : orders.getOrderItems()) {
-//                inventoryService.reduceStock(item.getGoodsId(), item.getSaleAmount().longValue());
-//            }
-            // 재고 감소 처리
+            sseService.sendNotification("admin", "결제", "✅ 결제가 완료되었습니다.");
+
             if (orders.getOrderItems() == null) {
                 log.warn("[TOSS PAY] 주문 상세(orderItems)가 null입니다.");
             } else {
@@ -154,17 +143,20 @@ public class PaymentsController {
                 log.info("[TOSS PAY] 결제 성공 → 재고 감소 처리 완료");
             }
 
-
-            //log.info("[TOSS PAY] 결제 성공 → 재고 감소 처리 완료");
-
+            responseStream.close();
+            return ResponseEntity.status(code).body(jsonObject); // ✅ 성공 후 바로 return
         }
 
-        if(!isSuccess){
-            saleDataRepository.deleteByOrders_OrdersId(Long.parseLong(orderId));
+        // ❌ 실패일 때만 sale_data 삭제 로직 실행
+        Orders order = ordersRepository.findById(Long.parseLong(orderId)).orElse(null);
+        if (order != null && order.getPaymentStatus() != PaymentStatus.COMPLETED) {
+            saleDataRepository.deleteByOrders_OrdersId(order.getOrdersId());
+            log.info("❌ 결제 실패로 sale_data 삭제됨: orderId = {}", orderId);
+        } else {
+            log.info("✅ 이미 결제 성공된 주문 - sale_data 삭제하지 않음: orderId = {}", orderId);
         }
 
         responseStream.close();
-
         return ResponseEntity.status(code).body(jsonObject);
     }
 
