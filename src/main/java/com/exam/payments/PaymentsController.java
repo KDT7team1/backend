@@ -16,9 +16,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -161,6 +159,10 @@ public class PaymentsController {
 
         }
 
+        if(!isSuccess){
+            saleDataRepository.deleteByOrders_OrdersId(Long.parseLong(orderId));
+        }
+
         responseStream.close();
 
         return ResponseEntity.status(code).body(jsonObject);
@@ -172,4 +174,15 @@ public class PaymentsController {
         errorResponse.put("error", message);
         return errorResponse;
     }
+
+    @DeleteMapping("/fail/{orderId}")
+    public ResponseEntity<String> handlePaymentFail(@PathVariable Long orderId) {
+        log.warn("[PAYMENT FAIL] TossPay 창 닫힘 → 결제 실패로 간주, sale_data 삭제");
+
+        saleDataRepository.deleteByOrders_OrdersId(orderId);
+        // 필요시 orders도 삭제하거나, payment_status = 2로 업데이트 가능
+
+        return ResponseEntity.ok("결제 실패 처리 완료");
+    }
+
 }
