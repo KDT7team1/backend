@@ -9,9 +9,12 @@ import com.exam.payments.PaymentStatus;
 import com.exam.saleData.SaleData;
 import com.exam.saleData.SaleDataRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,6 +99,26 @@ public class OrdersServiceImpl implements OrdersService {
         }
 
         return savedOrder.getOrdersId();
+    }
+
+    @Override
+    public Page<OrdersDTO> getOrdersListByDate(LocalDate date, Pageable pageable) {
+        // 해당하는 날짜의 주문 기록 조회
+        LocalDateTime startDate = date.atTime(0, 0, 0);
+        LocalDateTime endDate = date.atTime(23, 59, 59);
+
+        Page<Orders> entityPage = ordersRepository.getOrdersListByDate(startDate, endDate, pageable);
+
+        // Page.map으로 간단하게 DTO로 변환
+        return entityPage.map(s -> OrdersDTO.builder()
+                .ordersId(s.getOrdersId())
+                .memberNo(s.getMemberNo())
+                .ordersDate(s.getOrdersDate())
+                .finalPrice(s.getFinalPrice())
+                .orderSummary(s.getOrderSummary())
+                .paymentStatus(s.getPaymentStatus())
+                .build());
+
     }
 
 }
