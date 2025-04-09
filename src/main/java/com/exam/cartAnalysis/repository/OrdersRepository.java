@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long>{
 
-    @Query("select o from Orders o where o.ordersDate between :start and :end")
+    @Query("select o from Orders o where o.ordersDate between :start and :end order by o.ordersId desc")
     Page<Orders> getOrdersListByDate(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end, Pageable pageable);
 
-    @Query("select o from Orders o where o.ordersDate between :startDate and :endDate and o.paymentStatus = :paymentStatus")
+    @Query("select o from Orders o where o.ordersDate between :startDate and :endDate and o.paymentStatus = :paymentStatus order by o.ordersId desc")
     Page<Orders> getOrdersListByDateAndPaymentStatus(
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
