@@ -32,6 +32,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     List<Inventory> findExpiredButNotDisposed();
 
 
+    // 재고가 1개 이상이고, 유통기한이 특정 기간 사이에 있는 애들 조회
     @Query("""
     select i from Inventory i 
     where i.expirationDate BETWEEN :now AND :limit
@@ -39,5 +40,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     order by i.expirationDate ASC  
     """)
     List<Inventory> findExpiringSoonItems(@Param("now") LocalDateTime now, @Param("limit") LocalDateTime limit);
+
 
 }
