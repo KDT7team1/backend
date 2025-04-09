@@ -53,26 +53,6 @@ public class DisposalController {
     }
 
 
-
-    // 유통기한 만료지만 폐기처리되지 않은 상품 조회
-//    @GetMapping("/pending-disposal")
-//    public ResponseEntity<List<InventoryDTO>> getPendingDisposalStocks() {
-//        List<InventoryDTO> list = disposalService.findExpiredButNotDisposed();
-//        return ResponseEntity.ok(list);
-//    }
-
-
-
-    // 수동 폐기 처리 ( 선택한 제품만 )
-//    @PostMapping("/manual-dispose")
-//    public ResponseEntity<String> manualDispose(
-//            @RequestBody List<Long> selectedBatchIds
-//    ) {
-//        disposalService.manualDispose(selectedBatchIds);
-//        return ResponseEntity.ok("✅ 선택한 항목이 수동 폐기 처리되었습니다.");
-//    }
-
-
     // 폐기 통계 (월별, 카테고리별)
     @GetMapping("/stats")
     public ResponseEntity<List<DisposalStatsDTO>> getMonthlyDisposalStats(

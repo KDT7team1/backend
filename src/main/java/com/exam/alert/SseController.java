@@ -17,13 +17,9 @@ public class SseController {
 
     private final SseService sseService;
 
-//    public SseController(SseService sseService) {
-//        this.sseService = sseService;
-//    }
 
     @GetMapping("/connect")
     public SseEmitter connect(@RequestParam String clientId) {
-
         return sseService.createEmitter(clientId);
     }
 
