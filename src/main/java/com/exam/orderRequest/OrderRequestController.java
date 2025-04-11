@@ -14,8 +14,10 @@ public class OrderRequestController {
 
     @Autowired
     private OrderRequestService orderRequestService;
+
     @Autowired
     private OrdersRepository ordersRepository;
+
 
     // 👉 발주 요청 등록 API
     @PostMapping("/request")
@@ -35,12 +37,14 @@ public class OrderRequestController {
         return ResponseEntity.status(200).body(orders);
     }
 
+
     // 가장 최신 발주 1건 조회
     @GetMapping("/latest/{goodsId}")
     public ResponseEntity<OrderRequestDTO> getLatestOrder(@PathVariable Long goodsId) {
         OrderRequestDTO orderRequestDTO = orderRequestService.findTop1ByGoodsOrderByScheduledTimeDesc(goodsId);
         return ResponseEntity.status(200).body(orderRequestDTO);
     }
+
 
     // 발주 상태 업데이트
     @PostMapping("/confirm/{orderId}")
