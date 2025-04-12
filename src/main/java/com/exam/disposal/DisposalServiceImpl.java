@@ -104,51 +104,7 @@ public class DisposalServiceImpl implements DisposalService {
         return dtoList;
     }
 
-    // 폐기 예정인 상품들 조회
-//    @Override
-//    public List<InventoryDTO> findExpiredButNotDisposed() {
-//        List<Inventory> list = inventoryRepository.findExpiredButNotDisposed();
-//
-//        return list.stream().map(i -> InventoryDTO.builder()
-//                .batchId(i.getBatchId())
-//                .goodsId(i.getGoods().getGoods_id())
-//                .goodsName(i.getGoods().getGoods_name())
-//                .stockQuantity(i.getStockQuantity())
-//                .stockStatus(i.getStockStatus())
-//                .stockUpdateAt(i.getStockUpdateAt())
-//                .expirationDate(i.getExpirationDate())
-//                .build()
-//        ).toList();
-//    }
 
-
-    // 수동 폐기 작업
-//    @Override
-//    public void manualDispose(List<Long> selectedBatchIds) {
-//
-//        List<Inventory> list = inventoryRepository.findAllById(selectedBatchIds);
-//
-//        for(Inventory inventory : list) {
-//            if(inventory.getStockQuantity() > 0 ){
-//                Disposal disposal = Disposal.builder()
-//                        .goods(inventory.getGoods())
-//                        .inventory(inventory)
-//                        .disposed_quantity(inventory.getStockQuantity())
-//                        .disposal_reason("유통기한 만료(수동)")
-//                        .build();
-//
-//                disposalRepository.save(disposal);
-//
-//                inventory.setStockQuantity(0L);
-//                inventory.setStockStatus("폐기");
-//                inventory.setStockUpdateAt(LocalDateTime.now());
-//                inventoryRepository.save(inventory);
-//            }
-//        }
-//
-//        System.out.println("✅ 수동 폐기 처리 완료: " + selectedBatchIds.size() + "건");
-//
-//    }
 
     @Override
     public List<DisposalStatsDTO> getDisposalStatsByMonth(int month, int year) {
