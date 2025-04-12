@@ -142,14 +142,17 @@ public class InventoryServiceImpl implements InventoryService {
                 remainingStock  = 0;
             } else {
                 remainingStock -= inventory.getStockQuantity(); // 11 - 10 = 1 개 남음
-                inventory.setStockQuantity(0L);// 현재 배치에는 남은 수량이0개임
-                inventory.setStockStatus("재고부족"); // 현재배치 상태는 재고부좃
+                inventory.setStockQuantity(0L);// 현재 배치에는 남은 수량이 0개임
+                inventory.setStockStatus("재고부족"); // 현재배치 상태는 재고부족
             }
             inventoryRepository.save(inventory);
-            if(inventory.getStockQuantity() < 5){
+
+
+            if( inventory.getStockQuantity() < 5){
                 log.info("알림보내기!!");
                 sseService.sendNotification("admin","재고부족", inventory.getGoods().getGoods_name() + " 재고가 5개 미만입니다!");
             }
+
 
         }
         updateGoodsStock(goodsId);

@@ -17,7 +17,6 @@ public class SseController {
 
     private final SseService sseService;
 
-
     @GetMapping("/connect")
     public SseEmitter connect(@RequestParam String clientId) {
         return sseService.createEmitter(clientId);
