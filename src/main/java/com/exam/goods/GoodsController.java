@@ -113,6 +113,7 @@ public class GoodsController {
         return ResponseEntity.ok(list);
     }
 
+    //
     @GetMapping("/subName")
     public ResponseEntity<String> getsubNameOfGoods(@RequestParam Long goodsId) {
         String subName = goodsService.getsubNameOfGoods(goodsId);
