@@ -1,7 +1,7 @@
 package com.exam.Inventory;
 
 
-import com.exam.alert.SseService;
+import com.exam.notification.SseService;
 import com.exam.category.SubCategory;
 import com.exam.goods.Goods;
 import com.exam.goods.GoodsRepository;
