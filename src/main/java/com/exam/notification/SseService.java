@@ -1,4 +1,4 @@
-package com.exam.alert;
+package com.exam.notification;
 
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

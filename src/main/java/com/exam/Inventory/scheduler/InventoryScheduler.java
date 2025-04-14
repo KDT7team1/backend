@@ -2,7 +2,7 @@ package com.exam.Inventory.scheduler;
 
 import com.exam.Inventory.Inventory;
 import com.exam.Inventory.InventoryRepository;
-import com.exam.alert.SseService;
+import com.exam.notification.SseService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class InventoryScheduler {
         this.sseService = sseService;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 17 * * *")
     public void notifyTomorrowExpirations(){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime tomorrow = now.plusHours(24); // 24시간 뒤
