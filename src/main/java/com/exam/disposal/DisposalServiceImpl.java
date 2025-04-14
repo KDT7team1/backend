@@ -2,9 +2,8 @@ package com.exam.disposal;
 
 
 import com.exam.Inventory.Inventory;
-import com.exam.Inventory.InventoryDTO;
 import com.exam.Inventory.InventoryRepository;
-import com.exam.alert.SseService;
+import com.exam.notification.SseService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
