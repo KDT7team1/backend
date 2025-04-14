@@ -3,9 +3,8 @@ package com.exam.payments;
 import java.util.Arrays;
 
 public enum PaymentStatus {
-    PENDING(0),   // 결제 대기
-    COMPLETED(1), // 결제 완료
-    CANCELED(2);  // 결제 취소
+    CANCELED(0),   // 결제 취소
+    COMPLETED(1);   // 결제 완료
 
     private final int code;
 
