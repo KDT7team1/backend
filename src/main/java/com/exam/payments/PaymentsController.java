@@ -132,6 +132,7 @@ public class PaymentsController {
             ordersRepository.flush();
 
             sseService.sendNotification("admin", "결제", "✅ 결제가 완료되었습니다.");
+            log.info("결제 알림 보내기");
 
             if (orders.getOrderItems() == null) {
                 log.warn("[TOSS PAY] 주문 상세(orderItems)가 null입니다.");

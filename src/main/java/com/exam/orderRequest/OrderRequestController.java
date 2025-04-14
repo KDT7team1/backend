@@ -1,6 +1,7 @@
 package com.exam.orderRequest;
 
 import com.exam.cartAnalysis.repository.OrdersRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/orderRequest")
 public class OrderRequestController {
@@ -51,6 +53,7 @@ public class OrderRequestController {
     public ResponseEntity<String> confirmOrder(
             @PathVariable Long orderId
     ) {
+        log.info("cofirm 호출");
         orderRequestService.confirmOrder(orderId);
         return ResponseEntity.status(200).body("상태 변환 완료");
     }

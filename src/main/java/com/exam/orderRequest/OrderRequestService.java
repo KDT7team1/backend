@@ -10,8 +10,6 @@ public interface OrderRequestService {
 
     List<OrderRequestDTO> getAllOrders();
 
-    void completeOrder(Long orderId);
-
     OrderRequestDTO findTop1ByGoodsOrderByScheduledTimeDesc(Long goodsId);
 
     void confirmOrder(Long orderId);
