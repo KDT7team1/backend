@@ -132,6 +132,7 @@ public class PaymentsController {
             ordersRepository.flush();
 
             sseService.sendNotification("admin", "결제", "✅ 결제가 완료되었습니다.");
+            log.info("결제 알림 보내기");
 
             if (orders.getOrderItems() == null) {
                 log.warn("[TOSS PAY] 주문 상세(orderItems)가 null입니다.");
@@ -148,13 +149,13 @@ public class PaymentsController {
         }
 
         // ❌ 실패일 때만 sale_data 삭제 로직 실행
-        Orders order = ordersRepository.findById(Long.parseLong(orderId)).orElse(null);
-        if (order != null && order.getPaymentStatus() != PaymentStatus.COMPLETED) {
-            saleDataRepository.deleteByOrders_OrdersId(order.getOrdersId());
-            log.info("❌ 결제 실패로 sale_data 삭제됨: orderId = {}", orderId);
-        } else {
-            log.info("✅ 이미 결제 성공된 주문 - sale_data 삭제하지 않음: orderId = {}", orderId);
-        }
+//        Orders order = ordersRepository.findById(Long.parseLong(orderId)).orElse(null);
+//        if (order != null && order.getPaymentStatus() != PaymentStatus.COMPLETED) {
+//            saleDataRepository.deleteByOrders_OrdersId(order.getOrdersId());
+//            log.info("❌ 결제 실패로 sale_data 삭제됨: orderId = {}", orderId);
+//        } else {
+//            log.info("✅ 이미 결제 성공된 주문 - sale_data 삭제하지 않음: orderId = {}", orderId);
+//        }
 
         responseStream.close();
         return ResponseEntity.status(code).body(jsonObject);
@@ -167,14 +168,5 @@ public class PaymentsController {
         return errorResponse;
     }
 
-    @DeleteMapping("/fail/{orderId}")
-    public ResponseEntity<String> handlePaymentFail(@PathVariable Long orderId) {
-        log.warn("[PAYMENT FAIL] TossPay 창 닫힘 → 결제 실패로 간주, sale_data 삭제");
-
-        saleDataRepository.deleteByOrders_OrdersId(orderId);
-        // 필요시 orders도 삭제하거나, payment_status = 2로 업데이트 가능
-
-        return ResponseEntity.ok("결제 실패 처리 완료");
-    }
 
 }
