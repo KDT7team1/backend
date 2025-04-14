@@ -17,10 +17,10 @@ public class SseServiceImpl implements SseService {
 
     @Override
     public SseEmitter createEmitter(String clientId) {
-        SseEmitter emitter =  new SseEmitter(30L * 1000 * 60); // 60분 유지
+        SseEmitter emitter =  new SseEmitter(0L); // 60분 유지
 
         emitters.put(clientId, emitter);
-        log.info("📡 SSE 연결 성공: {}", clientId);
+        log.info("📡 SSE 연결 성공 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: {}", clientId);
 
 
         emitter.onCompletion(() -> {
@@ -50,9 +50,12 @@ public class SseServiceImpl implements SseService {
                 emitter.send(SseEmitter.event()
                         .data(payload));
             } catch (IOException e) {
+                log.error("❌ SSE 전송 실패 (연결 끊김) → emitter 제거: {}", clientId);
                 emitter.complete();
                 emitters.remove(clientId);
             }
+        }else {
+            log.warn("⚠️ SSE emitter 없음 → clientId: {}", clientId);
         }
     }
 }

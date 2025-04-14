@@ -6,13 +6,15 @@ import com.exam.Inventory.InventoryService;
 import com.exam.cartAnalysis.repository.OrdersRepository;
 import com.exam.goods.Goods;
 import com.exam.goods.GoodsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class OrderRequestServiceImpl implements OrderRequestService {
 
@@ -44,18 +46,13 @@ public class OrderRequestServiceImpl implements OrderRequestService {
 
         orderRequestRepository.save(order);
 
+        // 3분 뒤 → '발주완료' 로만 변경 (재고 추가 X)
         new Thread(() -> {
             try {
-                Thread.sleep(300000); // 3분 대기
-                inventoryService.addStock(
-                        goods.getGoods_id(),
-                        quantity
-                );
+                Thread.sleep(3000); // 3분 대기
                 order.setStatus("발주완료");
                 orderRequestRepository.save(order);
-                System.out.println("✅ 자동 입고 처리 완료: " + order.getOrderId());
             } catch (Exception e) {
-                System.out.println("❌ 입고 처리 실패: " + e.getMessage());
                 e.printStackTrace();
             }
         }).start(); // 🔻 별도 스레드로 실행 (메인 흐름 차단 방지)
@@ -83,14 +80,29 @@ public class OrderRequestServiceImpl implements OrderRequestService {
      return orders;
     }
 
+
+
+
     // 발주 요청 처리 후 완료 로직
     @Override
-    public void completeOrder(Long orderId) {
-        OrderRequest order = orderRequestRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("발주 내역을 찾을 수 없습니다."));
+    @Transactional
+    public void confirmOrder(Long orderId) {
+        log.info("🔔 confirmOrder 진입: orderId={}", orderId);
+        OrderRequest orderRequest = orderRequestRepository.findById(orderId)
+                .orElseThrow();
 
-        order.setStatus("입고완료");
-        orderRequestRepository.save(order);
+
+        // 재고 입고
+        inventoryService.addStock(
+                orderRequest.getGoods().getGoods_id(),
+                orderRequest.getOrderQuantity()
+        );
+        log.info("✅ addStock 호출 완료");
+
+        orderRequest.setStatus("입고완료");
+        orderRequestRepository.save(orderRequest);
+
+        log.info("✅ 상태 '입고완료' 저장 완료");
     }
 
     // 상품별
@@ -119,11 +131,5 @@ public class OrderRequestServiceImpl implements OrderRequestService {
        return orderRequestDTO;
     }
 
-    @Override
-    public void confirmOrder(Long orderId) {
-            OrderRequest orderRequest = orderRequestRepository.findById(orderId)
-                    .orElseThrow();
-            orderRequest.setStatus("입고완료");
-            orderRequestRepository.save(orderRequest);
-    }
+
 }
