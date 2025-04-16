@@ -6,10 +6,15 @@
 **개발 기간 :** 2025.03.  ~ 2025.04.22
 ---
 ### **팀원 구성**
+| 정혜민(조장님) | 구혜연 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/0584281d-d1ee-46f3-9425-60463fdbd613" width="300px" height="300px"/> | <img src="https://github.com/user-attachments/assets/ca573a71-0642-4ba6-83fd-19b5858194f4" width="300px" height="300px"/> |
 
-정혜민
 
-구혜연
+
+
+
+
 ---
 ### 📌 프로젝트 소개
 
@@ -59,9 +64,55 @@
     <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white">
   </div>
 
+---
+
+## 화면 구성 
+| 대시보드 | 판매기록 조회 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/c0d27739-06cc-4ced-bcf8-0a63cf17e499" width="400px"/> | <img src="https://github.com/user-attachments/assets/1e5c4efb-8ac4-405e-99b4-ec8b44cab0bf" width="400px"/> |
+
+| 기간멸 매출 조회 | 매출 레포트 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/21ab3db3-377b-4eb9-9a73-7776834cad9e" width="400px"/> | <img src="https://github.com/user-attachments/assets/e84e9cba-d49a-4676-b264-1d8e161c1a82" width="400px"/> |
+
+| 매출 비교 | 장바구니 분석 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/7a030ce0-b256-4057-abb7-41fff1061b7c" width="400px"/> | <img src="https://github.com/user-attachments/assets/088adcf9-6184-4607-b099-fd27c7a389130a9f" width="400px"/> |
+
+| 재고현황 | 발주 관리 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/7ef29246-1fe9-4bd4-b13b-677144a2addf" width="400px"/> | <img src="https://github.com/user-attachments/assets/66d9a7b6-46d9-4a0d-8350-ed2ee829fd88" width="400px"/> |
+
+| 발주 리스트 | 폐기내역 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/21ab3db3-377b-4eb9-9a73-7776834cad9e" width="400px"/> | <img src="https://github.com/user-attachments/assets/60dcc810-fa5b-43c7-904c-05004a3d8200" width="400px"/> |
+
+| 폐기통계 | 상품조회 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/bc4bfd59-eb57-41e3-a53d-be8445691f57" width="400px"/> | <img src="https://github.com/user-attachments/assets/610418f2-4351-4ea9-9dca-a717f38ec535" width="400px"/> |
+
+| 상품 상세페이지 | 상품수정 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/41769219-b5de-4502-90ff-71e6c60f0670" width="400px"/> | <img src="https://github.com/user-attachments/assets/c9e796ba-418a-4172-9224-02710200eb04" width="400px"/> |
+
+| 상품등록 |  
+|-------------|
+| <img src="https://github.com/user-attachments/assets/37efc1f1-4ee5-4ba0-a3e4-e7a21cd780d3" width="400px"/> |
 
 
+| 사용자 페이지 | 할인상품 페이지 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/21ab3db3-377b-4eb9-9a73-7776834cad9e" width="400px"/> | <img src="https://github.com/user-attachments/assets/fd3424bb-781f-49e5-b178-5272e0a90a9f" width="400px"/> |
 
+| 상품 상세페이지 | 장바구니 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/21ab3db3-377b-4eb9-9a73-7776834cad9e" width="400px"/> | <img src="https://github.com/user-attachments/assets/fd3424bb-781f-49e5-b178-5272e0a90a9f" width="400px"/> |
+
+| 결제 페이지 | 결제완료 |
+|-------------|-------------|
+| <img src="https://github.com/user-attachments/assets/21ab3db3-377b-4eb9-9a73-7776834cad9e" width="400px"/> | <img src="https://github.com/user-attachments/assets/fd3424bb-781f-49e5-b178-5272e0a90a9f" width="400px"/> |
+
+---
 
 
 # backend
