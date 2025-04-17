@@ -195,11 +195,9 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setDiscountRate(discountRate);
 
 
-    if(period == 1){
-        goods.setDiscountEndAt(LocalDateTime.now().plusMinutes(1)); // 일단 7일 할인기간
-    }else {
+
         goods.setDiscountEndAt(LocalDateTime.now().plusDays(period)); // 일단 7일 할인기간
-    }
+
 
         goods.setGoods_updated_at(LocalDateTime.now());
 
