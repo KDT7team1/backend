@@ -1,7 +1,6 @@
 ## 🏪 무인매장 관리 시스템 - Smart Convenience
 
 > 무인 편의점 점주를 위한 똑똑한 매장 운영 솔루션
-> 
 
 **개발 기간 :** 2025.03.06  ~ 2025.04.22
 ---
@@ -34,13 +33,17 @@
 
 > 권장 개발 환경: IntelliJ / VS Code
 
-
 ### 레포지토리 클론
 
 ```bash
 git clone https://github.com/your-org/your-repo.git
 cd your-repo
 ```
+
+### 프론트엔드 실행
+
+
+### 백엔드(FastAPI) 실행
 
 
 ---
@@ -124,7 +127,62 @@ cd your-repo
 | <img src="https://github.com/user-attachments/assets/2a809579-5f99-434e-8f42-dc7658fc5e77" width="250px" height="450px"/> | <img src="https://github.com/user-attachments/assets/4088c1db-17c0-488d-99e5-7022377592f8" width="250px" height="450px"/> |
 
 ---
+## 주요기능
 
+### 매출 레포트
+- 일주일 전, 한달전, 일년전 오늘과 비교해 매출 분석 레포트 제공
+- 상품별 변화와 시간대별 변화 확인 가능
+
+### 장바구니 분석
+- 고객들이 자주 함께 구매하는 상품 조합을 분석해 매장 진열 및 행사 기획에 활용 가능
+- 최근 7일 판매 추이를 함께 제공해 현재 트랜드에 맞춘 대응 가능
+
+### 실시간 알림
+- 결제 알림, 재고 부족 및 품절, 자동 폐기/폐기 예정 상품에 대한 실시간 알림 제공
+
+---
+## 아키텍처
+### 디렉토리 구조
+
+```
+프로젝트 루트
+├── backend/                        # FastAPI 기반 챗봇 서버
+│   ├── data/                       # 세일즈 데이터 저장 폴더
+│   ├── prompts/                    # 프롬프트 템플릿
+│   ├── vectorstore/                # FAISS 벡터 저장소
+│   ├── build_vectorstore.py        # 벡터 DB 생성 스크립트
+│   ├── load_vectorstore_chain.py   # LangChain 로드 로직
+│   ├── rag_chain.py                # RAG 체인 구성 파일
+│   ├── main.py                     # FastAPI 서버 진입점
+│   ├── sales_tools.py              # 판매 분석 도구 모듈
+│   ├── requirements.txt            # Python 패키지 정의
+│   └── .env                        # 환경변수 설정
+│
+├── frontend/                       # React 프론트엔드
+│   ├── public/                  
+│   ├── src/
+│   │   ├── components/            # 공통 컴포넌트
+│   │   ├── contexts/              # 전역 상태 관리
+│   │   ├── features/              # 주요 기능 폴더 (도메인 단위 구성)
+│   │   │   ├── cart_analysis/     # 장바구니 분석
+│   │   │   ├── dashboard/         # 관리자 대시보드
+│   │   │   ├── disposal/          # 폐기 관리
+│   │   │   ├── goods/             # 상품 등록/수정/조회
+│   │   │   ├── inventory/         # 재고 관리
+│   │   │   ├── member/            # 관리자 기능
+│   │   │   ├── ordering/          # 발주 관리
+│   │   │   ├── sales_analysis/    # 매출 분석
+│   │   │   ├── shop/              # 사용자 쇼핑 페이지
+│   │   │   └── statistics/        # 통계 그래프
+│   │   ├── pages/                 # 라우팅 페이지
+│   │   └── utils/                 # 유틸 함수
+│   ├── .env                       # 프론트 환경변수
+│   └── package.json
+│
+├── .gitignore
+└── README.md
+```
+---
 
 # backend
 프로젝트의 백엔드 코드가 저장됩니다.
