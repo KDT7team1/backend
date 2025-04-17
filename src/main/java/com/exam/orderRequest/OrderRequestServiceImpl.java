@@ -49,7 +49,7 @@ public class OrderRequestServiceImpl implements OrderRequestService {
         // 3분 뒤 → '발주완료' 로만 변경 (재고 추가 X)
         new Thread(() -> {
             try {
-                Thread.sleep(3000); // 3분 대기
+                Thread.sleep(5000); // 3분 대기
                 order.setStatus("발주완료");
                 orderRequestRepository.save(order);
             } catch (Exception e) {
