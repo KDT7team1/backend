@@ -275,16 +275,14 @@ deactivate # 가상환경 종료
 - spring-boot-starter-web  
 - spring-boot-starter-validation  
 - spring-boot-starter-data-jpa  
-- mysql-connector-java  
-- tomcat-embed-jasper  
-- jakarta.servlet.jsp.jstl-api  
-- jakarta.servlet.jsp.jstl  
-- jquery  
-- bootstrap  
-- spring-boot-devtools  
-- lombok  
-- spring-boot-starter-security  
-- spring-security-taglibs  
+- mysql-connector-java
+- json-simple
+- spring-boot-starter
+- spring-boot-devtools
+- lombok
+- spring-boot-starter-security
+- spring-boot-starter-oauth2-resource-server
+- spring-boot-configuration-processor 
 - spring-boot-starter-test  
 
 
