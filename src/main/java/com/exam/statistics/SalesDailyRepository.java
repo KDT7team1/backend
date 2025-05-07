@@ -1,6 +1,7 @@
 package com.exam.statistics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -156,9 +157,45 @@ public interface SalesDailyRepository extends JpaRepository<SalesDaily, DailyCom
             @Param("salesHour") int salesHour
     );
 
+    /*
+    스케줄러 관련
+     */
 
+    // 일일 판매기록 업데이트
+    @Modifying
+    @Query(value= """
+            UPDATE sales_daily
+            SET daily_price = :price,
+                daily_amount = :amount
+            WHERE sales_date = :date
+            AND sales_hour = :hour
+            AND category_id = :cat
+            AND sub_category_id = :subCat
+            """, nativeQuery = true)
+    int updateDailyStat(
+            @Param("date") LocalDate date,
+            @Param("hour") int hour,
+            @Param("cat") Long categoryId,
+            @Param("subCat") Long subCategoryId,
+            @Param("price") Long price,
+            @Param("amount") Long amount
+    );
 
-
+    // 일일 판매기록 추가
+    @Modifying
+    @Query(value = """
+    INSERT INTO sales_daily
+    (sales_date, sales_hour, category_id, sub_category_id, daily_price, daily_amount)
+    VALUES (:date, :hour, :cat, :subCat, :price, :amount)
+    """, nativeQuery = true)
+    void insertDailyStat(
+            @Param("date") LocalDate date,
+            @Param("hour") int hour,
+            @Param("cat") Long categoryId,
+            @Param("subCat") Long subCategoryId,
+            @Param("price") Long price,
+            @Param("amount") Long amount
+    );
 }
 
 

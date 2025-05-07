@@ -1,7 +1,5 @@
-package com.exam.goods.scheduler;
+package com.exam.goods;
 
-import com.exam.goods.Goods;
-import com.exam.goods.GoodsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,12 +10,12 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class restoreOriginalPriceScheduler {
+public class RestoreOriginalPriceScheduler {
 
     GoodsRepository goodsRepository;
 
     @Autowired // ✅ 생성자 주입 시 생략 가능하지만 명확하게!
-    public restoreOriginalPriceScheduler(GoodsRepository goodsRepository) {
+    public RestoreOriginalPriceScheduler(GoodsRepository goodsRepository) {
         this.goodsRepository = goodsRepository;
     }
 

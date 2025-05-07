@@ -28,7 +28,7 @@ public class BulkSalesAnalysisController {
         log.info("[매출 분석] 벌크 데이터 생성 시작");
 
         LocalDate startDate = LocalDate.of(2025, 4, 1);
-        LocalDate endDate = LocalDate.of(2025, 4, 2);
+        LocalDate endDate = LocalDate.of(2025, 4, 19);
 
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {

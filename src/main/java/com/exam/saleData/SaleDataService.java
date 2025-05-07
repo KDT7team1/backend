@@ -9,4 +9,6 @@ import java.util.List;
 public interface SaleDataService {
     List<SalesChartDTO> getWeeklySalesByGoodsId(Long goodsId);
     ReceiptDTO getReceiptByOrdersId(Long ordersId);
+    void updateSalesDaily();
+    void updateSalesMonthly();
 }
