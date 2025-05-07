@@ -1,11 +1,14 @@
 package com.exam.saleData;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,5 +55,41 @@ public interface SaleDataRepository extends JpaRepository<SaleData, Long>{
             """)
     List<SaleData> findByOrdersIdWithDetails(@Param("ordersId") Long ordersId);
 
+    // 매 시 정각에 통계 테이블 업데이트하기
+    @Query(value = """
+            SELECT
+                DATE(s.sale_date) as salesDate,
+                HOUR(s.sale_date) as salesHour,
+                g.category_id as categoryId,
+                g.sub_category_id as subCategoryId,
+                SUM(s.sale_price) as totalPrice,
+                SUM(s.sale_amount) as totalAmount
+            FROM sale_data s
+            JOIN goods g ON s.goods_id = g.goods_id
+            WHERE s.sale_date >= :start AND s.sale_date < :end
+            GROUP BY salesDate, salesHour, categoryId, subCategoryId
+            """, nativeQuery = true)
+    List<Object[]> findHourlyAggregatedSales(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    // 매 월 1일에 통계 테이블 업데이트
+    @Query(value = """
+    SELECT 
+        DATE_FORMAT(s.sale_date, '%Y-%m') AS salesMonth,
+        g.category_id AS categoryId,
+        g.sub_category_id AS subCategoryId,
+        SUM(s.sale_price) AS totalPrice,
+        SUM(s.sale_amount) AS totalAmount
+    FROM sale_data s
+    JOIN goods g ON s.goods_id = g.goods_id
+    WHERE s.sale_date >= :start AND s.sale_date < :end
+    GROUP BY salesMonth, categoryId, subCategoryId
+""", nativeQuery = true)
+    List<Object[]> findMonthlyAggregatedSales(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
 }
 

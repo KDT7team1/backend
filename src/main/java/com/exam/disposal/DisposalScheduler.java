@@ -1,7 +1,6 @@
-package com.exam.disposal.scheduler;
+package com.exam.disposal;
 
 
-import com.exam.disposal.DisposalService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

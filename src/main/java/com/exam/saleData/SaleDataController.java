@@ -24,6 +24,16 @@ public class SaleDataController {
     }
 
 
+    @PostMapping("/trigger-daily")
+    public ResponseEntity<?> triggerDaily() {
+        saleDataService.updateSalesDaily();
+        return ResponseEntity.ok("일간 통계 수동 실행 완료");
+    }
 
+    @PostMapping("/trigger-monthly")
+    public ResponseEntity<?> triggerMonthly() {
+        saleDataService.updateSalesMonthly();
+        return ResponseEntity.ok("월간 통계 수동 실행 완료");
+    }
 
 }

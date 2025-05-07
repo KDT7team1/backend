@@ -1,7 +1,5 @@
-package com.exam.Inventory.scheduler;
+package com.exam.Inventory;
 
-import com.exam.Inventory.Inventory;
-import com.exam.Inventory.InventoryRepository;
 import com.exam.notification.SseService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

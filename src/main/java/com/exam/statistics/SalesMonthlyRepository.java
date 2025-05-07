@@ -1,6 +1,7 @@
 package com.exam.statistics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -60,4 +61,32 @@ public interface SalesMonthlyRepository extends JpaRepository<SalesMonthly, Mont
             """)
     List<Object[]> getSubCategorySalesByMonth(@Param("month") String month, @Param("categoryId") Long categoryId);
 
+
+    // 스케줄링 - 월간 데이터 업데이트
+    @Modifying
+    @Query(value = """
+        UPDATE sales_monthly
+        SET monthly_price = :price,
+            monthly_amount = :amount
+        WHERE sales_month = :month
+          AND category_id = :cat
+          AND sub_category_id = :subCat
+        """, nativeQuery = true)
+    int updateMonthlyStat(@Param("month") String month,
+                          @Param("cat") Long categoryId,
+                          @Param("subCat") Long subCategoryId,
+                          @Param("price") Long price,
+                          @Param("amount") Long amount);
+
+    @Modifying
+    @Query(value = """
+        INSERT INTO sales_monthly
+        (sales_month, category_id, sub_category_id, monthly_price, monthly_amount)
+        VALUES (:month, :cat, :subCat, :price, :amount)
+        """, nativeQuery = true)
+    void insertMonthlyStat(@Param("month") String month,
+                           @Param("cat") Long categoryId,
+                           @Param("subCat") Long subCategoryId,
+                           @Param("price") Long price,
+                           @Param("amount") Long amount);
 }
